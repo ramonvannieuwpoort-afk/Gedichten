@@ -11,6 +11,18 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Gedichten">
 
+<!-- Bij openen een unieke URL gebruiken om oude HTML-cache te omzeilen -->
+<script>
+(function() {
+  const url = new URL(window.location.href);
+
+  if (!url.searchParams.has("fresh")) {
+    url.searchParams.set("fresh", Date.now());
+    window.location.replace(url.toString());
+  }
+})();
+</script>
+
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&display=swap" rel="stylesheet">
 
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
@@ -33,7 +45,6 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* De pagina */
 .page {
   max-width: 900px;
   margin: 0 auto;
@@ -47,7 +58,6 @@ body {
   );
 }
 
-/* Titel en dichter */
 header {
   margin-bottom: 58px;
   padding-bottom: 25px;
@@ -71,7 +81,6 @@ h1 {
   text-align: center;
 }
 
-/* Gedicht */
 .poem {
   font-size: 25px;
   font-weight: 400;
@@ -82,7 +91,6 @@ h1 {
   text-align: left;
 }
 
-/* Navigatie */
 .navigation {
   margin-top: 70px;
   padding-top: 20px;
@@ -119,7 +127,6 @@ button:disabled {
   padding-top: 30px;
 }
 
-/* Kleine schermen */
 @media (max-width: 600px) {
   .page {
     padding: 75px 27px 50px;
@@ -171,6 +178,7 @@ const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSyqrEB__RKjtVv
 
 let poems = [];
 let current = 0;
+let loading = false;
 
 function findColumn(row, name) {
   const key = Object.keys(row).find(
@@ -181,12 +189,18 @@ function findColumn(row, name) {
 }
 
 async function loadPoems() {
+  if (loading) return;
+
+  loading = true;
+
   const status = document.getElementById("status");
 
   try {
     const response = await fetch(
       CSV_URL + "&refresh=" + Date.now(),
-      { cache: "no-store" }
+      {
+        cache: "no-store"
+      }
     );
 
     if (!response.ok) {
@@ -229,6 +243,9 @@ async function loadPoems() {
       "Gedichten konden niet worden geladen. Controleer je internetverbinding en de Google Sheets-publicatie.";
 
     console.error(error);
+
+  } finally {
+    loading = false;
   }
 }
 
@@ -260,6 +277,18 @@ loadPoems();
 
 // Iedere vijf minuten opnieuw ophalen
 setInterval(loadPoems, 5 * 60 * 1000);
+
+// Opnieuw ophalen wanneer de webapp weer zichtbaar wordt
+document.addEventListener("visibilitychange", function() {
+  if (!document.hidden) {
+    loadPoems();
+  }
+});
+
+// Opnieuw ophalen wanneer de webapp opnieuw wordt geactiveerd
+window.addEventListener("pageshow", function() {
+  loadPoems();
+});
 
 </script>
 
