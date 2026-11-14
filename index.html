@@ -297,9 +297,21 @@ const item=poems[currentIndex];
 titleElement.textContent=item.title||"";
 authorElement.textContent=item.author||"";
 poemElement.innerHTML="";
-const decodedPoem=String(item.poem||"").replace(/\\n/g,"\n");
+
+/* HERSTEL VAN REGELAFBREKINGEN UIT GOOGLE SHEETS */
+const decodedPoem=String(item.poem||"")
+.replace(/\\+r\\+n/g,"\n")
+.replace(/\\+n/g,"\n")
+.replace(/\r\n?/g,"\n");
+
 const paragraphs=decodedPoem.trim().split(/\n\s*\n/).filter(part=>part.trim());
-paragraphs.forEach(text=>{const paragraph=document.createElement("p");paragraph.className="poem-paragraph";paragraph.textContent=text.trim();poemElement.appendChild(paragraph)});
+paragraphs.forEach(text=>{
+const paragraph=document.createElement("p");
+paragraph.className="poem-paragraph";
+paragraph.textContent=text.trim();
+poemElement.appendChild(paragraph);
+});
+
 counterElement.textContent=(currentIndex+1)+" / "+poems.length;
 clearMagnification();
 notesByPassage={};
@@ -308,6 +320,7 @@ loadNotesForCurrentPoem();
 
 document.getElementById("previous").addEventListener("click",()=>show(-1));
 document.getElementById("next").addEventListener("click",()=>show(1));
+
 poemElement.addEventListener("click",event=>{
 const paragraph=event.target.closest(".poem-paragraph");
 if(!paragraph||!paragraph.classList.contains("has-notes"))return;
@@ -403,6 +416,7 @@ setTimeout(()=>document.getElementById("accessCode").focus(),300);
 
 function closeAccessModal(){accessBackdrop.classList.remove("visible")}
 document.getElementById("accessCancel").addEventListener("click",closeAccessModal);
+
 document.getElementById("accessForm").addEventListener("submit",event=>{
 event.preventDefault();
 const code=document.getElementById("accessCode").value.trim();
