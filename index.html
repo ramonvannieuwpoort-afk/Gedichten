@@ -465,6 +465,26 @@ hand.style.right="auto";
 updateMagnification();
 }
 
+// Zet alle handjes terug op hun vaste beginposities aan de schermranden.
+// Omdat de handjes position:fixed gebruiken, blijven ze daar ook staan na scrollen.
+function resetHandsToEdges(){
+handStates.forEach(state=>{
+  const hand=state.element;
+  hand.style.left="";
+  hand.style.right="";
+  hand.style.top="";
+  hand.classList.remove("dragging");
+  state.dragging=false;
+  state.pointerId=null;
+  state.moved=false;
+  state.x=null;
+  state.y=null;
+  state.target=null;
+  if(state.type==="sentence")state.activated=false;
+});
+updateMagnification();
+}
+
 // Herbereken ook wanneer Safari zelf scrolt (inclusief scrollcontainers en de visuele viewport).
 window.addEventListener("scroll",updateMagnification,{passive:true,capture:true});
 document.addEventListener("scroll",updateMagnification,{passive:true,capture:true});
@@ -486,10 +506,7 @@ moveHand(state,event.clientX,event.clientY);
 state.element.addEventListener("pointermove",event=>{
 if(!state.dragging||state.pointerId!==event.pointerId)return;
 event.preventDefault();
-if(Math.hypot(event.clientX-state.startX,event.clientY-state.startY)>8){
-state.moved=true;
-if(state.type==="sentence")state.activated=true;
-}
+if(Math.hypot(event.clientX-state.startX,event.clientY-state.startY)>8){state.moved=true;if(state.type==="sentence")state.activated=true;}
 moveHand(state,event.clientX,event.clientY);
 });
 function finishPointer(event){
@@ -642,7 +659,10 @@ setTimeout(loadNotesForCurrentPoem,1200);
 }catch(error){status.textContent="Verwijderen is niet gelukt. Probeer opnieuw."}
 }
 
-function closeNoteModal(){noteBackdrop.classList.remove("visible")}
+function closeNoteModal(){
+noteBackdrop.classList.remove("visible");
+resetHandsToEdges();
+}
 document.getElementById("noteCancel").addEventListener("click",closeNoteModal);
 
 document.getElementById("noteForm").addEventListener("submit",async event=>{
