@@ -11,18 +11,6 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Gedichten">
 
-<!-- Bij openen een unieke URL gebruiken om oude HTML-cache te omzeilen -->
-<script>
-(function() {
-  const url = new URL(window.location.href);
-
-  if (!url.searchParams.has("fresh")) {
-    url.searchParams.set("fresh", Date.now());
-    window.location.replace(url.toString());
-  }
-})();
-</script>
-
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&display=swap" rel="stylesheet">
 
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
@@ -33,13 +21,13 @@
 }
 
 html {
-  background: #f7f4ed;
+  background: #ffffff;
   scroll-behavior: smooth;
 }
 
 body {
   margin: 0;
-  background: #f7f4ed;
+  background: #ffffff;
   color: #302c26;
   font-family: 'Cormorant Garamond', Georgia, serif;
   -webkit-font-smoothing: antialiased;
@@ -50,11 +38,13 @@ body {
   margin: 0 auto;
   padding: 105px 65px 65px;
   min-height: 100vh;
+
   background: linear-gradient(
     to bottom,
-    #f7f4ed 0px,
-    #f7f4ed 180px,
-    #eee9df 300px
+    #ffffff 0px,
+    #ffffff 70px,
+    #f7f4ed 190px,
+    #eee9df 340px
   );
 }
 
@@ -130,11 +120,13 @@ button:disabled {
 @media (max-width: 600px) {
   .page {
     padding: 75px 27px 50px;
+
     background: linear-gradient(
       to bottom,
-      #f7f4ed 0px,
+      #ffffff 0px,
+      #ffffff 50px,
       #f7f4ed 150px,
-      #eee9df 260px
+      #eee9df 280px
     );
   }
 
@@ -173,7 +165,6 @@ button:disabled {
 
 <script>
 
-// Google Sheets CSV
 const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSyqrEB__RKjtVvARlIYLBkIdwVlXFh0PYBN615AgXk1RrlmrRzqFfV8r7DRWIuEbeRTeetKTBBWNBd/pub?gid=0&single=true&output=csv";
 
 let poems = [];
@@ -221,7 +212,7 @@ async function loadPoems() {
     })).filter(p => p.title && p.text);
 
     if (!updated.length) {
-      throw new Error("Geen gedichten gevonden. Controleer de kolomnamen.");
+      throw new Error("Geen gedichten gevonden.");
     }
 
     const previousTitle = poems[current]?.title;
@@ -278,14 +269,14 @@ loadPoems();
 // Iedere vijf minuten opnieuw ophalen
 setInterval(loadPoems, 5 * 60 * 1000);
 
-// Opnieuw ophalen wanneer de webapp weer zichtbaar wordt
+// Opnieuw ophalen wanneer de webapp zichtbaar wordt
 document.addEventListener("visibilitychange", function() {
   if (!document.hidden) {
     loadPoems();
   }
 });
 
-// Opnieuw ophalen wanneer de webapp opnieuw wordt geactiveerd
+// Opnieuw ophalen bij activering
 window.addEventListener("pageshow", function() {
   loadPoems();
 });
