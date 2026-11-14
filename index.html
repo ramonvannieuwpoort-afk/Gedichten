@@ -53,12 +53,14 @@ h1 {
   letter-spacing: 0.3px;
   margin: 0 0 10px;
   line-height: 1.1;
+  text-align: center;
 }
 
 .author {
   font-size: 21px;
   font-style: italic;
   color: #887e70;
+  text-align: center;
 }
 
 .poem {
@@ -147,10 +149,19 @@ button:disabled {
 
 <script>
 
+// Google Sheets CSV
 const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSyqrEB__RKjtVvARlIYLBkIdwVlXFh0PYBN615AgXk1RrlmrRzqFfV8r7DRWIuEbeRTeetKTBBWNBd/pub?gid=0&single=true&output=csv";
 
 let poems = [];
 let current = 0;
+
+function findColumn(row, name) {
+  const key = Object.keys(row).find(
+    k => k.trim().toLowerCase() === name.toLowerCase()
+  );
+
+  return key ? row[key] : "";
+}
 
 async function loadPoems() {
   const status = document.getElementById("status");
@@ -168,23 +179,18 @@ async function loadPoems() {
     const csv = await response.text();
 
     const result = Papa.parse(csv, {
-      skipEmptyLines: false
+      header: true,
+      skipEmptyLines: "greedy"
     });
 
-    const rows = result.data;
-
-    // Kolom A = Titel
-    // Kolom B = Dichter
-    // Kolom C = Volledig gedicht
-
-    const updated = rows.slice(1).map(row => ({
-      title: String(row[0] || "").trim(),
-      author: String(row[1] || "").trim(),
-      text: String(row[2] || "").trim()
+    const updated = result.data.map(row => ({
+      title: String(findColumn(row, "Titel") || "").trim(),
+      author: String(findColumn(row, "Dichter") || "").trim(),
+      text: String(findColumn(row, "Gedicht") || "").trim()
     })).filter(p => p.title && p.text);
 
     if (!updated.length) {
-      throw new Error("Geen gedichten gevonden. Controleer kolom A, B en C.");
+      throw new Error("Geen gedichten gevonden. Controleer de kolomnamen.");
     }
 
     const previousTitle = poems[current]?.title;
@@ -204,6 +210,7 @@ async function loadPoems() {
   } catch (error) {
     status.textContent =
       "Gedichten konden niet worden geladen. Controleer je internetverbinding en de Google Sheets-publicatie.";
+
     console.error(error);
   }
 }
@@ -216,7 +223,7 @@ function show(direction) {
   const p = poems[current];
 
   document.getElementById("title").textContent = p.title;
-  document.getElementById("author").textContent = "— " + p.author;
+  document.getElementById("author").textContent = p.author;
   document.getElementById("poem").textContent = p.text;
 
   document.getElementById("counter").textContent =
