@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="theme-color" content="#ffffff">
 <title>Gedichten</title>
-<!-- Testversie 3: 14 november 2026 -->
+<!-- Testversie 4: 14 november 2026 -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&display=swap" rel="stylesheet">
@@ -47,12 +47,30 @@ button{font-family:inherit}
 #hand1 .hand-icon{transform:rotate(60deg)}
 #hand2 .hand-icon{transform:rotate(-60deg)}
 .hand.dragging{cursor:grabbing}
- .hand-hint{margin-top:18px;font-size:15px;color:#a09688;text-align:center;font-style:italic}
-.test-version{position:fixed;left:14px;bottom:calc(10px + env(safe-area-inset-bottom));z-index:10001;color:#9b9183;font-family:Georgia,serif;font-size:11px;letter-spacing:.08em;opacity:.78;pointer-events:none;user-select:none}
+.hand-hint{margin-top:18px;font-size:15px;color:#a09688;text-align:center;font-style:italic}
+.test-version{position:fixed;left:14px;bottom:calc(54px + env(safe-area-inset-bottom));z-index:10001;color:#9b9183;font-family:Georgia,serif;font-size:11px;letter-spacing:.08em;opacity:.78;pointer-events:none;user-select:none}
 .reset-hands-button{position:fixed;right:14px;bottom:calc(10px + env(safe-area-inset-bottom));z-index:10002;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(151,133,108,.38);border-radius:50%;padding:0;background:rgba(247,244,237,.94);color:#766b5d;font-family:Georgia,serif;font-size:30px;font-weight:400;line-height:1;padding:0 0 2px;box-shadow:0 2px 9px rgba(55,45,32,.09);cursor:pointer;backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);-webkit-tap-highlight-color:transparent}
 .reset-hands-button:active{background:#e9e1d4;transform:translateY(1px)}
 .reset-hands-button:focus-visible{outline:2px solid #887e70;outline-offset:3px}
-@media(max-width:600px){.test-version{left:9px;bottom:calc(8px + env(safe-area-inset-bottom));font-size:10px}.reset-hands-button{right:9px;bottom:calc(7px + env(safe-area-inset-bottom));width:38px;height:38px;font-size:29px}}
+.poem-menu-button{position:fixed;left:14px;bottom:calc(10px + env(safe-area-inset-bottom));z-index:10002;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(151,133,108,.38);border-radius:50%;padding:0;background:rgba(247,244,237,.94);color:#766b5d;box-shadow:0 2px 9px rgba(55,45,32,.09);cursor:pointer;backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);-webkit-tap-highlight-color:transparent}
+.poem-menu-button:active{background:#e9e1d4;transform:translateY(1px)}
+.poem-menu-button:focus-visible{outline:2px solid #887e70;outline-offset:3px}
+.poem-menu-button svg{width:21px;height:21px;display:block}
+.poem-menu-backdrop{display:none;position:fixed;inset:0;z-index:21000;background:rgba(35,30,24,.42);align-items:center;justify-content:center;padding:20px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.poem-menu-backdrop.visible{display:flex}
+.poem-menu-panel{width:100%;max-width:460px;max-height:min(78vh,680px);display:flex;flex-direction:column;background:#f7f4ed;border:1px solid #d5cdbf;border-radius:4px;padding:26px;box-shadow:0 12px 40px rgba(35,30,24,.2)}
+.poem-menu-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:16px;padding-bottom:13px;border-bottom:1px solid #d5cdbf}
+.poem-menu-heading h2{margin:0;font-size:29px;font-weight:500}
+.poem-menu-close{border:0;background:none;color:#887e70;font-size:27px;line-height:1;padding:2px 5px;cursor:pointer}
+.poem-menu-list{overflow-y:auto;-webkit-overflow-scrolling:touch}
+.poem-menu-item{display:block;width:100%;border:0;border-bottom:1px solid rgba(213,205,191,.75);padding:12px 3px;background:transparent;color:#302c26;text-align:left;font-family:inherit;cursor:pointer}
+.poem-menu-item:last-child{border-bottom:0}
+.poem-menu-item-title{display:block;font-size:21px;line-height:1.2}
+.poem-menu-item-author{display:block;margin-top:3px;color:#887e70;font-size:16px;font-style:italic}
+.poem-menu-item.current .poem-menu-item-title{font-weight:600;color:#8a6845}
+.poem-menu-empty{margin:0;color:#887e70;font-size:18px;font-style:italic}
+@media(max-width:600px){.poem-menu-button{left:9px;bottom:calc(7px + env(safe-area-inset-bottom));width:38px;height:38px}.poem-menu-button svg{width:20px;height:20px}.poem-menu-panel{padding:22px;max-height:80vh}}
+@media(max-width:600px){.test-version{left:9px;bottom:calc(51px + env(safe-area-inset-bottom));font-size:10px}.reset-hands-button{right:9px;bottom:calc(7px + env(safe-area-inset-bottom));width:38px;height:38px;font-size:29px}}
 .modal-backdrop{display:none;position:fixed;top:0;right:0;bottom:0;left:0;width:100%;height:100%;z-index:20000;background:rgba(35,30,24,.42);align-items:center;justify-content:center;padding:20px;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .modal-backdrop.visible{display:-webkit-box;display:-webkit-flex;display:flex}
 .modal{width:100%;max-width:460px;background:#f7f4ed;border:1px solid #d5cdbf;border-radius:4px;padding:30px;box-shadow:0 12px 40px rgba(35,30,24,.2);position:relative;margin:auto;flex-shrink:0}
@@ -131,8 +149,17 @@ header{margin-bottom:48px}
 <button type="button" class="hand" id="hand2" aria-label="Tweede Hamsa-hand"></button>
 <button type="button" class="hand" id="sentenceHand" aria-label="Wijzende vinger voor regels"></button>
 <button type="button" class="hand" id="wordHand" aria-label="Wijzende vinger voor woorden"></button>
-<div class="test-version" aria-label="Testversie 3">TEST v3</div>
+<div class="test-version" aria-label="Testversie 4">TEST v4</div>
 <button type="button" class="reset-hands-button" id="resetHandsButton" aria-label="Zet alle handjes terug naar hun beginposities" title="Handjes terugzetten">⟲</button>
+<button type="button" class="poem-menu-button" id="poemMenuButton" aria-label="Open gedichtenmenu" title="Gedichten">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M4 6.5h16M4 12h16M4 17.5h16"/></svg>
+</button>
+<div class="poem-menu-backdrop" id="poemMenuBackdrop" aria-hidden="true">
+  <section class="poem-menu-panel" role="dialog" aria-modal="true" aria-labelledby="poemMenuTitle">
+    <div class="poem-menu-heading"><h2 id="poemMenuTitle">Gedichten</h2><button type="button" class="poem-menu-close" id="poemMenuClose" aria-label="Menu sluiten">×</button></div>
+    <div class="poem-menu-list" id="poemMenuList"><p class="poem-menu-empty">Gedichten worden geladen…</p></div>
+  </section>
+</div>
 
 <div class="modal-backdrop" id="accessBackdrop">
 <div class="modal" role="dialog" aria-modal="true" aria-labelledby="accessTitle">
@@ -251,12 +278,9 @@ svg.setAttribute("class","finger-icon");
 svg.setAttribute("aria-hidden","true");
 svg.innerHTML=`
 <g stroke="#352b2b" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round">
-  <!-- Handpalm en gebogen vingers -->
   <path d="M29 91 Q23 86 24 76 L18 60 Q15 52 21 48 Q27 44 32 52 L38 63 L39 17 Q39 7 48 5 Q57 7 57 17 L57 55 L63 47 Q69 41 75 47 Q80 53 74 60 L67 82 Q64 92 53 94Z" fill="#13c9d5"/>
-  <!-- Spitse wijsvingertop -->
   <path d="M39 19 Q39 8 48 5 Q57 8 57 19 L55 33 L41 33Z" fill="#ffe12e"/>
   <path d="M42 17 Q48 9 54 17 L53 25 L43 25Z" fill="#ff4fa3" stroke-width="1.5"/>
-  <!-- Kleurrijke banden en details in dezelfde palet als de Hamsa -->
   <path d="M40 38 L56 38 L56 46 L40 46Z" fill="#ff8a24" stroke-width="1.5"/>
   <path d="M39 59 L57 59 L57 68 L39 68Z" fill="#ff4fa3" stroke-width="1.5"/>
   <path d="M28 75 Q46 84 66 75" fill="none" stroke="#ffe12e" stroke-width="5"/>
@@ -288,6 +312,8 @@ const counterElement=document.getElementById("counter");
 const hands=[document.getElementById("hand1"),document.getElementById("hand2"),document.getElementById("sentenceHand"),document.getElementById("wordHand")];
 const accessBackdrop=document.getElementById("accessBackdrop");
 const noteBackdrop=document.getElementById("noteBackdrop");
+const poemMenuBackdrop=document.getElementById("poemMenuBackdrop");
+const poemMenuList=document.getElementById("poemMenuList");
 const handStates=hands.map((hand,index)=>({element:hand,type:index===2?"sentence":index===3?"word":"passage",dragging:false,pointerId:null,startX:0,startY:0,moved:false,activated:false,x:null,y:null,target:null}));
 
 function findColumn(row,possibleNames){
@@ -303,7 +329,7 @@ if(!response.ok)throw new Error("Kon gedichten niet laden");
 const csv=await response.text();
 const result=Papa.parse(csv,{header:true,skipEmptyLines:"greedy"});
 poems=result.data.map(row=>({title:findColumn(row,["titel","title"]),author:findColumn(row,["dichter","auteur","author"]),poem:findColumn(row,["gedicht","tekst","poem"])})).filter(item=>item.poem&&item.poem.trim());
-if(poems.length>0)show(0);
+if(poems.length>0){show(0);renderPoemMenu();}
 }catch(error){poemElement.textContent="De gedichten konden niet worden geladen.";console.error(error)}
 }
 
@@ -354,9 +380,9 @@ paragraph.appendChild(sentence);
 if(lineIndex<lines.length-1)paragraph.appendChild(document.createTextNode("\n"));
 });
 }
-function show(direction){
+function show(direction,directIndex=false){
 if(!poems.length)return;
-currentIndex=(currentIndex+direction+poems.length)%poems.length;
+currentIndex=directIndex?direction:(currentIndex+direction+poems.length)%poems.length;
 const item=poems[currentIndex];
 titleElement.textContent=item.title||"";
 authorElement.textContent=item.author||"";
@@ -369,6 +395,26 @@ clearMagnification();
 notesByPassage={};
 loadNotesForCurrentPoem();
 }
+
+function renderPoemMenu(){
+poemMenuList.innerHTML="";
+if(!poems.length){const empty=document.createElement("p");empty.className="poem-menu-empty";empty.textContent="Er zijn geen gedichten beschikbaar.";poemMenuList.appendChild(empty);return;}
+poems.forEach((poem,index)=>{
+const item=document.createElement("button");
+item.type="button";
+item.className="poem-menu-item"+(index===currentIndex?" current":"");
+const poemTitle=document.createElement("span");poemTitle.className="poem-menu-item-title";poemTitle.textContent=poem.title||"Zonder titel";
+const author=document.createElement("span");author.className="poem-menu-item-author";author.textContent=poem.author||"";
+item.appendChild(poemTitle);if(poem.author)item.appendChild(author);
+item.addEventListener("click",()=>{show(index,true);closePoemMenu();});
+poemMenuList.appendChild(item);
+});
+}
+function openPoemMenu(){renderPoemMenu();poemMenuBackdrop.classList.add("visible");poemMenuBackdrop.setAttribute("aria-hidden","false");}
+function closePoemMenu(){poemMenuBackdrop.classList.remove("visible");poemMenuBackdrop.setAttribute("aria-hidden","true");}
+document.getElementById("poemMenuButton").addEventListener("click",openPoemMenu);
+document.getElementById("poemMenuClose").addEventListener("click",closePoemMenu);
+poemMenuBackdrop.addEventListener("click",event=>{if(event.target===poemMenuBackdrop)closePoemMenu();});
 
 document.getElementById("previous").addEventListener("click",()=>show(-1));
 document.getElementById("next").addEventListener("click",()=>show(1));
@@ -404,8 +450,6 @@ poemElement.querySelectorAll(".sentence-active,.word-active").forEach(el=>el.cla
 handStates.forEach(state=>{
 state.target=null;
 if(!state.activated)return;
-// Gebruik steeds de actuele schermpositie van het element zelf.
-// Zo blijven de raakvlakken kloppen wanneer Safari de pagina scrollt.
 const handRect=state.element.getBoundingClientRect();
 const x=handRect.left+handRect.width/2;
 const y=handRect.top+handRect.height/2;
@@ -430,8 +474,6 @@ if(target){state.target=target;target.classList.add("sentence-active");}
 return;
 }
 if(state.type==="word"){
-// Het zichtbare topje van de wijsvinger ligt niet in het midden van
-// het knopvlak. Reken de echte puntpositie uit na de CSS-rotatie.
 const direction=state.element.id==="wordHand"?-1:1;
 const tipX=x+(direction*handRect.width*0.40);
 const tipY=y-(handRect.height*0.21);
@@ -450,8 +492,6 @@ if(document.elementsFromPoint){
   state.element.style.visibility=oldVisibility;
   target=hit&&hit.closest?hit.closest(".poem-word"):null;
 }
-// Safari kan op kleine schermen een raakpunt net naast een letter rapporteren.
-// Kies dan het dichtstbijzijnde woord binnen een kleine, begrensde marge.
 if(!target){
   let nearestDistance=Infinity;
   const tolerance=Math.max(14,handRect.width*0.42);
@@ -497,8 +537,6 @@ hand.style.right="auto";
 updateMagnification();
 }
 
-// Zet alle handjes terug op hun vaste beginposities aan de schermranden.
-// Omdat de handjes position:fixed gebruiken, blijven ze daar ook staan na scrollen.
 function resetHandsToEdges(){
 handStates.forEach(state=>{
   const hand=state.element;
@@ -514,21 +552,18 @@ handStates.forEach(state=>{
   state.target=null;
   state.activated=false;
 });
-// Wis ook alle tijdelijke markeringen; er wordt niets opgeslagen of geopend.
 poemElement.querySelectorAll(".poem-paragraph.active,.sentence-active,.word-active").forEach(element=>{
   element.classList.remove("active","sentence-active","word-active");
 });
 updateMagnification();
 }
 
-// De resetknop is een aparte actie: nooit een notitie openen of opslaan.
 document.getElementById("resetHandsButton").addEventListener("click",event=>{
   event.preventDefault();
   event.stopPropagation();
   resetHandsToEdges();
 });
 
-// Herbereken ook wanneer Safari zelf scrolt (inclusief scrollcontainers en de visuele viewport).
 window.addEventListener("scroll",updateMagnification,{passive:true,capture:true});
 document.addEventListener("scroll",updateMagnification,{passive:true,capture:true});
 window.addEventListener("resize",updateMagnification);
@@ -537,8 +572,6 @@ window.visualViewport.addEventListener("scroll",updateMagnification,{passive:tru
 window.visualViewport.addEventListener("resize",updateMagnification,{passive:true});
 }
 
-// Start het slepen op het handje, maar volg de aanwijzer daarna op documentniveau.
-// Zo blijft slepen werken als de vinger buiten de knop komt (ook op oudere iPad-Safari).
 handStates.forEach(state=>{
 state.element.addEventListener("pointerdown",event=>{
 if(event.button!==undefined&&event.button!==0)return;
@@ -759,7 +792,7 @@ saveButton.disabled=!selectedPerson;
 
 accessBackdrop.addEventListener("click",event=>{if(event.target===accessBackdrop)closeAccessModal()});
 noteBackdrop.addEventListener("click",event=>{if(event.target===noteBackdrop)closeNoteModal()});
-document.addEventListener("keydown",event=>{if(event.key==="Escape"){closeAccessModal();closeNoteModal()}});
+document.addEventListener("keydown",event=>{if(event.key==="Escape"){closeAccessModal();closeNoteModal();closePoemMenu()}});
 loadPoems();
 setInterval(loadPoems,5*60*1000);
 </script>
