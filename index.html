@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -34,17 +35,19 @@ button{font-family:inherit}
 #hand2{right:max(8px,calc((100vw - 900px)/2 + 8px))}
 #sentenceHand{top:158px;left:max(8px,calc((100vw - 900px)/2 + 8px))}
 #wordHand{top:158px;right:max(8px,calc((100vw - 900px)/2 + 8px))}
-.hand-icon{width:100%;height:100%;display:block;overflow:visible;pointer-events:none;transform-origin:50% 50%}
-#hand1 .hand-icon{transform:rotate(60deg)}
-#hand2 .hand-icon{transform:rotate(-60deg)}
-.finger-icon{width:100%;height:100%;display:block;pointer-events:none;overflow:visible}
-.hand.dragging{width:46px;height:46px;cursor:grabbing;box-shadow:0 4px 15px rgba(50,40,25,.2)}
-.hand-hint{margin-top:18px;font-size:15px;color:#a09688;text-align:center;font-style:italic}
+.finger-icon{width:100%;height:100%;display:block;pointer-events:none;overflow:visible;transform-origin:50% 50%}
+#sentenceHand .finger-icon{transform:rotate(60deg)}
+#wordHand .finger-icon{transform:rotate(-60deg)}
 .poem-sentence{border-radius:3px;transition:background-color 180ms ease,box-shadow 180ms ease}
 .poem-sentence.sentence-active{background:rgba(255,190,70,.28);box-shadow:0 0 0 2px rgba(190,130,50,.16)}
 .poem-word{border-radius:2px;transition:background-color 160ms ease,box-shadow 160ms ease}
 .poem-word.word-active{background:rgba(38,183,190,.25);box-shadow:0 0 0 2px rgba(38,150,160,.15)}
-.poem-sentence.has-notes,.poem-word.has-notes{text-decoration:underline;text-decoration-color:#bda27b;text-decoration-thickness:1px;text-underline-offset:3px;cursor:pointer}
+.poem-sentence.has-notes,.poem-word.has-notes{ text-decoration:underline;text-decoration-color:#bda27b;text-decoration-thickness:1px;text-underline-offset:3px;cursor:pointer}
+.hand-icon{width:100%;height:100%;display:block;overflow:visible;pointer-events:none;transform-origin:50% 50%}
+#hand1 .hand-icon{transform:rotate(60deg)}
+#hand2 .hand-icon{transform:rotate(-60deg)}
+.hand.dragging{width:46px;height:46px;cursor:grabbing;box-shadow:0 4px 15px rgba(50,40,25,.2)}
+.hand-hint{margin-top:18px;font-size:15px;color:#a09688;text-align:center;font-style:italic}
 .modal-backdrop{display:none;position:fixed;top:0;right:0;bottom:0;left:0;width:100%;height:100%;z-index:20000;background:rgba(35,30,24,.42);align-items:center;justify-content:center;padding:20px;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .modal-backdrop.visible{display:-webkit-box;display:-webkit-flex;display:flex}
 .modal{width:100%;max-width:460px;background:#f7f4ed;border:1px solid #d5cdbf;border-radius:4px;padding:30px;box-shadow:0 12px 40px rgba(35,30,24,.2);position:relative;margin:auto;flex-shrink:0}
@@ -241,8 +244,23 @@ const svg=document.createElementNS("http://www.w3.org/2000/svg","svg");
 svg.setAttribute("viewBox","0 0 100 100");
 svg.setAttribute("class","finger-icon");
 svg.setAttribute("aria-hidden","true");
-const flip=direction==="left"?"translate(100 0) scale(-1 1)":"";
-svg.innerHTML=`<g transform="${flip}"><path d="M42 91 Q30 89 27 77 L18 52 Q15 43 22 40 Q29 37 33 45 L39 59 L39 18 Q39 8 48 8 Q57 8 57 18 L57 52 L61 43 Q65 35 72 39 Q79 43 74 52 L66 79 Q62 91 51 93Z" fill="#ffe12e" stroke="#352b2b" stroke-width="4" stroke-linejoin="round"/><path d="M42 17 Q48 11 54 17 L54 28 L42 28Z" fill="#ff4fa3"/><path d="M39 59 L57 59 L57 69 L39 69Z" fill="#13c9d5"/><path d="M29 78 Q47 87 65 78" fill="none" stroke="#8b5cf6" stroke-width="5" stroke-linecap="round"/><circle cx="48" cy="43" r="4" fill="#ff8a24" stroke="#352b2b" stroke-width="1.5"/></g>`;
+svg.innerHTML=`
+<g stroke="#352b2b" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round">
+  <!-- Handpalm en gebogen vingers -->
+  <path d="M29 91 Q23 86 24 76 L18 60 Q15 52 21 48 Q27 44 32 52 L38 63 L39 17 Q39 7 48 5 Q57 7 57 17 L57 55 L63 47 Q69 41 75 47 Q80 53 74 60 L67 82 Q64 92 53 94Z" fill="#13c9d5"/>
+  <!-- Spitse wijsvingertop -->
+  <path d="M39 19 Q39 8 48 5 Q57 8 57 19 L55 33 L41 33Z" fill="#ffe12e"/>
+  <path d="M42 17 Q48 9 54 17 L53 25 L43 25Z" fill="#ff4fa3" stroke-width="1.5"/>
+  <!-- Kleurrijke banden en details in dezelfde palet als de Hamsa -->
+  <path d="M40 38 L56 38 L56 46 L40 46Z" fill="#ff8a24" stroke-width="1.5"/>
+  <path d="M39 59 L57 59 L57 68 L39 68Z" fill="#ff4fa3" stroke-width="1.5"/>
+  <path d="M28 75 Q46 84 66 75" fill="none" stroke="#ffe12e" stroke-width="5"/>
+  <path d="M31 84 Q47 91 61 84" fill="none" stroke="#8b5cf6" stroke-width="4"/>
+  <circle cx="48" cy="53" r="4" fill="#a8e63f" stroke-width="1.5"/>
+  <circle cx="48" cy="53" r="1.5" fill="#352b2b" stroke="none"/>
+  <path d="M21 57 Q25 54 29 60" fill="none" stroke="#ffe12e" stroke-width="3"/>
+  <path d="M65 58 Q70 52 75 55" fill="none" stroke="#ff8a24" stroke-width="3"/>
+</g>`;
 return svg;
 }
 document.getElementById("sentenceHand").appendChild(buildFingerIcon("left"));
@@ -316,21 +334,14 @@ element.classList.toggle("has-notes",!!(notesByPassage[key]&&notesByPassage[key]
 });
 }
 
-/* Elke zichtbare dichtregel wordt één afzonderlijk selecteerbare eenheid.
-   Woorden blijven daarbinnen afzonderlijk selecteerbaar. */
 function renderPoemParagraph(paragraph,text){
 const lines=text.split("\n");
 lines.forEach((line,lineIndex)=>{
-const sentence=document.createElement("span");
-sentence.className="poem-sentence";
-const wordPattern=/\S+/g;
-let wordMatch,wordLast=0;
+const sentence=document.createElement("span");sentence.className="poem-sentence";
+const wordPattern=/\S+/g;let wordMatch,wordLast=0;
 while((wordMatch=wordPattern.exec(line))!==null){
 if(wordMatch.index>wordLast)sentence.appendChild(document.createTextNode(line.slice(wordLast,wordMatch.index)));
-const word=document.createElement("span");
-word.className="poem-word";
-word.textContent=wordMatch[0];
-sentence.appendChild(word);
+const word=document.createElement("span");word.className="poem-word";word.textContent=wordMatch[0];sentence.appendChild(word);
 wordLast=wordMatch.index+wordMatch[0].length;
 }
 if(wordLast<line.length)sentence.appendChild(document.createTextNode(line.slice(wordLast)));
@@ -387,28 +398,16 @@ const paragraphs=Array.from(poemElement.querySelectorAll(".poem-paragraph"));
 const activeParagraphs=new Set();
 poemElement.querySelectorAll(".sentence-active,.word-active").forEach(el=>el.classList.remove("sentence-active","word-active"));
 handStates.forEach(state=>{
-state.target=null;
-if(state.x===null||state.y===null)return;
+state.target=null;if(state.x===null||state.y===null)return;
 if(state.type==="sentence"||state.type==="word"){
 const hit=document.elementFromPoint(state.x,state.y);
 const selector=state.type==="sentence"?".poem-sentence":".poem-word";
 const target=hit&&hit.closest?hit.closest(selector):null;
-if(target&&poemElement.contains(target)){
-state.target=target;
-target.classList.add(state.type==="sentence"?"sentence-active":"word-active");
-}
+if(target&&poemElement.contains(target)){state.target=target;target.classList.add(state.type==="sentence"?"sentence-active":"word-active");}
 return;
 }
 let target=null,nearestDistance=Infinity;
-paragraphs.forEach(paragraph=>{
-const rect=paragraph.getBoundingClientRect();
-if(circleTouchesRectangle(state.x,state.y,21,rect)){
-const centerX=(rect.left+rect.right)/2;
-const centerY=(rect.top+rect.bottom)/2;
-const distance=Math.hypot(state.x-centerX,state.y-centerY);
-if(distance<nearestDistance){nearestDistance=distance;target=paragraph;}
-}
-});
+paragraphs.forEach(paragraph=>{const rect=paragraph.getBoundingClientRect();if(circleTouchesRectangle(state.x,state.y,21,rect)){const centerX=(rect.left+rect.right)/2;const centerY=(rect.top+rect.bottom)/2;const distance=Math.hypot(state.x-centerX,state.y-centerY);if(distance<nearestDistance){nearestDistance=distance;target=paragraph;}}});
 if(target){state.target=target;activeParagraphs.add(target);}
 });
 paragraphs.forEach(paragraph=>paragraph.classList.toggle("active",activeParagraphs.has(paragraph)));
@@ -427,11 +426,7 @@ handStates.forEach(state=>{
 state.element.addEventListener("pointerdown",event=>{
 if(event.button!==undefined&&event.button!==0)return;
 event.preventDefault();
-state.dragging=true;
-state.pointerId=event.pointerId;
-state.startX=event.clientX;
-state.startY=event.clientY;
-state.moved=false;
+state.dragging=true;state.pointerId=event.pointerId;state.startX=event.clientX;state.startY=event.clientY;state.moved=false;
 state.element.classList.add("dragging");
 if(state.element.setPointerCapture)state.element.setPointerCapture(event.pointerId);
 moveHand(state,event.clientX,event.clientY);
@@ -444,17 +439,13 @@ moveHand(state,event.clientX,event.clientY);
 });
 function finishPointer(event){
 if(!state.dragging||state.pointerId!==event.pointerId)return;
-state.dragging=false;
-state.pointerId=null;
-state.element.classList.remove("dragging");
+state.dragging=false;state.pointerId=null;state.element.classList.remove("dragging");
 if(!state.moved)openNoteForHand(state);
 }
 state.element.addEventListener("pointerup",finishPointer);
 state.element.addEventListener("pointercancel",event=>{
 if(state.pointerId!==event.pointerId)return;
-state.dragging=false;
-state.pointerId=null;
-state.element.classList.remove("dragging");
+state.dragging=false;state.pointerId=null;state.element.classList.remove("dragging");
 });
 });
 
