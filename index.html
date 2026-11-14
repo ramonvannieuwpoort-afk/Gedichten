@@ -3,141 +3,194 @@
 <html lang="nl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-<title>Mijn gedichten</title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Gedichten">
+<meta name="theme-color" content="#ffffff">
 
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&display=swap" rel="stylesheet">
+<title>Gedichten</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
 
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 
 <style>
 * {
-  box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 html {
-  background: #ffffff;
-  scroll-behavior: smooth;
+    background: #ffffff;
 }
 
 body {
-  margin: 0;
-  background: #eee9df;
-  color: #302c26;
-  font-family: 'Cormorant Garamond', Georgia, serif;
-  -webkit-font-smoothing: antialiased;
+    margin: 0;
+    background: #eee9df;
+    color: #302c26;
+    font-family: 'Cormorant Garamond', Georgia, serif;
 }
 
 .page {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 105px 65px 65px;
-  min-height: 100vh;
-
-  background: linear-gradient(
-    to bottom,
-    #ffffff 0px,
-    #ffffff 25px,
-    #f7f4ed 85px,
-    #eee9df 210px
-  );
+    max-width: 900px;
+    min-height: 100vh;
+    margin: 0 auto;
+    padding: 105px 65px 65px;
+    background: linear-gradient(
+        to bottom,
+        #ffffff 0px,
+        #ffffff 25px,
+        #f7f4ed 85px,
+        #eee9df 210px
+    );
 }
 
 header {
-  margin-bottom: 58px;
-  padding-bottom: 25px;
-  border-bottom: 1px solid #d5cdbf;
-  text-align: center;
+    text-align: center;
+    margin-bottom: 58px;
+    padding-bottom: 25px;
+    border-bottom: 1px solid #d5cdbf;
 }
 
 h1 {
-  font-size: 43px;
-  font-weight: 500;
-  letter-spacing: 0.3px;
-  margin: 0 0 10px;
-  line-height: 1.1;
-  text-align: center;
+    font-size: 43px;
+    font-weight: 500;
+    line-height: 1.1;
+    margin: 0 0 8px;
 }
 
 .author {
-  font-size: 21px;
-  font-style: italic;
-  color: #887e70;
-  text-align: center;
+    font-size: 21px;
+    font-style: italic;
+    color: #887e70;
 }
 
 .poem {
-  font-size: 25px;
-  font-weight: 400;
-  line-height: 1.48;
-  white-space: pre-wrap;
-  overflow-wrap: break-word;
-  letter-spacing: 0.05px;
-  text-align: left;
+    font-size: 25px;
+    line-height: 1.48;
+    text-align: left;
+    overflow-wrap: break-word;
+}
+
+.poem-paragraph {
+    margin: 0 0 1.15em;
+    transition: font-size 0.22s ease, color 0.22s ease;
+}
+
+.poem-paragraph.active {
+    font-size: 31px;
+    line-height: 1.4;
+    color: #211e19;
 }
 
 .navigation {
-  margin-top: 70px;
-  padding-top: 20px;
-  border-top: 1px solid #d5cdbf;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 70px;
+    padding-top: 20px;
+    border-top: 1px solid #d5cdbf;
 }
 
 button {
-  background: transparent;
-  border: none;
-  color: #887e70;
-  font-family: Georgia, serif;
-  font-size: 17px;
-  padding: 14px 5px;
-  cursor: pointer;
+    font-family: inherit;
 }
 
-button:disabled {
-  opacity: 0.25;
+.nav-button {
+    border: 0;
+    background: none;
+    color: #887e70;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 8px 0;
+}
+
+.nav-button:active {
+    color: #302c26;
 }
 
 .counter {
-  font-size: 15px;
-  color: #a69b8c;
-  letter-spacing: 1px;
+    font-size: 17px;
+    color: #887e70;
 }
 
-.status {
-  font-size: 17px;
-  color: #887e70;
-  font-style: italic;
-  padding-top: 30px;
+.hand {
+    position: fixed;
+    z-index: 1000;
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #c9beae;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.88);
+    color: #887e70;
+    font-size: 23px;
+    line-height: 1;
+    box-shadow: 0 2px 8px rgba(50, 40, 25, 0.08);
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    transition: width 0.18s ease, height 0.18s ease,
+                font-size 0.18s ease, box-shadow 0.18s ease;
+}
+
+.hand.dragging {
+    width: 50px;
+    height: 50px;
+    font-size: 28px;
+    cursor: grabbing;
+    box-shadow: 0 4px 14px rgba(50, 40, 25, 0.16);
+}
+
+.hand-hint {
+    margin-top: 18px;
+    font-size: 15px;
+    color: #a09688;
+    text-align: center;
+    font-style: italic;
 }
 
 @media (max-width: 600px) {
-  .page {
-    padding: 75px 27px 50px;
+    .page {
+        padding: 75px 27px 50px;
+        background: linear-gradient(
+            to bottom,
+            #ffffff 0px,
+            #ffffff 20px,
+            #f7f4ed 65px,
+            #eee9df 175px
+        );
+    }
 
-    background: linear-gradient(
-      to bottom,
-      #ffffff 0px,
-      #ffffff 20px,
-      #f7f4ed 65px,
-      #eee9df 175px
-    );
-  }
+    h1 {
+        font-size: 36px;
+    }
 
-  h1 {
-    font-size: 36px;
-  }
+    .author {
+        font-size: 20px;
+    }
 
-  .poem {
-    font-size: 22px;
-    line-height: 1.45;
-  }
+    .poem {
+        font-size: 22px;
+        line-height: 1.45;
+    }
+
+    .poem-paragraph.active {
+        font-size: 28px;
+        line-height: 1.4;
+    }
+
+    header {
+        margin-bottom: 48px;
+    }
+
+    .navigation {
+        margin-top: 55px;
+    }
 }
 </style>
 </head>
@@ -146,141 +199,202 @@ button:disabled {
 
 <div class="page">
 
-<header>
-  <h1 id="title">Gedichten</h1>
-  <div class="author" id="author"></div>
-</header>
+    <header>
+        <h1 id="title">Gedichten</h1>
+        <div class="author" id="author"></div>
+    </header>
 
-<article class="poem" id="poem"></article>
+    <main>
+        <div class="poem" id="poem"></div>
+        <div class="hand-hint">Sleep het handje over het gedicht om tekst te vergroten</div>
+    </main>
 
-<div class="status" id="status">Gedichten ophalen...</div>
+    <div class="navigation">
+        <button class="nav-button" id="previous">← Vorige</button>
+        <div class="counter" id="counter"></div>
+        <button class="nav-button" id="next">Volgende →</button>
+    </div>
 
-<div class="navigation">
-  <button id="previous" onclick="show(-1)">← Vorige</button>
-  <span class="counter" id="counter"></span>
-  <button id="next" onclick="show(1)">Volgende →</button>
 </div>
 
-</div>
+<button class="hand" id="hand" aria-label="Sleep om tekst te vergroten">☞</button>
 
 <script>
-
 const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSyqrEB__RKjtVvARlIYLBkIdwVlXFh0PYBN615AgXk1RrlmrRzqFfV8r7DRWIuEbeRTeetKTBBWNBd/pub?gid=0&single=true&output=csv";
 
 let poems = [];
-let current = 0;
-let loading = false;
+let currentIndex = 0;
 
-function findColumn(row, name) {
-  const key = Object.keys(row).find(
-    k => k.trim().toLowerCase() === name.toLowerCase()
-  );
+const titleElement = document.getElementById("title");
+const authorElement = document.getElementById("author");
+const poemElement = document.getElementById("poem");
+const counterElement = document.getElementById("counter");
+const hand = document.getElementById("hand");
 
-  return key ? row[key] : "";
+function findColumn(row, possibleNames) {
+    const keys = Object.keys(row);
+    const match = keys.find(key =>
+        possibleNames.includes(key.trim().toLowerCase())
+    );
+    return match ? row[match] : "";
 }
 
 async function loadPoems() {
-  if (loading) return;
+    try {
+        const response = await fetch(
+            CSV_URL + "&refresh=" + Date.now(),
+            { cache: "no-store" }
+        );
 
-  loading = true;
+        if (!response.ok) {
+            throw new Error("Kon gedichten niet laden");
+        }
 
-  const status = document.getElementById("status");
+        const csv = await response.text();
 
-  try {
-    const response = await fetch(
-      CSV_URL + "&refresh=" + Date.now(),
-      {
-        cache: "no-store"
-      }
-    );
+        const result = Papa.parse(csv, {
+            header: true,
+            skipEmptyLines: "greedy"
+        });
 
-    if (!response.ok) {
-      throw new Error("Google Sheets niet bereikbaar.");
+        poems = result.data.map(row => ({
+            title: findColumn(row, ["titel", "title"]),
+            author: findColumn(row, ["dichter", "auteur", "author"]),
+            poem: findColumn(row, ["gedicht", "tekst", "poem"])
+        })).filter(item => item.poem && item.poem.trim());
+
+        if (poems.length > 0) {
+            show(0);
+        }
+    } catch (error) {
+        poemElement.textContent = "De gedichten konden niet worden geladen.";
+        console.error(error);
     }
-
-    const csv = await response.text();
-
-    const result = Papa.parse(csv, {
-      header: true,
-      skipEmptyLines: "greedy"
-    });
-
-    const updated = result.data.map(row => ({
-      title: String(findColumn(row, "Titel") || "").trim(),
-      author: String(findColumn(row, "Dichter") || "").trim(),
-      text: String(findColumn(row, "Gedicht") || "").trim()
-    })).filter(p => p.title && p.text);
-
-    if (!updated.length) {
-      throw new Error("Geen gedichten gevonden.");
-    }
-
-    const previousTitle = poems[current]?.title;
-
-    poems = updated;
-
-    const oldIndex = poems.findIndex(
-      p => p.title === previousTitle
-    );
-
-    current = oldIndex >= 0 ? oldIndex : 0;
-
-    show(0);
-
-    status.textContent = "";
-
-  } catch (error) {
-    status.textContent =
-      "Gedichten konden niet worden geladen. Controleer je internetverbinding en de Google Sheets-publicatie.";
-
-    console.error(error);
-
-  } finally {
-    loading = false;
-  }
 }
 
 function show(direction) {
-  if (!poems.length) return;
+    if (!poems.length) return;
 
-  current = (current + direction + poems.length) % poems.length;
+    currentIndex = (currentIndex + direction + poems.length) % poems.length;
 
-  const p = poems[current];
+    const item = poems[currentIndex];
 
-  document.getElementById("title").textContent = p.title;
-  document.getElementById("author").textContent = p.author;
-  document.getElementById("poem").textContent = p.text;
+    titleElement.textContent = item.title || "";
+    authorElement.textContent = item.author || "";
 
-  document.getElementById("counter").textContent =
-    (current + 1) + " / " + poems.length;
+    poemElement.innerHTML = "";
 
-  document.getElementById("previous").disabled =
-    poems.length < 2;
+    const paragraphs = item.poem
+        .trim()
+        .split(/\n\s*\n/)
+        .filter(part => part.trim());
 
-  document.getElementById("next").disabled =
-    poems.length < 2;
+    paragraphs.forEach(text => {
+        const paragraph = document.createElement("p");
+        paragraph.className = "poem-paragraph";
+        paragraph.textContent = text.trim();
+        poemElement.appendChild(paragraph);
+    });
 
-  window.scrollTo(0, 0);
+    counterElement.textContent =
+        (currentIndex + 1) + " / " + poems.length;
+
+    clearMagnification();
 }
 
-// Gedichten ophalen bij openen
+document.getElementById("previous").addEventListener("click", () => show(-1));
+document.getElementById("next").addEventListener("click", () => show(1));
+
+function clearMagnification() {
+    document.querySelectorAll(".poem-paragraph.active").forEach(element => {
+        element.classList.remove("active");
+    });
+}
+
+function magnifyAt(x, y) {
+    const element = document.elementFromPoint(x, y);
+
+    if (!element) return;
+
+    const paragraph = element.closest(".poem-paragraph");
+
+    document.querySelectorAll(".poem-paragraph.active").forEach(item => {
+        if (item !== paragraph) {
+            item.classList.remove("active");
+        }
+    });
+
+    if (paragraph && poemElement.contains(paragraph)) {
+        paragraph.classList.add("active");
+    } else {
+        clearMagnification();
+    }
+}
+
+let dragging = false;
+
+function moveHand(x, y) {
+    hand.style.left = (x - hand.offsetWidth / 2) + "px";
+    hand.style.top = (y - hand.offsetHeight / 2) + "px";
+
+    // Meet iets onder het handje, zodat het handje zelf
+    // de tekst onder de aanwijzer niet afdekt.
+    magnifyAt(x, y + 22);
+}
+
+hand.addEventListener("touchstart", event => {
+    event.preventDefault();
+    dragging = true;
+    hand.classList.add("dragging");
+
+    const touch = event.touches[0];
+    moveHand(touch.clientX, touch.clientY);
+}, { passive: false });
+
+document.addEventListener("touchmove", event => {
+    if (!dragging) return;
+
+    event.preventDefault();
+
+    const touch = event.touches[0];
+    moveHand(touch.clientX, touch.clientY);
+}, { passive: false });
+
+document.addEventListener("touchend", () => {
+    dragging = false;
+    hand.classList.remove("dragging");
+});
+
+hand.addEventListener("mousedown", event => {
+    event.preventDefault();
+    dragging = true;
+    hand.classList.add("dragging");
+    moveHand(event.clientX, event.clientY);
+});
+
+document.addEventListener("mousemove", event => {
+    if (!dragging) return;
+    moveHand(event.clientX, event.clientY);
+});
+
+document.addEventListener("mouseup", () => {
+    dragging = false;
+    hand.classList.remove("dragging");
+});
+
+// Plaats het handje aanvankelijk bij de titel.
+window.addEventListener("load", () => {
+    const header = document.querySelector("header");
+    const rect = header.getBoundingClientRect();
+
+    hand.style.left = (rect.right - 65) + "px";
+    hand.style.top = (rect.top + 8) + "px";
+});
+
 loadPoems();
 
-// Iedere vijf minuten opnieuw ophalen
+// Controleer iedere vijf minuten op nieuwe gedichten.
 setInterval(loadPoems, 5 * 60 * 1000);
-
-// Opnieuw ophalen wanneer de webapp zichtbaar wordt
-document.addEventListener("visibilitychange", function() {
-  if (!document.hidden) {
-    loadPoems();
-  }
-});
-
-// Opnieuw ophalen bij activering
-window.addEventListener("pageshow", function() {
-  loadPoems();
-});
-
 </script>
 
 </body>
