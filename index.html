@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="theme-color" content="#ffffff">
 <title>Gedichten</title>
-<!-- Testversie 2: 14 november 2026 -->
+<!-- Testversie 3: 14 november 2026 -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&display=swap" rel="stylesheet">
@@ -49,10 +49,10 @@ button{font-family:inherit}
 .hand.dragging{cursor:grabbing}
  .hand-hint{margin-top:18px;font-size:15px;color:#a09688;text-align:center;font-style:italic}
 .test-version{position:fixed;left:14px;bottom:calc(10px + env(safe-area-inset-bottom));z-index:10001;color:#9b9183;font-family:Georgia,serif;font-size:11px;letter-spacing:.08em;opacity:.78;pointer-events:none;user-select:none}
-.reset-hands-button{position:fixed;right:14px;bottom:calc(10px + env(safe-area-inset-bottom));z-index:10002;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(151,133,108,.38);border-radius:50%;padding:0;background:rgba(247,244,237,.94);color:#766b5d;font-family:Georgia,serif;font-size:25px;font-weight:400;line-height:1;box-shadow:0 2px 9px rgba(55,45,32,.09);cursor:pointer;backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);-webkit-tap-highlight-color:transparent}
+.reset-hands-button{position:fixed;right:14px;bottom:calc(10px + env(safe-area-inset-bottom));z-index:10002;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(151,133,108,.38);border-radius:50%;padding:0;background:rgba(247,244,237,.94);color:#766b5d;font-family:Georgia,serif;font-size:30px;font-weight:400;line-height:1;padding:0 0 2px;box-shadow:0 2px 9px rgba(55,45,32,.09);cursor:pointer;backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);-webkit-tap-highlight-color:transparent}
 .reset-hands-button:active{background:#e9e1d4;transform:translateY(1px)}
 .reset-hands-button:focus-visible{outline:2px solid #887e70;outline-offset:3px}
-@media(max-width:600px){.test-version{left:9px;bottom:calc(8px + env(safe-area-inset-bottom));font-size:10px}.reset-hands-button{right:9px;bottom:calc(7px + env(safe-area-inset-bottom));width:38px;height:38px;font-size:24px}}
+@media(max-width:600px){.test-version{left:9px;bottom:calc(8px + env(safe-area-inset-bottom));font-size:10px}.reset-hands-button{right:9px;bottom:calc(7px + env(safe-area-inset-bottom));width:38px;height:38px;font-size:29px}}
 .modal-backdrop{display:none;position:fixed;top:0;right:0;bottom:0;left:0;width:100%;height:100%;z-index:20000;background:rgba(35,30,24,.42);align-items:center;justify-content:center;padding:20px;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .modal-backdrop.visible{display:-webkit-box;display:-webkit-flex;display:flex}
 .modal{width:100%;max-width:460px;background:#f7f4ed;border:1px solid #d5cdbf;border-radius:4px;padding:30px;box-shadow:0 12px 40px rgba(35,30,24,.2);position:relative;margin:auto;flex-shrink:0}
@@ -131,7 +131,7 @@ header{margin-bottom:48px}
 <button type="button" class="hand" id="hand2" aria-label="Tweede Hamsa-hand"></button>
 <button type="button" class="hand" id="sentenceHand" aria-label="Wijzende vinger voor regels"></button>
 <button type="button" class="hand" id="wordHand" aria-label="Wijzende vinger voor woorden"></button>
-<div class="test-version" aria-label="Testversie 2">TEST v2</div>
+<div class="test-version" aria-label="Testversie 3">TEST v3</div>
 <button type="button" class="reset-hands-button" id="resetHandsButton" aria-label="Zet alle handjes terug naar hun beginposities" title="Handjes terugzetten">⟲</button>
 
 <div class="modal-backdrop" id="accessBackdrop">
