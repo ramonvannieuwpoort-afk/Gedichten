@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -238,7 +237,6 @@ return svg;
 }
 
 document.querySelectorAll("#hand1,#hand2").forEach(hand=>hand.appendChild(buildHamsaIcon()));
-
 function buildFingerIcon(direction){
 const svg=document.createElementNS("http://www.w3.org/2000/svg","svg");
 svg.setAttribute("viewBox","0 0 100 100");
@@ -349,7 +347,6 @@ paragraph.appendChild(sentence);
 if(lineIndex<lines.length-1)paragraph.appendChild(document.createTextNode("\n"));
 });
 }
-
 function show(direction){
 if(!poems.length)return;
 currentIndex=(currentIndex+direction+poems.length)%poems.length;
@@ -400,9 +397,24 @@ poemElement.querySelectorAll(".sentence-active,.word-active").forEach(el=>el.cla
 handStates.forEach(state=>{
 state.target=null;if(state.x===null||state.y===null)return;
 if(state.type==="sentence"||state.type==="word"){
-const hit=document.elementFromPoint(state.x,state.y);
 const selector=state.type==="sentence"?".poem-sentence":".poem-word";
-const target=hit&&hit.closest?hit.closest(selector):null;
+let target=null;
+// De vinger ligt boven de tekst en vangt zelf elementFromPoint op.
+// Zoek daarom door de volledige stapel elementen onder de aanwijzer.
+if(document.elementsFromPoint){
+  const stack=document.elementsFromPoint(state.x,state.y);
+  for(const hit of stack){
+    if(hit===state.element||state.element.contains(hit))continue;
+    const candidate=hit.closest?hit.closest(selector):null;
+    if(candidate&&poemElement.contains(candidate)){target=candidate;break;}
+  }
+}else{
+  const oldVisibility=state.element.style.visibility;
+  state.element.style.visibility="hidden";
+  const hit=document.elementFromPoint(state.x,state.y);
+  state.element.style.visibility=oldVisibility;
+  target=hit&&hit.closest?hit.closest(selector):null;
+}
 if(target&&poemElement.contains(target)){state.target=target;target.classList.add(state.type==="sentence"?"sentence-active":"word-active");}
 return;
 }
