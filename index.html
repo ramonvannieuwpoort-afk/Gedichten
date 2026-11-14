@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="theme-color" content="#ffffff">
 <title>Gedichten</title>
-<!-- Testversie 4: 14 november 2026 -->
+<!-- Testversie 5: 14 november 2026 -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&display=swap" rel="stylesheet">
@@ -150,7 +150,7 @@ header{margin-bottom:48px}
 <button type="button" class="hand" id="hand2" aria-label="Tweede Hamsa-hand"></button>
 <button type="button" class="hand" id="sentenceHand" aria-label="Wijzende vinger voor regels"></button>
 <button type="button" class="hand" id="wordHand" aria-label="Wijzende vinger voor woorden"></button>
-<div class="test-version" aria-label="Testversie 4">TEST v4</div>
+<div class="test-version" aria-label="Testversie 5">TEST v5</div>
 <button type="button" class="reset-hands-button" id="resetHandsButton" aria-label="Zet alle handjes terug naar hun beginposities" title="Handjes terugzetten">⟲</button>
 <button type="button" class="poem-menu-button" id="poemMenuButton" aria-label="Open gedichtenmenu" title="Gedichten">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M4 6.5h16M4 12h16M4 17.5h16"/></svg>
@@ -322,23 +322,36 @@ return match?row[match]:"";
 }
 
 function getLocalDateKey(date=new Date()){
-const year=date.getFullYear();
-const month=String(date.getMonth()+1).padStart(2,"0");
-const day=String(date.getDate()).padStart(2,"0");
+// De gedichtendag loopt van 05:00 tot 04:59.
+const poemDate=new Date(date);
+if(poemDate.getHours()<5)poemDate.setDate(poemDate.getDate()-1);
+const year=poemDate.getFullYear();
+const month=String(poemDate.getMonth()+1).padStart(2,"0");
+const day=String(poemDate.getDate()).padStart(2,"0");
 return `${year}-${month}-${day}`;
 }
 function getDailyPoemIndex(date=new Date()){
 if(!poems.length)return 0;
 const dateKey=getLocalDateKey(date);
+
+// Op 14 november 2026 is Pessoa het daggedicht, tot 05:00 op 15 november.
+if(dateKey==="2026-11-14"){
+const pessoaIndex=poems.findIndex(item=>/pessoa/i.test(String(item.author||"")));
+if(pessoaIndex!==-1)return pessoaIndex;
+}
 let hash=0;
 for(let i=0;i<dateKey.length;i++)hash=(hash*31+dateKey.charCodeAt(i))>>>0;
 let index=hash%poems.length;
-const previousDate=new Date(date.getFullYear(),date.getMonth(),date.getDate()-1);
+if(poems.length>1){
+const previousDate=new Date(date);
+previousDate.setHours(5,0,0,0);
+previousDate.setDate(previousDate.getDate()-1);
 const previousKey=getLocalDateKey(previousDate);
 let previousHash=0;
 for(let i=0;i<previousKey.length;i++)previousHash=(previousHash*31+previousKey.charCodeAt(i))>>>0;
 const previousIndex=previousHash%poems.length;
-if(poems.length>1&&index===previousIndex)index=(index+1)%poems.length;
+if(index===previousIndex)index=(index+1)%poems.length;
+}
 return index;
 }
 async function loadPoems(){
@@ -350,8 +363,12 @@ const result=Papa.parse(csv,{header:true,skipEmptyLines:"greedy"});
 poems=result.data.map(row=>({title:findColumn(row,["titel","title"]),author:findColumn(row,["dichter","auteur","author"]),poem:findColumn(row,["gedicht","tekst","poem"])})).filter(item=>item.poem&&item.poem.trim());
 if(poems.length>0){
 const dailyIndex=getDailyPoemIndex();
-if(currentIndex!==dailyIndex||!titleElement.textContent.trim())show(dailyIndex,true);
+if(!titleElement.textContent.trim()||currentIndex!==dailyIndex)show(dailyIndex,true);
 renderPoemMenu();
+}else{
+titleElement.textContent="Gedichten";
+authorElement.textContent="";
+poemElement.textContent="Er zijn nog geen gedichten beschikbaar.";
 }
 }catch(error){poemElement.textContent="De gedichten konden niet worden geladen.";console.error(error)}
 }
