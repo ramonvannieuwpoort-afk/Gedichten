@@ -157,7 +157,6 @@ button { font-family: inherit; }
     transform-origin: 50% 50%;
 }
 
-/* Linker hand wijst naar 2 uur, rechter hand naar 10 uur */
 #hand1 .hand-icon { transform: rotate(60deg); }
 #hand2 .hand-icon { transform: rotate(-60deg); }
 
@@ -176,20 +175,32 @@ button { font-family: inherit; }
     font-style: italic;
 }
 
-/* Vensters voor toegangscode en aantekeningen */
+/* Toegangscode- en aantekeningenvensters */
 
 .modal-backdrop {
     display: none;
     position: fixed;
-    inset: 0;
+
+    /* Expliciete positionering voor oudere Safari-versies */
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
     z-index: 20000;
     background: rgba(35, 30, 24, 0.42);
     align-items: center;
     justify-content: center;
     padding: 20px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 .modal-backdrop.visible {
+    display: -webkit-box;
+    display: -webkit-flex;
     display: flex;
 }
 
@@ -201,6 +212,9 @@ button { font-family: inherit; }
     border-radius: 4px;
     padding: 30px;
     box-shadow: 0 12px 40px rgba(35, 30, 24, 0.2);
+    position: relative;
+    margin: auto;
+    flex-shrink: 0;
 }
 
 .modal h2 {
@@ -239,6 +253,8 @@ button { font-family: inherit; }
     font-size: 18px;
     padding: 11px 12px;
     margin: 0 0 15px;
+    -webkit-appearance: none;
+    appearance: none;
 }
 
 .modal textarea {
@@ -342,6 +358,7 @@ button { font-family: inherit; }
 
     .modal {
         padding: 23px;
+        max-width: 100%;
     }
 }
 
@@ -380,7 +397,6 @@ button { font-family: inherit; }
 
 </div>
 
-<!-- De twee Hamsa-handjes -->
 <button type="button" class="hand" id="hand1" aria-label="Eerste Hamsa-hand"></button>
 <button type="button" class="hand" id="hand2" aria-label="Tweede Hamsa-hand"></button>
 
@@ -436,7 +452,7 @@ button { font-family: inherit; }
 
 <script>
 
-/* Hamsa-illustratie: inline SVG */
+/* Hamsa-illustratie */
 
 function buildHamsaIcon() {
     const ns = "http://www.w3.org/2000/svg";
@@ -561,8 +577,6 @@ let poems = [];
 let currentIndex = 0;
 let selectedPassage = "";
 let selectedPoemTitle = "";
-
-/* Elementen */
 
 const titleElement = document.getElementById("title");
 const authorElement = document.getElementById("author");
@@ -764,7 +778,10 @@ handStates.forEach(state => {
         state.moved = false;
 
         state.element.classList.add("dragging");
-        state.element.setPointerCapture(event.pointerId);
+
+        if (state.element.setPointerCapture) {
+            state.element.setPointerCapture(event.pointerId);
+        }
 
         moveHand(state, event.clientX, event.clientY);
     });
@@ -799,6 +816,7 @@ handStates.forEach(state => {
     }
 
     state.element.addEventListener("pointerup", finishPointer);
+
     state.element.addEventListener("pointercancel", event => {
         if (state.pointerId !== event.pointerId) return;
 
@@ -835,11 +853,12 @@ function openNoteForHand(state) {
 function openAccessModal() {
     document.getElementById("accessCode").value = "";
     document.getElementById("accessStatus").textContent = "";
+
     accessBackdrop.classList.add("visible");
 
     setTimeout(() => {
         document.getElementById("accessCode").focus();
-    }, 100);
+    }, 300);
 }
 
 function closeAccessModal() {
@@ -879,7 +898,7 @@ function openNoteModal() {
 
     setTimeout(() => {
         document.getElementById("noteText").focus();
-    }, 100);
+    }, 300);
 }
 
 function closeNoteModal() {
