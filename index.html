@@ -1,0 +1,119 @@
+
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Gedichten</title>
+
+<!-- iPad: openen als zelfstandige webapp -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Gedichten">
+
+<!-- Typografie -->
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: #f4f0e8;
+  color: #25231f;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8vw;
+}
+
+main {
+  max-width: 780px;
+  width: 100%;
+}
+
+.title {
+  font-size: 18px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 45px;
+  color: #777064;
+}
+
+.poem {
+  font-size: clamp(25px, 4vw, 42px);
+  line-height: 1.42;
+  white-space: pre-line;
+}
+
+.author {
+  margin-top: 55px;
+  font-size: 23px;
+  color: #777064;
+}
+
+nav {
+  margin-top: 65px;
+  display: flex;
+  justify-content: space-between;
+}
+
+button {
+  background: none;
+  border: 0;
+  color: #777064;
+  font: 18px Georgia, serif;
+  padding: 12px;
+}
+
+</style>
+</head>
+
+<body>
+
+<main>
+  <div class="title" id="title"></div>
+  <div class="poem" id="poem"></div>
+  <div class="author" id="author"></div>
+
+  <nav>
+    <button onclick="show(-1)">← Vorige</button>
+    <button onclick="show(1)">Volgende →</button>
+  </nav>
+</main>
+
+<script>
+
+const poems = [
+  {
+    title: "Gedicht 1",
+    author: "Dichter",
+    text: "Hier komt je eerste gedicht.\n\nVervang deze tekst door je eigen gedicht."
+  },
+  {
+    title: "Gedicht 2",
+    author: "Dichter",
+    text: "Hier komt een tweede gedicht.\n\nOok dit kun je vervangen."
+  }
+];
+
+let current = 0;
+
+function show(direction) {
+  current = (current + direction + poems.length) % poems.length;
+
+  const p = poems[current];
+
+  document.getElementById("title").textContent = p.title;
+  document.getElementById("poem").textContent = p.text;
+  document.getElementById("author").textContent = "— " + p.author;
+}
+
+show(0);
+
+</script>
+</body>
+</html>
