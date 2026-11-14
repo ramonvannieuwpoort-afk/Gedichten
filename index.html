@@ -130,7 +130,7 @@ button {
     color: #887e70;
 }
 
-/* Ronde hitbox en hamsa-aanwijzer */
+/* Ronde hitbox en kleurrijke hamsa-aanwijzer */
 
 .hand {
     position: fixed;
@@ -145,13 +145,13 @@ button {
     align-items: center;
     justify-content: center;
 
-    border: 1px solid #c9beae;
+    border: 1px solid #b9a98e;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.94);
+    background: #fffdf8;
 
     box-shadow:
-        0 2px 8px rgba(50, 40, 25, 0.10),
-        inset 0 0 0 3px rgba(201, 190, 174, 0.10);
+        0 2px 8px rgba(50, 40, 25, 0.12),
+        inset 0 0 0 2px rgba(255, 255, 255, 0.9);
 
     cursor: grab;
     touch-action: none;
@@ -168,6 +168,46 @@ button {
         background 180ms ease;
 }
 
+/* Kleurrijke, geweven binnenrand met geometrische segmenten */
+.hand::before {
+    content: "";
+    position: absolute;
+    inset: 3px;
+    border-radius: 50%;
+    background:
+        repeating-conic-gradient(
+            from -4deg,
+            #c94b36 0deg 7deg,
+            #e4b64d 7deg 14deg,
+            #278b91 14deg 21deg,
+            #345d9b 21deg 28deg,
+            #d47735 28deg 35deg,
+            #c94b36 35deg 42deg
+        );
+    -webkit-mask: radial-gradient(
+        circle,
+        transparent 0 69%,
+        #000 70% 88%,
+        transparent 89%
+    );
+    mask: radial-gradient(
+        circle,
+        transparent 0 69%,
+        #000 70% 88%,
+        transparent 89%
+    );
+    pointer-events: none;
+}
+
+.hand::after {
+    content: "";
+    position: absolute;
+    inset: 7px;
+    border: 1px solid rgba(164, 119, 66, 0.55);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
 .hand.dragging {
     width: 62px;
     height: 62px;
@@ -180,6 +220,8 @@ button {
 }
 
 .hand svg {
+    position: relative;
+    z-index: 1;
     width: 39px;
     height: 39px;
     display: block;
@@ -287,7 +329,7 @@ button {
 
         <g transform="rotate(-25 32 32)"
            fill="none"
-           stroke="#756b5e"
+           stroke="#72543c"
            stroke-linecap="round"
            stroke-linejoin="round">
 
@@ -328,7 +370,7 @@ button {
                 stroke-width="1.1"
             />
             <circle cx="33" cy="43" r="1.2"
-                    fill="#756b5e" stroke="none"/>
+                    fill="#c94b36" stroke="none"/>
 
             <!-- Kleine ornamenten -->
             <path d="M32 18 L32 22" stroke-width="1"/>
@@ -338,9 +380,9 @@ button {
 
             <!-- Kleine sierstipjes -->
             <circle cx="24" cy="46" r="0.8"
-                    fill="#a09688" stroke="none"/>
+                    fill="#278b91" stroke="none"/>
             <circle cx="40" cy="45" r="0.8"
-                    fill="#a09688" stroke="none"/>
+                    fill="#278b91" stroke="none"/>
         </g>
     </svg>
 </button>
