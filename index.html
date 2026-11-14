@@ -93,12 +93,6 @@ h1 {
     z-index: 2;
 }
 
-.poem-paragraph.has-note::after {
-    content: " ·";
-    color: #a77c48;
-    font-weight: 600;
-}
-
 .navigation {
     display: flex;
     justify-content: space-between;
@@ -126,7 +120,7 @@ button { font-family: inherit; }
     color: #887e70;
 }
 
-/* Hamsa-handjes */
+/* De twee Hamsa-handjes */
 
 .hand {
     position: fixed;
@@ -137,12 +131,10 @@ button { font-family: inherit; }
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 2px solid #A77C48;
+    border: 0;
     border-radius: 50%;
-    background: #D8B77A;
-    box-shadow:
-        0 2px 8px rgba(50, 40, 25, 0.14),
-        inset 0 0 0 1px rgba(255, 248, 225, 0.45);
+    background: transparent;
+    box-shadow: 0 2px 8px rgba(50, 40, 25, 0.14);
     cursor: grab;
     touch-action: none;
     user-select: none;
@@ -165,6 +157,7 @@ button { font-family: inherit; }
     transform-origin: 50% 50%;
 }
 
+/* Linker hand wijst naar 2 uur, rechter hand naar 10 uur */
 #hand1 .hand-icon { transform: rotate(60deg); }
 #hand2 .hand-icon { transform: rotate(-60deg); }
 
@@ -172,7 +165,6 @@ button { font-family: inherit; }
     width: 46px;
     height: 46px;
     cursor: grabbing;
-    background: #D8B77A;
     box-shadow: 0 4px 15px rgba(50,40,25,0.2);
 }
 
@@ -184,179 +176,111 @@ button { font-family: inherit; }
     font-style: italic;
 }
 
-/* Notitievenster */
+/* Vensters voor toegangscode en aantekeningen */
 
-.note-overlay {
+.modal-backdrop {
+    display: none;
     position: fixed;
     inset: 0;
     z-index: 20000;
-    display: none;
+    background: rgba(35, 30, 24, 0.42);
     align-items: center;
     justify-content: center;
     padding: 20px;
-    background: rgba(48, 44, 38, 0.35);
-    font-family: 'Cormorant Garamond', Georgia, serif;
 }
 
-.note-overlay.visible {
+.modal-backdrop.visible {
     display: flex;
 }
 
-.note-card {
+.modal {
     width: 100%;
-    max-width: 440px;
-    padding: 28px;
-    border-radius: 4px;
+    max-width: 460px;
     background: #f7f4ed;
-    box-shadow: 0 12px 40px rgba(40, 30, 20, 0.2);
+    border: 1px solid #d5cdbf;
+    border-radius: 4px;
+    padding: 30px;
+    box-shadow: 0 12px 40px rgba(35, 30, 24, 0.2);
 }
 
-.note-card h2 {
+.modal h2 {
     margin: 0 0 8px;
     font-size: 29px;
     font-weight: 500;
 }
 
-.note-context {
+.modal-description {
     margin: 0 0 20px;
+    color: #887e70;
+    font-size: 18px;
+    line-height: 1.35;
+}
+
+.modal-passage {
     padding: 12px 14px;
-    border-left: 2px solid #c4a46d;
-    color: #776d60;
-    font-size: 19px;
-    font-style: italic;
+    margin-bottom: 18px;
+    background: #eee9df;
+    border-left: 2px solid #b69a70;
+    font-size: 17px;
     line-height: 1.4;
-    max-height: 130px;
+    max-height: 125px;
     overflow-y: auto;
 }
 
-.note-card label {
-    display: block;
-    margin-bottom: 7px;
-    color: #887e70;
-    font-size: 17px;
-}
-
-.note-card textarea {
+.modal input,
+.modal textarea {
     display: block;
     width: 100%;
-    min-height: 125px;
-    resize: vertical;
-    border: 1px solid #d5cdbf;
-    border-radius: 3px;
+    border: 1px solid #cfc5b5;
+    border-radius: 2px;
     background: #fffdf8;
     color: #302c26;
-    padding: 12px;
-    font-family: 'Cormorant Garamond', Georgia, serif;
-    font-size: 19px;
+    font-family: inherit;
+    font-size: 18px;
+    padding: 11px 12px;
+    margin: 0 0 15px;
+}
+
+.modal textarea {
+    min-height: 150px;
+    resize: vertical;
     line-height: 1.4;
-    outline: none;
 }
 
-.note-card textarea:focus {
-    border-color: #a77c48;
-}
-
-.note-actions {
+.modal-actions {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
+    gap: 18px;
     align-items: center;
-    gap: 12px;
-    margin-top: 18px;
+    margin-top: 8px;
 }
 
-.note-actions button {
+.modal-button {
     border: 0;
-    border-radius: 3px;
-    padding: 9px 17px;
-    font-size: 17px;
+    background: none;
+    color: #887e70;
+    font-size: 18px;
+    padding: 8px 4px;
     cursor: pointer;
 }
 
-.note-cancel {
-    background: transparent;
-    color: #887e70;
+.modal-button.primary {
+    color: #302c26;
+    border-bottom: 1px solid #a77c48;
+    font-weight: 600;
 }
 
-.note-save {
-    background: #a77c48;
-    color: white;
-}
-
-.note-save:disabled {
+.modal-button:disabled {
     opacity: 0.5;
     cursor: wait;
 }
 
-.note-status {
+.modal-status {
     min-height: 22px;
     margin-top: 12px;
     color: #887e70;
     font-size: 16px;
-}
-
-.access-overlay {
-    position: fixed;
-    inset: 0;
-    z-index: 30000;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    background: rgba(48, 44, 38, 0.5);
-    font-family: 'Cormorant Garamond', Georgia, serif;
-}
-
-.access-overlay.visible {
-    display: flex;
-}
-
-.access-card {
-    width: 100%;
-    max-width: 380px;
-    padding: 28px;
-    background: #f7f4ed;
-    border-radius: 4px;
-    box-shadow: 0 12px 40px rgba(40, 30, 20, 0.2);
-}
-
-.access-card h2 {
-    margin: 0 0 8px;
-    font-size: 29px;
-    font-weight: 500;
-}
-
-.access-card p {
-    margin: 0 0 18px;
-    color: #776d60;
-    font-size: 18px;
-}
-
-.access-card input {
-    width: 100%;
-    padding: 11px;
-    border: 1px solid #d5cdbf;
-    background: #fffdf8;
-    font-family: inherit;
-    font-size: 19px;
-}
-
-.access-card button {
-    width: 100%;
-    margin-top: 15px;
-    padding: 10px;
-    border: 0;
-    border-radius: 3px;
-    background: #a77c48;
-    color: white;
-    font-size: 18px;
-    cursor: pointer;
-}
-
-.access-error {
-    min-height: 22px;
-    margin-top: 10px;
-    color: #a34d3e;
-    font-size: 16px;
+    line-height: 1.3;
 }
 
 @media (max-width: 600px) {
@@ -416,8 +340,8 @@ button { font-family: inherit; }
         transform: scale(1.07);
     }
 
-    .note-card {
-        padding: 22px;
+    .modal {
+        padding: 23px;
     }
 }
 
@@ -443,8 +367,8 @@ button { font-family: inherit; }
     <main>
         <div class="poem" id="poem"></div>
         <div class="hand-hint">
-            Sleep de handjes over het gedicht om passages te vergroten.
-            Klik op een handje om een aantekening te maken.
+            Sleep de handjes over het gedicht om twee passages te vergroten.
+            Tik op een handje om een aantekening toe te voegen.
         </div>
     </main>
 
@@ -456,42 +380,63 @@ button { font-family: inherit; }
 
 </div>
 
-<button type="button" class="hand" id="hand1" aria-label="Eerste vergroothand"></button>
-<button type="button" class="hand" id="hand2" aria-label="Tweede vergroothand"></button>
+<!-- De twee Hamsa-handjes -->
+<button type="button" class="hand" id="hand1" aria-label="Eerste Hamsa-hand"></button>
+<button type="button" class="hand" id="hand2" aria-label="Tweede Hamsa-hand"></button>
 
-<!-- Notitievenster -->
-<div class="note-overlay" id="noteOverlay">
-    <div class="note-card">
-        <h2>Een persoonlijke aantekening</h2>
-        <div class="note-context" id="noteContext"></div>
+<!-- Toegangscodevenster -->
+<div class="modal-backdrop" id="accessBackdrop">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="accessTitle">
+        <h2 id="accessTitle">Toegang</h2>
+        <p class="modal-description">
+            Voer de toegangscode in om aantekeningen te kunnen bewaren.
+            Je hoeft dit op dit apparaat maar één keer te doen.
+        </p>
 
-        <label for="noteText">Wat wil je hierover bewaren?</label>
-        <textarea id="noteText" maxlength="3000"
-            placeholder="Een herinnering, gedachte of interpretatie voor Sanne..."></textarea>
-
-        <div class="note-actions">
-            <button class="note-cancel" id="noteCancel">Annuleren</button>
-            <button class="note-save" id="noteSave">Bewaren</button>
-        </div>
-        <div class="note-status" id="noteStatus"></div>
+        <form id="accessForm">
+            <input
+                type="password"
+                id="accessCode"
+                placeholder="Toegangscode"
+                autocomplete="current-password"
+                required
+            >
+            <div class="modal-actions">
+                <button type="button" class="modal-button" id="accessCancel">Annuleren</button>
+                <button type="submit" class="modal-button primary">Verder</button>
+            </div>
+        </form>
+        <div class="modal-status" id="accessStatus"></div>
     </div>
 </div>
 
-<!-- Eenmalige toegangscode -->
-<div class="access-overlay" id="accessOverlay">
-    <div class="access-card">
-        <h2>Toegang tot aantekeningen</h2>
-        <p>Voer de gedeelde toegangscode in. Dit hoeft maar één keer op dit apparaat.</p>
-        <input type="password" id="accessInput"
-            autocomplete="off" placeholder="Toegangscode">
-        <button id="accessSave">Doorgaan</button>
-        <div class="access-error" id="accessError"></div>
+<!-- Aantekeningenvenster -->
+<div class="modal-backdrop" id="noteBackdrop">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="noteTitle">
+        <h2 id="noteTitle">Aantekening</h2>
+        <p class="modal-description" id="notePoemTitle"></p>
+        <div class="modal-passage" id="notePassage"></div>
+
+        <form id="noteForm">
+            <textarea
+                id="noteText"
+                placeholder="Schrijf hier je aantekening..."
+                maxlength="3000"
+                required
+            ></textarea>
+
+            <div class="modal-actions">
+                <button type="button" class="modal-button" id="noteCancel">Annuleren</button>
+                <button type="submit" class="modal-button primary" id="noteSave">Bewaren</button>
+            </div>
+        </form>
+        <div class="modal-status" id="noteStatus"></div>
     </div>
 </div>
 
 <script>
 
-/* Hamsa-illustratie: inline SVG, zonder CSS-maskers of gradients. */
+/* Hamsa-illustratie: inline SVG */
 
 function buildHamsaIcon() {
     const ns = "http://www.w3.org/2000/svg";
@@ -538,6 +483,7 @@ function buildHamsaIcon() {
           <path d="M12 49 L16 44 L20 49 L16 54Z"/>
           <path d="M80 49 L84 44 L88 49 L84 54Z"/>
         </g>
+
         <g fill="#8b5cf6" stroke="#352b2b" stroke-width="0.8">
           <circle cx="33" cy="53" r="2.3"/>
           <circle cx="67" cy="53" r="2.3"/>
@@ -603,50 +549,47 @@ document.querySelectorAll(".hand").forEach(hand => {
     hand.appendChild(buildHamsaIcon());
 });
 
-/* Gedichten laden */
+/* Instellingen */
 
 const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSyqrEB__RKjtVvARlIYLBkIdwVlXFh0PYBN615AgXk1RrlmrRzqFfV8r7DRWIuEbeRTeetKTBBWNBd/pub?gid=0&single=true&output=csv";
 
-/* Apps Script webapp */
 const NOTES_URL = "https://script.google.com/macros/s/AKfycbximcSly2Yp2TyiIzJWdNZ2gt5QcQ5Is9rf4ITK3SHQfMaWQH6NCAUGYMw3kgJvHl36kQ/exec";
 
-const TOKEN_STORAGE_KEY = "gedichten_toegangscode";
+const ACCESS_STORAGE_KEY = "gedichten_toegangscode";
 
 let poems = [];
 let currentIndex = 0;
-let selectedParagraph = null;
-let selectedHand = null;
+let selectedPassage = "";
+let selectedPoemTitle = "";
+
+/* Elementen */
 
 const titleElement = document.getElementById("title");
 const authorElement = document.getElementById("author");
 const poemElement = document.getElementById("poem");
 const counterElement = document.getElementById("counter");
 
-const noteOverlay = document.getElementById("noteOverlay");
-const noteContext = document.getElementById("noteContext");
-const noteText = document.getElementById("noteText");
-const noteSave = document.getElementById("noteSave");
-const noteStatus = document.getElementById("noteStatus");
-
-const accessOverlay = document.getElementById("accessOverlay");
-const accessInput = document.getElementById("accessInput");
-const accessError = document.getElementById("accessError");
-
 const hands = [
     document.getElementById("hand1"),
     document.getElementById("hand2")
 ];
 
+const accessBackdrop = document.getElementById("accessBackdrop");
+const noteBackdrop = document.getElementById("noteBackdrop");
+
 const handStates = hands.map(hand => ({
     element: hand,
     dragging: false,
+    pointerId: null,
+    startX: 0,
+    startY: 0,
+    moved: false,
     x: null,
     y: null,
-    touchId: null,
-    startX: null,
-    startY: null,
-    moved: false
+    target: null
 }));
+
+/* Gedichten laden */
 
 function findColumn(row, possibleNames) {
     const keys = Object.keys(row);
@@ -726,9 +669,15 @@ document.getElementById("previous")
 document.getElementById("next")
     .addEventListener("click", () => show(1));
 
+/* Vergroten van passages */
+
 function clearMagnification() {
     document.querySelectorAll(".poem-paragraph.active")
         .forEach(element => element.classList.remove("active"));
+
+    handStates.forEach(state => {
+        state.target = null;
+    });
 }
 
 function circleTouchesRectangle(cx, cy, radius, rect) {
@@ -741,37 +690,6 @@ function circleTouchesRectangle(cx, cy, radius, rect) {
     return (dx * dx + dy * dy) <= radius * radius;
 }
 
-function findTargetParagraph(state) {
-    if (state.x === null || state.y === null) return null;
-
-    const paragraphs = Array.from(
-        poemElement.querySelectorAll(".poem-paragraph")
-    );
-
-    let target = null;
-    let nearestDistance = Infinity;
-
-    paragraphs.forEach(paragraph => {
-        const rect = paragraph.getBoundingClientRect();
-
-        if (circleTouchesRectangle(state.x, state.y, 21, rect)) {
-            const centerX = (rect.left + rect.right) / 2;
-            const centerY = (rect.top + rect.bottom) / 2;
-            const distance = Math.hypot(
-                state.x - centerX,
-                state.y - centerY
-            );
-
-            if (distance < nearestDistance) {
-                nearestDistance = distance;
-                target = paragraph;
-            }
-        }
-    });
-
-    return target;
-}
-
 function updateMagnification() {
     const paragraphs = Array.from(
         poemElement.querySelectorAll(".poem-paragraph")
@@ -780,8 +698,35 @@ function updateMagnification() {
     const activeParagraphs = new Set();
 
     handStates.forEach(state => {
-        const target = findTargetParagraph(state);
-        if (target) activeParagraphs.add(target);
+        state.target = null;
+
+        if (state.x === null || state.y === null) return;
+
+        let target = null;
+        let nearestDistance = Infinity;
+
+        paragraphs.forEach(paragraph => {
+            const rect = paragraph.getBoundingClientRect();
+
+            if (circleTouchesRectangle(state.x, state.y, 21, rect)) {
+                const centerX = (rect.left + rect.right) / 2;
+                const centerY = (rect.top + rect.bottom) / 2;
+                const distance = Math.hypot(
+                    state.x - centerX,
+                    state.y - centerY
+                );
+
+                if (distance < nearestDistance) {
+                    nearestDistance = distance;
+                    target = paragraph;
+                }
+            }
+        });
+
+        if (target) {
+            state.target = target;
+            activeParagraphs.add(target);
+        }
     });
 
     paragraphs.forEach(paragraph => {
@@ -793,11 +738,6 @@ function updateMagnification() {
 }
 
 function moveHand(state, x, y) {
-    if (state.startX !== null &&
-        Math.hypot(x - state.startX, y - state.startY) > 8) {
-        state.moved = true;
-    }
-
     state.x = x;
     state.y = y;
 
@@ -809,249 +749,224 @@ function moveHand(state, x, y) {
     updateMagnification();
 }
 
+/* Onafhankelijke bediening van beide handjes */
+
+handStates.forEach(state => {
+    state.element.addEventListener("pointerdown", event => {
+        if (event.button !== undefined && event.button !== 0) return;
+
+        event.preventDefault();
+
+        state.dragging = true;
+        state.pointerId = event.pointerId;
+        state.startX = event.clientX;
+        state.startY = event.clientY;
+        state.moved = false;
+
+        state.element.classList.add("dragging");
+        state.element.setPointerCapture(event.pointerId);
+
+        moveHand(state, event.clientX, event.clientY);
+    });
+
+    state.element.addEventListener("pointermove", event => {
+        if (!state.dragging || state.pointerId !== event.pointerId) return;
+
+        event.preventDefault();
+
+        if (
+            Math.hypot(
+                event.clientX - state.startX,
+                event.clientY - state.startY
+            ) > 8
+        ) {
+            state.moved = true;
+        }
+
+        moveHand(state, event.clientX, event.clientY);
+    });
+
+    function finishPointer(event) {
+        if (!state.dragging || state.pointerId !== event.pointerId) return;
+
+        state.dragging = false;
+        state.pointerId = null;
+        state.element.classList.remove("dragging");
+
+        if (!state.moved) {
+            openNoteForHand(state);
+        }
+    }
+
+    state.element.addEventListener("pointerup", finishPointer);
+    state.element.addEventListener("pointercancel", event => {
+        if (state.pointerId !== event.pointerId) return;
+
+        state.dragging = false;
+        state.pointerId = null;
+        state.element.classList.remove("dragging");
+    });
+});
+
+/* Aantekening openen bij de passage onder het handje */
+
+function openNoteForHand(state) {
+    if (!state.target || !state.target.isConnected) {
+        return;
+    }
+
+    selectedPassage = state.target.textContent.trim();
+    selectedPoemTitle = titleElement.textContent.trim();
+
+    if (!selectedPassage || !selectedPoemTitle) return;
+
+    const savedCode = localStorage.getItem(ACCESS_STORAGE_KEY);
+
+    if (!savedCode) {
+        openAccessModal();
+        return;
+    }
+
+    openNoteModal();
+}
+
 /* Toegangscode */
 
-function getAccessToken() {
-    return localStorage.getItem(TOKEN_STORAGE_KEY) || "";
+function openAccessModal() {
+    document.getElementById("accessCode").value = "";
+    document.getElementById("accessStatus").textContent = "";
+    accessBackdrop.classList.add("visible");
+
+    setTimeout(() => {
+        document.getElementById("accessCode").focus();
+    }, 100);
 }
 
-function requestAccess() {
-    accessOverlay.classList.add("visible");
-    accessInput.focus();
+function closeAccessModal() {
+    accessBackdrop.classList.remove("visible");
 }
 
-document.getElementById("accessSave").addEventListener("click", () => {
-    const token = accessInput.value.trim();
+document.getElementById("accessCancel").addEventListener("click", () => {
+    closeAccessModal();
+});
+
+document.getElementById("accessForm").addEventListener("submit", event => {
+    event.preventDefault();
+
+    const code = document.getElementById("accessCode").value.trim();
+
+    if (!code) return;
+
+    localStorage.setItem(ACCESS_STORAGE_KEY, code);
+    closeAccessModal();
+    openNoteModal();
+});
+
+/* Aantekeningvenster */
+
+function openNoteModal() {
+    document.getElementById("notePoemTitle").textContent =
+        selectedPoemTitle;
+
+    document.getElementById("notePassage").textContent =
+        selectedPassage;
+
+    document.getElementById("noteText").value = "";
+    document.getElementById("noteStatus").textContent = "";
+    document.getElementById("noteSave").disabled = false;
+
+    noteBackdrop.classList.add("visible");
+
+    setTimeout(() => {
+        document.getElementById("noteText").focus();
+    }, 100);
+}
+
+function closeNoteModal() {
+    noteBackdrop.classList.remove("visible");
+}
+
+document.getElementById("noteCancel").addEventListener("click", () => {
+    closeNoteModal();
+});
+
+/* Aantekening versturen naar Google Sheets */
+
+document.getElementById("noteForm").addEventListener("submit", async event => {
+    event.preventDefault();
+
+    const noteText = document.getElementById("noteText").value.trim();
+    const token = localStorage.getItem(ACCESS_STORAGE_KEY);
+
+    const statusElement = document.getElementById("noteStatus");
+    const saveButton = document.getElementById("noteSave");
 
     if (!token) {
-        accessError.textContent = "Vul de toegangscode in.";
+        closeNoteModal();
+        openAccessModal();
         return;
     }
 
-    localStorage.setItem(TOKEN_STORAGE_KEY, token);
-    accessOverlay.classList.remove("visible");
-    accessInput.value = "";
-    accessError.textContent = "";
-});
-
-accessInput.addEventListener("keydown", event => {
-    if (event.key === "Enter") {
-        document.getElementById("accessSave").click();
-    }
-});
-
-/* Notitievenster openen */
-
-function openNote(state) {
-    const paragraph = findTargetParagraph(state);
-
-    if (!paragraph) {
+    if (!noteText) {
+        statusElement.textContent = "Schrijf eerst een aantekening.";
         return;
     }
 
-    selectedParagraph = paragraph;
-    selectedHand = state;
+    saveButton.disabled = true;
+    statusElement.textContent = "Aantekening wordt verstuurd...";
 
-    noteContext.textContent = paragraph.textContent;
-    noteText.value = "";
-    noteStatus.textContent = "";
-
-    noteOverlay.classList.add("visible");
-
-    if (!getAccessToken()) {
-        noteOverlay.classList.remove("visible");
-        requestAccess();
-        return;
-    }
-
-    setTimeout(() => noteText.focus(), 100);
-}
-
-function closeNote() {
-    noteOverlay.classList.remove("visible");
-    selectedParagraph = null;
-    selectedHand = null;
-}
-
-document.getElementById("noteCancel")
-    .addEventListener("click", closeNote);
-
-noteOverlay.addEventListener("click", event => {
-    if (event.target === noteOverlay) closeNote();
-});
-
-/* Notitie opslaan */
-
-noteSave.addEventListener("click", async () => {
-    const token = getAccessToken();
-    const aantekening = noteText.value.trim();
-
-    if (!token) {
-        closeNote();
-        requestAccess();
-        return;
-    }
-
-    if (!aantekening) {
-        noteStatus.textContent = "Schrijf eerst een aantekening.";
-        return;
-    }
-
-    if (!selectedParagraph || !poems[currentIndex]) {
-        noteStatus.textContent = "Geen passage geselecteerd.";
-        return;
-    }
-
-    const passage = selectedParagraph.textContent;
-    const gedicht = titleElement.textContent;
-
-    noteSave.disabled = true;
-    noteStatus.textContent = "Aantekening wordt verstuurd...";
+    const formData = new URLSearchParams();
+    formData.append("token", token);
+    formData.append("gedicht", selectedPoemTitle);
+    formData.append("passage", selectedPassage);
+    formData.append("aantekening", noteText);
 
     try {
-        const formData = new URLSearchParams();
-        formData.append("token", token);
-        formData.append("gedicht", gedicht);
-        formData.append("passage", passage);
-        formData.append("aantekening", aantekening);
-
         await fetch(NOTES_URL, {
             method: "POST",
             mode: "no-cors",
             body: formData
         });
 
-        selectedParagraph.classList.add("has-note");
-        noteStatus.textContent =
-            "Verzoek verstuurd. Controleer het tabblad Aantekeningen in Google Sheets.";
+        statusElement.textContent =
+            "Het verzoek is verzonden. Controleer het tabblad Aantekeningen in Google Sheets om te zien of de regel is opgeslagen.";
 
-        noteText.value = "";
-
-        setTimeout(() => {
-            closeNote();
-        }, 2200);
+        saveButton.disabled = false;
 
     } catch (error) {
-        console.error(error);
-        noteStatus.textContent =
-            "Versturen is niet gelukt. Controleer je internetverbinding.";
-    } finally {
-        noteSave.disabled = false;
+        console.error("Fout bij versturen van aantekening:", error);
+
+        statusElement.textContent =
+            "Versturen is niet gelukt. Controleer je internetverbinding en probeer opnieuw.";
+
+        saveButton.disabled = false;
     }
 });
 
-/* Touchbediening met onafhankelijke vingerregistratie */
+/* Vensters sluiten door buiten het venster te klikken */
 
-handStates.forEach(state => {
-    state.element.addEventListener("touchstart", event => {
-        event.preventDefault();
-
-        const touch = event.changedTouches[0];
-
-        state.touchId = touch.identifier;
-        state.dragging = true;
-        state.moved = false;
-        state.startX = touch.clientX;
-        state.startY = touch.clientY;
-
-        state.element.classList.add("dragging");
-        moveHand(state, touch.clientX, touch.clientY);
-    }, { passive: false });
+accessBackdrop.addEventListener("click", event => {
+    if (event.target === accessBackdrop) {
+        closeAccessModal();
+    }
 });
 
-document.addEventListener("touchmove", event => {
-    const activeStates = handStates.filter(state => state.dragging);
-    if (!activeStates.length) return;
-
-    event.preventDefault();
-
-    activeStates.forEach(state => {
-        const touch = Array.from(event.touches).find(
-            t => t.identifier === state.touchId
-        );
-
-        if (touch) {
-            moveHand(state, touch.clientX, touch.clientY);
-        }
-    });
-}, { passive: false });
-
-document.addEventListener("touchend", event => {
-    handStates.forEach(state => {
-        const ended = Array.from(event.changedTouches).some(
-            t => t.identifier === state.touchId
-        );
-
-        if (ended) {
-            const wasTap = !state.moved;
-
-            state.dragging = false;
-            state.touchId = null;
-            state.startX = null;
-            state.startY = null;
-            state.element.classList.remove("dragging");
-
-            if (wasTap) {
-                openNote(state);
-            }
-        }
-    });
+noteBackdrop.addEventListener("click", event => {
+    if (event.target === noteBackdrop) {
+        closeNoteModal();
+    }
 });
 
-document.addEventListener("touchcancel", () => {
-    handStates.forEach(state => {
-        state.dragging = false;
-        state.touchId = null;
-        state.startX = null;
-        state.startY = null;
-        state.element.classList.remove("dragging");
-    });
-});
+/* Escape sluit een geopend venster */
 
-/* Muisbediening op MacBook */
-
-handStates.forEach(state => {
-    state.element.addEventListener("mousedown", event => {
-        event.preventDefault();
-
-        state.dragging = true;
-        state.moved = false;
-        state.startX = event.clientX;
-        state.startY = event.clientY;
-
-        state.element.classList.add("dragging");
-        moveHand(state, event.clientX, event.clientY);
-    });
-
-    state.element.addEventListener("click", () => {
-        if (!state.moved) {
-            openNote(state);
-        }
-    });
-});
-
-document.addEventListener("mousemove", event => {
-    handStates.forEach(state => {
-        if (state.dragging) {
-            moveHand(state, event.clientX, event.clientY);
-        }
-    });
-});
-
-document.addEventListener("mouseup", () => {
-    handStates.forEach(state => {
-        state.dragging = false;
-        state.startX = null;
-        state.startY = null;
-        state.element.classList.remove("dragging");
-    });
+document.addEventListener("keydown", event => {
+    if (event.key === "Escape") {
+        closeAccessModal();
+        closeNoteModal();
+    }
 });
 
 /* Start */
-
-if (!getAccessToken()) {
-    requestAccess();
-}
 
 loadPoems();
 setInterval(loadPoems, 5 * 60 * 1000);
