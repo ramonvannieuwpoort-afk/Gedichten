@@ -120,7 +120,7 @@ button { font-family: inherit; }
     color: #887e70;
 }
 
-/* Twee compacte handjes in de zijmarges */
+/* Twee compacte hamsa-handjes in de zijmarges */
 
 .hand {
     position: fixed;
@@ -131,12 +131,10 @@ button { font-family: inherit; }
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid #b9a98e;
+    border: 0;
     border-radius: 50%;
-    background: #fffdf8;
-    box-shadow:
-        0 2px 8px rgba(50, 40, 25, 0.12),
-        inset 0 0 0 2px rgba(255,255,255,0.9);
+    background: transparent;
+    box-shadow: 0 2px 8px rgba(50, 40, 25, 0.14);
     cursor: grab;
     touch-action: none;
     user-select: none;
@@ -144,59 +142,25 @@ button { font-family: inherit; }
     -webkit-appearance: none;
     appearance: none;
     padding: 0;
-    transition:
-        width 180ms ease,
-        height 180ms ease,
-        box-shadow 180ms ease,
-        background 180ms ease;
+    transition: width 180ms ease, height 180ms ease, box-shadow 180ms ease;
 }
 
-#hand1 {
-    left: max(8px, calc((100vw - 900px) / 2 + 8px));
-}
+#hand1 { left: max(8px, calc((100vw - 900px) / 2 + 8px)); }
+#hand2 { right: max(8px, calc((100vw - 900px) / 2 + 8px)); }
 
-#hand2 {
-    right: max(8px, calc((100vw - 900px) / 2 + 8px));
-}
-
-/* SVG-kleurenring: geen CSS-maskers of gradients */
-
-.hand-ring {
-    position: absolute;
-    inset: 0;
+.hand-icon {
     width: 100%;
     height: 100%;
     display: block;
-    z-index: 0;
+    overflow: visible;
     pointer-events: none;
-}
-
-.hand::before,
-.hand::after {
-    content: none;
 }
 
 .hand.dragging {
     width: 46px;
     height: 46px;
     cursor: grabbing;
-    background: #fffdf9;
-    box-shadow: 0 4px 15px rgba(50,40,25,0.16);
-}
-
-.hand-icon {
-    position: relative;
-    z-index: 2;
-    width: 30px;
-    height: 30px;
-    display: block;
-    overflow: visible;
-    pointer-events: none;
-}
-
-.hand.dragging .hand-icon {
-    width: 33px;
-    height: 33px;
+    box-shadow: 0 4px 15px rgba(50,40,25,0.2);
 }
 
 .hand-hint {
@@ -250,12 +214,12 @@ button { font-family: inherit; }
         height: 38px;
     }
 
-    .hand-icon {
+    .hand svg {
         width: 25px;
         height: 25px;
     }
 
-    .hand.dragging .hand-icon {
+    .hand.dragging svg {
         width: 28px;
         height: 28px;
     }
@@ -268,7 +232,7 @@ button { font-family: inherit; }
 @media (prefers-reduced-motion: reduce) {
     .poem-paragraph,
     .hand,
-    .hand-icon {
+    .hand svg {
         transition: none !important;
     }
 }
@@ -299,213 +263,130 @@ button { font-family: inherit; }
 
 </div>
 
-<!-- Eerste hand -->
-<button type="button" class="hand" id="hand1"
-        aria-label="Eerste vergroothand">
-    <svg class="hand-icon" viewBox="0 0 64 64"
-         xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <g transform="rotate(-25 32 32)"
-           fill="none" stroke="#72543c"
-           stroke-linecap="round" stroke-linejoin="round">
-            <path d="M27 48 C25 46 23 44 21 42 L13 34
-                C11 32 11 29 13 27 C15 25 18 25 20 27
-                L27 33 L27 13 C27 10 29 8 32 8
-                C35 8 37 10 37 13 L37 29 L42 25
-                C44 23 47 24 48 26 C50 28 49 31 47 33
-                L42 39 L40 46 C39 49 36 52 32 52
-                L29 52 C28 52 27 50 27 48 Z"
-                stroke-width="1.8"/>
-            <path d="M27 37 C30 35 34 35 38 37" stroke-width="1.1"/>
-            <path d="M29 43 C31 40 35 40 37 43 C35 46 31 46 29 43 Z"
-                  stroke-width="1.1"/>
-            <circle cx="33" cy="43" r="1.2" fill="#c94b36" stroke="none"/>
-            <path d="M32 18 L32 22 M30 20 L34 20" stroke-width="1"/>
-            <path d="M24 38 L21 35 M40 32 L44 29" stroke-width="1"/>
-            <circle cx="24" cy="46" r="0.8" fill="#278b91" stroke="none"/>
-            <circle cx="40" cy="45" r="0.8" fill="#278b91" stroke="none"/>
-        </g>
-    </svg>
-</button>
-
-<!-- Tweede hand -->
-<button type="button" class="hand" id="hand2"
-        aria-label="Tweede vergroothand">
-    <svg class="hand-icon" viewBox="0 0 64 64"
-         xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <g transform="rotate(-25 32 32)"
-           fill="none" stroke="#72543c"
-           stroke-linecap="round" stroke-linejoin="round">
-            <path d="M27 48 C25 46 23 44 21 42 L13 34
-                C11 32 11 29 13 27 C15 25 18 25 20 27
-                L27 33 L27 13 C27 10 29 8 32 8
-                C35 8 37 10 37 13 L37 29 L42 25
-                C44 23 47 24 48 26 C50 28 49 31 47 33
-                L42 39 L40 46 C39 49 36 52 32 52
-                L29 52 C28 52 27 50 27 48 Z"
-                stroke-width="1.8"/>
-            <path d="M27 37 C30 35 34 35 38 37" stroke-width="1.1"/>
-            <path d="M29 43 C31 40 35 40 37 43 C35 46 31 46 29 43 Z"
-                  stroke-width="1.1"/>
-            <circle cx="33" cy="43" r="1.2" fill="#c94b36" stroke="none"/>
-            <path d="M32 18 L32 22 M30 20 L34 20" stroke-width="1"/>
-            <path d="M24 38 L21 35 M40 32 L44 29" stroke-width="1"/>
-            <circle cx="24" cy="46" r="0.8" fill="#278b91" stroke="none"/>
-            <circle cx="40" cy="45" r="0.8" fill="#278b91" stroke="none"/>
-        </g>
-    </svg>
-</button>
+<!-- Twee hamsa-handjes; de illustraties worden hieronder als SVG opgebouwd -->
+<button type="button" class="hand" id="hand1" aria-label="Eerste vergroothand"></button>
+<button type="button" class="hand" id="hand2" aria-label="Tweede vergroothand"></button>
 
 <script>
-/* De Andes-geïnspireerde ring wordt volledig met SVG getekend.
-   Eerst de gouden basis en het witte midden, daarna de versieringen.
-   Daardoor blijven alle gekleurde vormen zichtbaar op de buitenrand. */
 
-function createAndeanRing() {
+/* Hamsa-illustratie: inline SVG, zonder CSS-maskers of gradients.
+   Het silhouet en alle decoratieve details zijn vectorvormen. */
+
+function buildHamsaIcon() {
     const ns = "http://www.w3.org/2000/svg";
     const svg = document.createElementNS(ns, "svg");
-
-    svg.setAttribute("viewBox", "0 0 64 64");
-    svg.setAttribute("class", "hand-ring");
+    svg.setAttribute("viewBox", "0 0 100 120");
+    svg.setAttribute("class", "hand-icon");
     svg.setAttribute("aria-hidden", "true");
 
-    function add(tag, attributes, parent = svg) {
-        const element = document.createElementNS(ns, tag);
-        Object.keys(attributes).forEach(key => {
-            element.setAttribute(key, attributes[key]);
-        });
-        parent.appendChild(element);
-        return element;
-    }
+    const silhouette = "M29 58 L29 29 C29 20 34 15 41 15 C48 15 53 20 53 29 L53 43 L53 18 C53 9 59 4 66 4 C73 4 79 9 79 18 L79 45 L79 28 C79 20 84 15 90 15 C97 15 101 21 101 29 L101 65 C101 74 96 82 89 88 L81 96 C75 107 65 113 52 114 L43 114 C30 114 20 107 15 96 L4 76 C0 68 3 60 10 57 C17 54 23 58 28 68 Z";
 
-    const colors = [
-        "#bd4938",
-        "#d87937",
-        "#e5b84e",
-        "#829b55",
-        "#278b91",
-        "#315b96",
-        "#73558a",
-        "#c15a42",
-        "#d99a43",
-        "#6f925b",
-        "#287f86",
-        "#66518a",
-        "#bd4938",
-        "#d87937",
-        "#e5b84e",
-        "#829b55"
-    ];
+    svg.innerHTML = `
+      <defs>
+        <clipPath id="hamsaClip">
+          <path d="${silhouette}"/>
+        </clipPath>
+      </defs>
 
-    /* Gouden basisring */
-    add("circle", {
-        cx: 32, cy: 32, r: 29,
-        fill: "#d5a64c"
-    });
+      <path d="${silhouette}" fill="#fff8e9" stroke="#49372d"
+            stroke-width="3.2" stroke-linejoin="round"/>
 
-    /* Buitenste fijne donkere lijn */
-    add("circle", {
-        cx: 32, cy: 32, r: 30.5,
-        fill: "none",
-        stroke: "#72543c",
-        "stroke-width": 0.65
-    });
+      <g clip-path="url(#hamsaClip)">
+        <!-- Vingers -->
+        <path d="M27 13 H54 V58 H27 Z" fill="#278b91"/>
+        <path d="M53 2 H80 V58 H53 Z" fill="#315b96"/>
+        <path d="M78 13 H104 V60 H78 Z" fill="#829b55"/>
 
-    /* Wit midden: laat de versieringen aan de buitenkant vrij */
-    add("circle", {
-        cx: 32, cy: 32, r: 22.5,
-        fill: "#fffdf8"
-    });
+        <!-- Vingerbanden -->
+        <path d="M29 21 Q41 11 53 21 L53 28 Q41 19 29 28Z"
+              fill="#e5b84e" stroke="#49372d" stroke-width="1.5"/>
+        <path d="M54 11 Q66 1 78 11 L78 19 Q66 10 54 19Z"
+              fill="#d87937" stroke="#49372d" stroke-width="1.5"/>
+        <path d="M80 21 Q91 11 102 21 L102 28 Q91 19 80 28Z"
+              fill="#bd4938" stroke="#49372d" stroke-width="1.5"/>
 
-    /* Fijne binnenste rand */
-    add("circle", {
-        cx: 32, cy: 32, r: 22.5,
-        fill: "none",
-        stroke: "#a77b45",
-        "stroke-width": 0.8
-    });
+        <!-- Ruit- en zigzagmotieven -->
+        <path d="M32 35 L41 27 L50 35 L41 43Z"
+              fill="#f2c94c" stroke="#49372d" stroke-width="1.5"/>
+        <path d="M57 29 L66 21 L75 29 L66 38Z"
+              fill="#e5b84e" stroke="#49372d" stroke-width="1.5"/>
+        <path d="M83 35 L91 27 L99 35 L91 43Z"
+              fill="#d87937" stroke="#49372d" stroke-width="1.5"/>
+        <path d="M29 49 L41 42 L53 49 L41 56Z"
+              fill="#bd4938" stroke="#49372d" stroke-width="1.4"/>
+        <path d="M53 46 L66 39 L79 46 L66 54Z"
+              fill="#e5b84e" stroke="#49372d" stroke-width="1.4"/>
 
-    /* Tweede dunne lijn aan de buitenzijde */
-    add("circle", {
-        cx: 32, cy: 32, r: 26.5,
-        fill: "none",
-        stroke: "#fff1d2",
-        "stroke-width": 0.65
-    });
+        <!-- Duimen -->
+        <path d="M4 62 Q16 52 29 69 L38 86 L25 98 Q17 88 8 79Z"
+              fill="#d87937" stroke="#49372d" stroke-width="2"/>
+        <path d="M101 62 Q88 52 78 69 L67 86 L80 98 Q88 88 97 79Z"
+              fill="#d87937" stroke="#49372d" stroke-width="2"/>
+        <path d="M8 68 L19 61 L29 73 L18 81Z"
+              fill="#e5b84e" stroke="#49372d" stroke-width="1.2"/>
+        <path d="M97 68 L86 61 L76 73 L87 81Z"
+              fill="#e5b84e" stroke="#49372d" stroke-width="1.2"/>
 
-    /* Zestien kleine geweven ruitmotieven */
-    for (let i = 0; i < 16; i++) {
-        const angle = i * 22.5;
-        const group = add("g", {
-            transform: `rotate(${angle} 32 32)`
-        });
+        <!-- Palm -->
+        <path d="M18 58 Q50 44 82 58 L91 91 Q77 111 51 115 Q25 111 10 91Z"
+              fill="#278b91" stroke="#49372d" stroke-width="2.2"/>
 
-        /* Grote gekleurde ruit */
-        add("path", {
-            d: "M32 23.1 L35.2 27 L32 30.9 L28.8 27 Z",
-            fill: colors[i],
-            stroke: "#fff4dc",
-            "stroke-width": 0.8,
-            "stroke-linejoin": "round"
-        }, group);
+        <!-- Symmetrische bladeren -->
+        <g fill="#829b55" stroke="#49372d" stroke-width="1.3">
+          <path d="M18 86 Q27 68 36 83 Q31 95 18 86Z"/>
+          <path d="M84 86 Q75 68 66 83 Q71 95 84 86Z"/>
+        </g>
+        <g fill="#e5b84e" stroke="#49372d" stroke-width="1">
+          <path d="M22 84 L29 77 L33 86 L26 91Z"/>
+          <path d="M80 84 L73 77 L69 86 L76 91Z"/>
+        </g>
 
-        /* Binnenruit */
-        add("path", {
-            d: "M32 24.8 L33.7 27 L32 29.2 L30.3 27 Z",
-            fill: "none",
-            stroke: "#72543c",
-            "stroke-width": 0.55
-        }, group);
+        <!-- Mandala en oog -->
+        <g transform="translate(51 83)">
+          <circle r="23" fill="#e5b84e" stroke="#49372d" stroke-width="2"/>
+          <circle r="19" fill="#bd4938" stroke="#fff2d5" stroke-width="1.4"/>
+          <g fill="#f2c94c" stroke="#49372d" stroke-width="1">
+            <path d="M0 -22 Q5 -14 0 -10 Q-5 -14 0 -22Z"/>
+            <path d="M0 -22 Q5 -14 0 -10 Q-5 -14 0 -22Z" transform="rotate(45)"/>
+            <path d="M0 -22 Q5 -14 0 -10 Q-5 -14 0 -22Z" transform="rotate(90)"/>
+            <path d="M0 -22 Q5 -14 0 -10 Q-5 -14 0 -22Z" transform="rotate(135)"/>
+            <path d="M0 -22 Q5 -14 0 -10 Q-5 -14 0 -22Z" transform="rotate(180)"/>
+            <path d="M0 -22 Q5 -14 0 -10 Q-5 -14 0 -22Z" transform="rotate(225)"/>
+            <path d="M0 -22 Q5 -14 0 -10 Q-5 -14 0 -22Z" transform="rotate(270)"/>
+            <path d="M0 -22 Q5 -14 0 -10 Q-5 -14 0 -22Z" transform="rotate(315)"/>
+          </g>
+          <circle r="12" fill="#315b96" stroke="#49372d" stroke-width="1.5"/>
+          <ellipse cx="0" cy="0" rx="9" ry="6.5"
+                   fill="#fff8e9" stroke="#49372d" stroke-width="1.2"/>
+          <circle r="3.5" fill="#278b91" stroke="#49372d" stroke-width="0.8"/>
+          <circle r="1.6" fill="#222"/>
+        </g>
 
-        /* Klein kleuraccent buiten de ruit */
-        add("circle", {
-            cx: 32,
-            cy: 7.2,
-            r: 1.15,
-            fill: colors[i],
-            stroke: "#fff4dc",
-            "stroke-width": 0.5
-        }, group);
+        <!-- Onderste kralenrand -->
+        <path d="M18 101 Q51 119 84 101" fill="none"
+              stroke="#e5b84e" stroke-width="3"/>
+        <g fill="#f4c4d3" stroke="#49372d" stroke-width="0.8">
+          <circle cx="27" cy="103" r="3"/>
+          <circle cx="39" cy="109" r="3"/>
+          <circle cx="51" cy="111" r="3"/>
+          <circle cx="63" cy="109" r="3"/>
+          <circle cx="75" cy="103" r="3"/>
+        </g>
+      </g>
 
-        /* Klein driehoekig accent */
-        add("path", {
-            d: "M32 10.2 L33.1 12.1 L30.9 12.1 Z",
-            fill: i % 2 === 0 ? "#72543c" : "#fff4dc",
-            stroke: "none"
-        }, group);
-    }
-
-    /* Kleine stippen tussen de motieven */
-    for (let i = 0; i < 16; i++) {
-        const angle = (i * 22.5 + 11.25) * Math.PI / 180;
-        const x = 32 + Math.sin(angle) * 27.7;
-        const y = 32 - Math.cos(angle) * 27.7;
-
-        add("circle", {
-            cx: x.toFixed(2),
-            cy: y.toFixed(2),
-            r: 0.75,
-            fill: "#fff4dc",
-            stroke: "#72543c",
-            "stroke-width": 0.35
-        });
-    }
-
-    /* Subtiele buitenrand */
-    add("circle", {
-        cx: 32, cy: 32, r: 31.1,
-        fill: "none",
-        stroke: "#fff8e9",
-        "stroke-width": 0.7
-    });
+      <path d="${silhouette}" fill="none" stroke="#49372d"
+            stroke-width="2.3" stroke-linejoin="round"/>
+      <path d="${silhouette}" fill="none" stroke="#fffdf8"
+            stroke-width="0.8" stroke-linejoin="round"
+            transform="translate(0.8 0.8)"/>
+    `;
 
     return svg;
 }
 
-/* Plaats dezelfde ring onder beide handjes */
 document.querySelectorAll(".hand").forEach(hand => {
-    hand.insertBefore(createAndeanRing(), hand.firstChild);
+    hand.appendChild(buildHamsaIcon());
 });
-
 
 const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSyqrEB__RKjtVvARlIYLBkIdwVlXFh0PYBN615AgXk1RrlmrRzqFfV8r7DRWIuEbeRTeetKTBBWNBd/pub?gid=0&single=true&output=csv";
 
