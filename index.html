@@ -29,7 +29,7 @@ button{font-family:inherit}
 .nav-button{border:0;background:none;color:#887e70;font-size:20px;cursor:pointer;padding:8px 0}
 .nav-button:active{color:#302c26}
 .counter{font-size:17px;color:#887e70}
-.hand{position:fixed;z-index:9999;top:105px;width:42px;height:42px;display:flex;align-items:center;justify-content:center;border:0;border-radius:50%;background:transparent;box-shadow:0 2px 8px rgba(50,40,25,.14);cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-appearance:none;appearance:none;padding:0;transition:width 180ms ease,height 180ms ease,box-shadow 180ms ease}
+.hand{position:fixed;z-index:9999;top:105px;width:60px;height:60px;display:flex;align-items:center;justify-content:center;border:0;border-radius:50%;background:transparent;box-shadow:none;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-appearance:none;appearance:none;padding:0;-webkit-tap-highlight-color:transparent}
 #hand1{left:max(8px,calc((100vw - 900px)/2 + 8px))}
 #hand2{right:max(8px,calc((100vw - 900px)/2 + 8px))}
 #sentenceHand{top:158px;left:max(8px,calc((100vw - 900px)/2 + 8px))}
@@ -45,7 +45,7 @@ button{font-family:inherit}
 .hand-icon{width:100%;height:100%;display:block;overflow:visible;pointer-events:none;transform-origin:50% 50%}
 #hand1 .hand-icon{transform:rotate(60deg)}
 #hand2 .hand-icon{transform:rotate(-60deg)}
-.hand.dragging{width:46px;height:46px;cursor:grabbing;box-shadow:0 4px 15px rgba(50,40,25,.2)}
+.hand.dragging{cursor:grabbing}
 .hand-hint{margin-top:18px;font-size:15px;color:#a09688;text-align:center;font-style:italic}
 .modal-backdrop{display:none;position:fixed;top:0;right:0;bottom:0;left:0;width:100%;height:100%;z-index:20000;background:rgba(35,30,24,.42);align-items:center;justify-content:center;padding:20px;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .modal-backdrop.visible{display:-webkit-box;display:-webkit-flex;display:flex}
@@ -92,12 +92,9 @@ header{margin-bottom:48px}
 #hand2{top:76px;right:3px}
 #sentenceHand{top:119px;left:3px}
 #wordHand{top:119px;right:3px}
-.hand{width:34px;height:34px}
-.hand.dragging{width:38px;height:38px}
-#sentenceHand,#wordHand{width:34px;height:34px}
-#sentenceHand.dragging,#wordHand.dragging{width:38px;height:38px}
-.hand svg{width:25px;height:25px}
-.hand.dragging svg{width:28px;height:28px}
+.hand{width:50px;height:50px}
+#sentenceHand,#wordHand{width:50px;height:50px}
+.hand svg{width:30px;height:30px}
 .poem-paragraph.active{transform:scale(1.07)}
 .poem-paragraph.has-notes{padding-left:7px;margin-left:-9px}
 .modal{padding:23px;max-width:100%}
@@ -244,12 +241,9 @@ svg.setAttribute("class","finger-icon");
 svg.setAttribute("aria-hidden","true");
 svg.innerHTML=`
 <g stroke="#352b2b" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round">
-  <!-- Handpalm en gebogen vingers -->
   <path d="M29 91 Q23 86 24 76 L18 60 Q15 52 21 48 Q27 44 32 52 L38 63 L39 17 Q39 7 48 5 Q57 7 57 17 L57 55 L63 47 Q69 41 75 47 Q80 53 74 60 L67 82 Q64 92 53 94Z" fill="#13c9d5"/>
-  <!-- Spitse wijsvingertop -->
   <path d="M39 19 Q39 8 48 5 Q57 8 57 19 L55 33 L41 33Z" fill="#ffe12e"/>
   <path d="M42 17 Q48 9 54 17 L53 25 L43 25Z" fill="#ff4fa3" stroke-width="1.5"/>
-  <!-- Kleurrijke banden en details in dezelfde palet als de Hamsa -->
   <path d="M40 38 L56 38 L56 46 L40 46Z" fill="#ff8a24" stroke-width="1.5"/>
   <path d="M39 59 L57 59 L57 68 L39 68Z" fill="#ff4fa3" stroke-width="1.5"/>
   <path d="M28 75 Q46 84 66 75" fill="none" stroke="#ffe12e" stroke-width="5"/>
@@ -396,13 +390,10 @@ const activeParagraphs=new Set();
 poemElement.querySelectorAll(".sentence-active,.word-active").forEach(el=>el.classList.remove("sentence-active","word-active"));
 handStates.forEach(state=>{
 state.target=null;
-// Gebruik steeds de actuele schermpositie van het element zelf.
-// Zo blijven de raakvlakken kloppen wanneer Safari de pagina scrollt.
 const handRect=state.element.getBoundingClientRect();
 const x=handRect.left+handRect.width/2;
 const y=handRect.top+handRect.height/2;
 if(state.type==="sentence"){
-// De regelvinger doet pas mee nadat hij daadwerkelijk versleept is.
 if(!state.activated)return;
 let target=null;
 let nearestVerticalDistance=Infinity;
@@ -455,7 +446,6 @@ if(target){state.target=target;activeParagraphs.add(target);}
 });
 paragraphs.forEach(paragraph=>paragraph.classList.toggle("active",activeParagraphs.has(paragraph)));
 }
-
 function moveHand(state,x,y){
 state.x=x;state.y=y;
 const hand=state.element;
@@ -466,7 +456,6 @@ updateMagnification();
 }
 
 // Zet alle handjes terug op hun vaste beginposities aan de schermranden.
-// Omdat de handjes position:fixed gebruiken, blijven ze daar ook staan na scrollen.
 function resetHandsToEdges(){
 handStates.forEach(state=>{
   const hand=state.element;
@@ -494,31 +483,48 @@ window.visualViewport.addEventListener("scroll",updateMagnification,{passive:tru
 window.visualViewport.addEventListener("resize",updateMagnification,{passive:true});
 }
 
+// Start het slepen op het handje, maar volg de aanwijzer daarna op documentniveau.
+// Zo blijft slepen werken als de vinger buiten de knop komt (ook op oudere iPad-Safari).
 handStates.forEach(state=>{
 state.element.addEventListener("pointerdown",event=>{
 if(event.button!==undefined&&event.button!==0)return;
 event.preventDefault();
-state.dragging=true;state.pointerId=event.pointerId;state.startX=event.clientX;state.startY=event.clientY;state.moved=false;
+state.dragging=true;
+state.pointerId=event.pointerId;
+state.startX=event.clientX;
+state.startY=event.clientY;
+state.moved=false;
 state.element.classList.add("dragging");
-if(state.element.setPointerCapture)state.element.setPointerCapture(event.pointerId);
 moveHand(state,event.clientX,event.clientY);
 });
-state.element.addEventListener("pointermove",event=>{
-if(!state.dragging||state.pointerId!==event.pointerId)return;
+});
+
+document.addEventListener("pointermove",event=>{
+const state=handStates.find(item=>item.dragging&&item.pointerId===event.pointerId);
+if(!state)return;
 event.preventDefault();
-if(Math.hypot(event.clientX-state.startX,event.clientY-state.startY)>8){state.moved=true;if(state.type==="sentence")state.activated=true;}
+if(Math.hypot(event.clientX-state.startX,event.clientY-state.startY)>8){
+state.moved=true;
+if(state.type==="sentence")state.activated=true;
+}
 moveHand(state,event.clientX,event.clientY);
-});
+},{passive:false});
+
 function finishPointer(event){
-if(!state.dragging||state.pointerId!==event.pointerId)return;
-state.dragging=false;state.pointerId=null;state.element.classList.remove("dragging");
+const state=handStates.find(item=>item.dragging&&item.pointerId===event.pointerId);
+if(!state)return;
+state.dragging=false;
+state.pointerId=null;
+state.element.classList.remove("dragging");
 if(!state.moved)openNoteForHand(state);
 }
-state.element.addEventListener("pointerup",finishPointer);
-state.element.addEventListener("pointercancel",event=>{
-if(state.pointerId!==event.pointerId)return;
-state.dragging=false;state.pointerId=null;state.element.classList.remove("dragging");
-});
+document.addEventListener("pointerup",finishPointer);
+document.addEventListener("pointercancel",event=>{
+const state=handStates.find(item=>item.dragging&&item.pointerId===event.pointerId);
+if(!state)return;
+state.dragging=false;
+state.pointerId=null;
+state.element.classList.remove("dragging");
 });
 
 function openNoteForHand(state){
@@ -536,106 +542,119 @@ document.getElementById("accessStatus").textContent="";
 accessBackdrop.classList.add("visible");
 setTimeout(()=>document.getElementById("accessCode").focus(),300);
 }
-
 function closeAccessModal(){accessBackdrop.classList.remove("visible")}
 document.getElementById("accessCancel").addEventListener("click",closeAccessModal);
-document.getElementById("accessForm").addEventListener("submit",event=>{
+document.getElementById("accessForm").addEventListener("submit",async event=>{
 event.preventDefault();
 const code=document.getElementById("accessCode").value.trim();
-if(!code)return;
+const status=document.getElementById("accessStatus");
+status.textContent="Code controleren...";
+try{
+const response=await fetch(NOTES_URL+"?action=verify&token="+encodeURIComponent(code));
+const result=await response.json();
+if(result&&result.success){
 localStorage.setItem(ACCESS_STORAGE_KEY,code);
 closeAccessModal();
 openNoteModal();
+}else{status.textContent="De toegangscode klopt niet."}
+}catch(error){status.textContent="Controleren is niet gelukt. Probeer opnieuw."}
 });
-
-function renderSavedNotes(){
-const container=document.getElementById("savedNotes");
-container.innerHTML="";
-const key=normalizePassage(selectedPassage);
-const notes=notesByPassage[key]||[];
-if(!notes.length){
-const empty=document.createElement("p");
-empty.className="saved-notes-empty";
-empty.textContent="Er zijn nog geen aantekeningen bij deze passage.";
-container.appendChild(empty);
-return;
-}
-notes.forEach(note=>{
-const item=document.createElement("div");
-const person=String(note.persoon||"").trim();
-const personClass=person.toLowerCase()==="sanne"?"sanne":person.toLowerCase()==="ramon"?"ramon":"unknown";
-item.className="saved-note "+personClass;
-const personLabel=document.createElement("span");
-personLabel.className="saved-note-person";
-personLabel.textContent=person||"Eerder opgeslagen";
-const text=document.createElement("div");
-text.textContent=note.aantekening||"";
-const date=document.createElement("span");
-date.className="saved-note-date";
-date.textContent=note.datum||"";
-item.appendChild(personLabel);
-item.appendChild(text);
-if(note.datum)item.appendChild(date);
-if(selectedPerson&&person===selectedPerson&&note.row){
-const tools=document.createElement("div");
-tools.className="saved-note-tools";
-const edit=document.createElement("button");
-edit.type="button";edit.textContent="Wijzigen";
-edit.addEventListener("click",()=>startEditingNote(note));
-const remove=document.createElement("button");
-remove.type="button";remove.textContent="Verwijderen";
-remove.addEventListener("click",()=>deleteNote(note));
-tools.append(edit,remove);
-item.appendChild(tools);
-}
-container.appendChild(item);
-});
-}
-
-function setSelectedPerson(person){
-selectedPerson=person;
-document.querySelectorAll(".person-choice").forEach(button=>{
-const selected=button.dataset.person===person;
-button.classList.toggle("selected",selected);
-button.setAttribute("aria-pressed",selected?"true":"false");
-});
-document.getElementById("noteSave").disabled=!person;
-renderSavedNotes();
-}
-
-document.querySelectorAll(".person-choice").forEach(button=>button.addEventListener("click",()=>setSelectedPerson(button.dataset.person)));
-
-function resetNoteEditor(){
-editingNoteRow=null;
-document.getElementById("noteText").value="";
-document.getElementById("noteText").placeholder="Schrijf hier een nieuwe aantekening...";
-document.getElementById("noteSave").textContent="Bewaren";
-document.getElementById("noteEditCancel").hidden=true;
-document.getElementById("noteStatus").textContent="";
-}
 
 function openNoteModal(){
 document.getElementById("notePoemTitle").textContent=selectedPoemTitle;
 document.getElementById("notePassage").textContent=selectedPassage;
+document.getElementById("noteText").value="";
+document.getElementById("noteStatus").textContent="";
 resetNoteEditor();
-setSelectedPerson("");
 renderSavedNotes();
-document.getElementById("noteSave").disabled=true;
 noteBackdrop.classList.add("visible");
 }
+function closeNoteModal(){
+noteBackdrop.classList.remove("visible");
+resetHandsToEdges();
+}
+document.getElementById("noteCancel").addEventListener("click",closeNoteModal);
 
-function startEditingNote(note){
-if(!selectedPerson||note.persoon!==selectedPerson)return;
-editingNoteRow=Number(note.row);
+function resetNoteEditor(){
+editingNoteRow=null;
+document.getElementById("noteText").value="";
+document.getElementById("noteSave").textContent="Bewaren";
+document.getElementById("noteEditCancel").hidden=true;
+document.getElementById("noteStatus").textContent="";
+document.getElementById("noteSave").disabled=!selectedPerson;
+}
+document.getElementById("noteEditCancel").addEventListener("click",resetNoteEditor);
+
+function renderSavedNotes(){
+const container=document.getElementById("savedNotes");
+container.innerHTML="";
+const notes=notesByPassage[normalizePassage(selectedPassage)]||[];
+if(!notes.length){
+const empty=document.createElement("p");
+empty.className="saved-notes-empty";
+empty.textContent="Nog geen aantekeningen bij deze passage.";
+container.appendChild(empty);
+return;
+}
+notes.forEach(note=>{
+const card=document.createElement("div");
+card.className="saved-note "+(String(note.persoon||"").toLowerCase()==="sanne"?"sanne":String(note.persoon||"").toLowerCase()==="ramon"?"ramon":"unknown");
+const person=document.createElement("span");
+person.className="saved-note-person";
+person.textContent=note.persoon||"Onbekend";
+const content=document.createElement("span");
+content.textContent=note.aantekening||"";
+const date=document.createElement("span");
+date.className="saved-note-date";
+date.textContent=note.datum||"";
+card.appendChild(person);
+card.appendChild(content);
+card.appendChild(date);
+if(note.persoon===selectedPerson){
+const tools=document.createElement("div");
+tools.className="saved-note-tools";
+const edit=document.createElement("button");
+edit.type="button";
+edit.textContent="Wijzigen";
+edit.addEventListener("click",()=>editNote(note));
+const remove=document.createElement("button");
+remove.type="button";
+remove.textContent="Verwijderen";
+remove.addEventListener("click",()=>deleteNote(note));
+tools.appendChild(edit);
+tools.appendChild(remove);
+card.appendChild(tools);
+}
+container.appendChild(card);
+});
+}
+
+document.querySelectorAll(".person-choice").forEach(button=>{
+button.addEventListener("click",()=>{
+selectedPerson=button.dataset.person;
+document.querySelectorAll(".person-choice").forEach(choice=>{
+const selected=choice===button;
+choice.classList.toggle("selected",selected);
+choice.setAttribute("aria-pressed",String(selected));
+});
+document.getElementById("noteSave").disabled=false;
+});
+});
+
+function editNote(note){
+editingNoteRow=note.row;
+selectedPerson=note.persoon;
+document.querySelectorAll(".person-choice").forEach(button=>{
+const selected=button.dataset.person===selectedPerson;
+button.classList.toggle("selected",selected);
+button.setAttribute("aria-pressed",String(selected));
+});
 document.getElementById("noteText").value=note.aantekening||"";
-document.getElementById("noteText").placeholder="Pas je aantekening aan...";
 document.getElementById("noteSave").textContent="Wijziging bewaren";
 document.getElementById("noteEditCancel").hidden=false;
 document.getElementById("noteStatus").textContent="Je wijzigt je eigen aantekening.";
 document.getElementById("noteText").focus();
 }
-
-document.getElementById("noteEditCancel").addEventListener("click",resetNoteEditor);
 
 async function sendNoteAction(action,note){
 const token=localStorage.getItem(ACCESS_STORAGE_KEY);
@@ -658,12 +677,6 @@ status.textContent="Verwijderverzoek verzonden.";
 setTimeout(loadNotesForCurrentPoem,1200);
 }catch(error){status.textContent="Verwijderen is niet gelukt. Probeer opnieuw."}
 }
-
-function closeNoteModal(){
-noteBackdrop.classList.remove("visible");
-resetHandsToEdges();
-}
-document.getElementById("noteCancel").addEventListener("click",closeNoteModal);
 
 document.getElementById("noteForm").addEventListener("submit",async event=>{
 event.preventDefault();
