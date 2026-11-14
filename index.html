@@ -120,7 +120,7 @@ button { font-family: inherit; }
     color: #887e70;
 }
 
-/* Twee compacte hamsa-handjes in de zijmarges */
+/* Handjes met warme zandkleurige omlijsting */
 
 .hand {
     position: fixed;
@@ -131,10 +131,12 @@ button { font-family: inherit; }
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 0;
+    border: 2px solid #A77C48;
     border-radius: 50%;
-    background: transparent;
-    box-shadow: 0 2px 8px rgba(50, 40, 25, 0.14);
+    background: #D8B77A;
+    box-shadow:
+        0 2px 8px rgba(50, 40, 25, 0.14),
+        inset 0 0 0 1px rgba(255, 248, 225, 0.45);
     cursor: grab;
     touch-action: none;
     user-select: none;
@@ -162,7 +164,6 @@ button { font-family: inherit; }
     transform-origin: 50% 50%;
 }
 
-/* Links wijst naar 2 uur, rechts naar 10 uur */
 #hand1 .hand-icon { transform: rotate(60deg); }
 #hand2 .hand-icon { transform: rotate(-60deg); }
 
@@ -170,6 +171,7 @@ button { font-family: inherit; }
     width: 46px;
     height: 46px;
     cursor: grabbing;
+    background: #D8B77A;
     box-shadow: 0 4px 15px rgba(50,40,25,0.2);
 }
 
@@ -273,14 +275,13 @@ button { font-family: inherit; }
 
 </div>
 
-<!-- Twee hamsa-handjes -->
 <button type="button" class="hand" id="hand1" aria-label="Eerste vergroothand"></button>
 <button type="button" class="hand" id="hand2" aria-label="Tweede vergroothand"></button>
 
 <script>
 
-/* Symmetrische hamsa-illustratie, volledig opgebouwd uit SVG.
-   Geen externe afbeeldingen, CSS-maskers of kleurverlopen. */
+/* Hamsa-illustratie: symmetrisch, met centrale aanwijzende vinger.
+   De illustratie zelf is ongewijzigd gebleven. */
 
 function buildHamsaIcon() {
     const ns = "http://www.w3.org/2000/svg";
@@ -291,7 +292,6 @@ function buildHamsaIcon() {
 
     const clipId = "hamsaClip" + Math.random().toString(36).slice(2);
 
-    /* Symmetrische Hamsa met centrale, spits toelopende vinger */
     const silhouette = "M25 73 L7 55 Q1 48 6 40 Q12 32 21 37 L25 40 L25 29 Q25 19 34 19 Q42 19 43 28 L43 20 Q43 12 50 4 Q57 12 57 20 L57 28 Q58 19 66 19 Q75 19 75 29 L75 40 L79 37 Q88 32 94 40 Q99 48 93 55 L75 73 Q72 98 62 108 Q56 114 50 116 Q44 114 38 108 Q28 98 25 73 Z";
 
     svg.innerHTML = `
@@ -301,28 +301,23 @@ function buildHamsaIcon() {
         </clipPath>
       </defs>
 
-      <!-- Symmetrisch silhouet -->
       <path d="${silhouette}" fill="#fff9e9" stroke="#30242d"
             stroke-width="3.2" stroke-linejoin="round"/>
 
       <g clip-path="url(#${clipId})">
 
-        <!-- Heldere turquoise basis -->
         <rect x="3" y="3" width="94" height="114" fill="#18d7df"/>
 
-        <!-- Buitenste vingers -->
         <path d="M4 37 Q14 28 25 43 L25 67 L4 58Z"
               fill="#ff8b24" stroke="#30242d" stroke-width="1.6"/>
         <path d="M96 37 Q86 28 75 43 L75 67 L96 58Z"
               fill="#ff8b24" stroke="#30242d" stroke-width="1.6"/>
 
-        <!-- Middelste zijvingers -->
         <path d="M25 24 Q25 18 34 18 Q43 18 43 28 L43 65 L25 65Z"
               fill="#ff4f9a" stroke="#30242d" stroke-width="1.6"/>
         <path d="M75 24 Q75 18 66 18 Q57 18 57 28 L57 65 L75 65Z"
               fill="#ff4f9a" stroke="#30242d" stroke-width="1.6"/>
 
-        <!-- Centrale aanwijzende vinger -->
         <path d="M50 4 Q57 12 57 21 L57 66 L43 66 L43 21 Q43 12 50 4Z"
               fill="#ffe52e" stroke="#30242d" stroke-width="1.8"/>
         <path d="M50 10 L55 20 L50 26 L45 20Z"
@@ -334,7 +329,6 @@ function buildHamsaIcon() {
         <path d="M45 48 L50 42 L55 48 L50 54Z"
               fill="#ff4f9a" stroke="#30242d" stroke-width="1.1"/>
 
-        <!-- Spiegelende motieven op de zijvingers -->
         <g stroke="#30242d" stroke-width="1.1" stroke-linejoin="round">
           <path d="M29 30 L34 25 L39 30 L34 35Z" fill="#ffe52e"/>
           <path d="M71 30 L66 25 L61 30 L66 35Z" fill="#ffe52e"/>
@@ -351,7 +345,6 @@ function buildHamsaIcon() {
           <circle cx="84" cy="60" r="2"/>
         </g>
 
-        <!-- Symmetrische duimen -->
         <path d="M5 43 Q15 35 26 52 L35 75 L23 88 Q14 77 7 65Z"
               fill="#ffb52e" stroke="#30242d" stroke-width="1.8"/>
         <path d="M95 43 Q85 35 74 52 L65 75 L77 88 Q86 77 93 65Z"
@@ -362,11 +355,9 @@ function buildHamsaIcon() {
         <path d="M91 51 Q83 44 76 57 L82 67Z"
               fill="#8b4df5" stroke="#30242d" stroke-width="1.2"/>
 
-        <!-- Palm -->
         <path d="M17 65 Q50 51 83 65 L80 91 Q73 110 50 116 Q27 110 20 91Z"
               fill="#ff4f9a" stroke="#30242d" stroke-width="2"/>
 
-        <!-- Symmetrische bladvormen -->
         <g stroke="#30242d" stroke-width="1.4" stroke-linejoin="round">
           <path d="M19 88 Q19 67 36 70 Q37 87 19 88Z" fill="#a8ef36"/>
           <path d="M81 88 Q81 67 64 70 Q63 87 81 88Z" fill="#a8ef36"/>
@@ -376,7 +367,6 @@ function buildHamsaIcon() {
           <path d="M75 91 L66 82 L61 94 L69 100Z" fill="#18d7df"/>
         </g>
 
-        <!-- Mandala rond het oog -->
         <g transform="translate(50 84)">
           <circle r="23" fill="#ffe52e" stroke="#30242d" stroke-width="2"/>
 
@@ -398,7 +388,6 @@ function buildHamsaIcon() {
           <circle r="1.8" fill="#24202a"/>
         </g>
 
-        <!-- Onderste kralenboog -->
         <path d="M20 101 Q50 120 80 101"
               fill="none" stroke="#ffe52e" stroke-width="4"/>
 
@@ -411,7 +400,6 @@ function buildHamsaIcon() {
         </g>
       </g>
 
-      <!-- Definitieve contour -->
       <path d="${silhouette}" fill="none" stroke="#30242d"
             stroke-width="3" stroke-linejoin="round"/>
       <path d="${silhouette}" fill="none" stroke="#fffdf8"
