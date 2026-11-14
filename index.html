@@ -15,7 +15,7 @@
 *{box-sizing:border-box}
 html{background:#fff}
 body{margin:0;background:#eee9df;color:#302c26;font-family:'Cormorant Garamond',Georgia,serif}
-.page{max-width:900px;min-height:100vh;margin:0 auto;padding:105px 65px 65px;background:linear-gradient(to bottom,#fff 0px,#fff 25px,#f7f4ed 85px,#eee9df 210px)}
+.page{max-width:900px;min-height:100vh;margin:0 auto;padding:105px 65px 65px;background:linear-gradient(to bottom,#ffffff 0%,#ffffff 5%,#f7f4ed 24%,#eee9df 100%)}
 header{position:relative;text-align:center;margin-bottom:58px;padding-bottom:25px;border-bottom:1px solid #d5cdbf}
 h1{font-size:43px;font-weight:500;line-height:1.1;margin:0 0 8px}
 .author{font-size:21px;font-style:italic;color:#887e70}
@@ -82,7 +82,7 @@ button{font-family:inherit}
 .saved-note.ramon .saved-note-tools button{color:#607b88}
 .saved-note.sanne .saved-note-tools button{color:#987044}
 @media(max-width:600px){
-.page{padding:75px 27px 50px;background:linear-gradient(to bottom,#fff 0px,#fff 20px,#f7f4ed 65px,#eee9df 175px)}
+.page{padding:75px 27px 50px;background:linear-gradient(to bottom,#ffffff 0%,#ffffff 4%,#f7f4ed 23%,#eee9df 100%)}
 h1{font-size:36px}
 .author{font-size:20px}
 .poem{font-size:22px;line-height:1.45}
@@ -396,8 +396,28 @@ const activeParagraphs=new Set();
 poemElement.querySelectorAll(".sentence-active,.word-active").forEach(el=>el.classList.remove("sentence-active","word-active"));
 handStates.forEach(state=>{
 state.target=null;if(state.x===null||state.y===null)return;
-if(state.type==="sentence"||state.type==="word"){
-const selector=state.type==="sentence"?".poem-sentence":".poem-word";
+if(state.type==="sentence"){
+// Voor dichtregels telt alleen de hoogte: de vinger mag ook naast de tekst staan.
+// getClientRects houdt rekening met regels die visueel over meerdere regels doorlopen.
+let target=null;
+let nearestVerticalDistance=Infinity;
+poemElement.querySelectorAll(".poem-sentence").forEach(sentence=>{
+  const paragraph=sentence.closest(".poem-paragraph");
+  const lineHeight=parseFloat(getComputedStyle(paragraph||poemElement).lineHeight)||30;
+  const rects=sentence.getClientRects();
+  for(const rect of rects){
+    const centerY=(rect.top+rect.bottom)/2;
+    const distance=Math.abs(state.y-centerY);
+    if(distance<=lineHeight*0.48&&distance<nearestVerticalDistance){
+      nearestVerticalDistance=distance;
+      target=sentence;
+    }
+  }
+});
+if(target){state.target=target;target.classList.add("sentence-active");}
+return;
+}
+if(state.type==="word"){
 let target=null;
 // De vinger ligt boven de tekst en vangt zelf elementFromPoint op.
 // Zoek daarom door de volledige stapel elementen onder de aanwijzer.
@@ -405,7 +425,7 @@ if(document.elementsFromPoint){
   const stack=document.elementsFromPoint(state.x,state.y);
   for(const hit of stack){
     if(hit===state.element||state.element.contains(hit))continue;
-    const candidate=hit.closest?hit.closest(selector):null;
+    const candidate=hit.closest?hit.closest(".poem-word"):null;
     if(candidate&&poemElement.contains(candidate)){target=candidate;break;}
   }
 }else{
@@ -413,9 +433,9 @@ if(document.elementsFromPoint){
   state.element.style.visibility="hidden";
   const hit=document.elementFromPoint(state.x,state.y);
   state.element.style.visibility=oldVisibility;
-  target=hit&&hit.closest?hit.closest(selector):null;
+  target=hit&&hit.closest?hit.closest(".poem-word"):null;
 }
-if(target&&poemElement.contains(target)){state.target=target;target.classList.add(state.type==="sentence"?"sentence-active":"word-active");}
+if(target&&poemElement.contains(target)){state.target=target;target.classList.add("word-active");}
 return;
 }
 let target=null,nearestDistance=Infinity;
