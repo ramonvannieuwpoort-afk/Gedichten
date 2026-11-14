@@ -281,7 +281,7 @@ const counterElement=document.getElementById("counter");
 const hands=[document.getElementById("hand1"),document.getElementById("hand2"),document.getElementById("sentenceHand"),document.getElementById("wordHand")];
 const accessBackdrop=document.getElementById("accessBackdrop");
 const noteBackdrop=document.getElementById("noteBackdrop");
-const handStates=hands.map((hand,index)=>({element:hand,type:index===2?"sentence":index===3?"word":"passage",dragging:false,pointerId:null,startX:0,startY:0,moved:false,x:null,y:null,target:null}));
+const handStates=hands.map((hand,index)=>({element:hand,type:index===2?"sentence":index===3?"word":"passage",dragging:false,pointerId:null,startX:0,startY:0,moved:false,activated:false,x:null,y:null,target:null}));
 
 function findColumn(row,possibleNames){
 const keys=Object.keys(row);
@@ -402,6 +402,8 @@ const handRect=state.element.getBoundingClientRect();
 const x=handRect.left+handRect.width/2;
 const y=handRect.top+handRect.height/2;
 if(state.type==="sentence"){
+// De regelvinger doet pas mee nadat hij daadwerkelijk versleept is.
+if(!state.activated)return;
 let target=null;
 let nearestVerticalDistance=Infinity;
 poemElement.querySelectorAll(".poem-sentence").forEach(sentence=>{
@@ -484,7 +486,10 @@ moveHand(state,event.clientX,event.clientY);
 state.element.addEventListener("pointermove",event=>{
 if(!state.dragging||state.pointerId!==event.pointerId)return;
 event.preventDefault();
-if(Math.hypot(event.clientX-state.startX,event.clientY-state.startY)>8)state.moved=true;
+if(Math.hypot(event.clientX-state.startX,event.clientY-state.startY)>8){
+state.moved=true;
+if(state.type==="sentence")state.activated=true;
+}
 moveHand(state,event.clientX,event.clientY);
 });
 function finishPointer(event){
@@ -509,129 +514,174 @@ openNoteModal();
 }
 
 function openAccessModal(){
-document.getElementById("accessStatus").textContent="";
 document.getElementById("accessCode").value="";
+document.getElementById("accessStatus").textContent="";
 accessBackdrop.classList.add("visible");
-document.getElementById("accessCode").focus();
+setTimeout(()=>document.getElementById("accessCode").focus(),300);
 }
+
 function closeAccessModal(){accessBackdrop.classList.remove("visible")}
 document.getElementById("accessCancel").addEventListener("click",closeAccessModal);
 document.getElementById("accessForm").addEventListener("submit",event=>{
 event.preventDefault();
-const code=document.getElementById("accessCode").value;
+const code=document.getElementById("accessCode").value.trim();
 if(!code)return;
 localStorage.setItem(ACCESS_STORAGE_KEY,code);
 closeAccessModal();
 openNoteModal();
 });
 
-function openNoteModal(){
-document.getElementById("notePoemTitle").textContent=selectedPoemTitle;
-document.getElementById("notePassage").textContent=selectedPassage;
-document.getElementById("noteText").value="";
-document.getElementById("noteStatus").textContent="";
-document.getElementById("noteSave").disabled=true;
-document.getElementById("noteEditCancel").hidden=true;
-editingNoteRow=null;
-selectedPerson="";
-document.querySelectorAll(".person-choice").forEach(button=>{button.classList.remove("selected");button.setAttribute("aria-pressed","false")});
-renderSavedNotes();
-noteBackdrop.classList.add("visible");
-}
-function closeNoteModal(){noteBackdrop.classList.remove("visible")}
-document.getElementById("noteCancel").addEventListener("click",closeNoteModal);
-document.getElementById("noteText").addEventListener("input",event=>{
-document.getElementById("noteSave").disabled=!event.target.value.trim()||!selectedPerson;
-});
-document.querySelectorAll(".person-choice").forEach(button=>{
-button.addEventListener("click",()=>{
-selectedPerson=button.dataset.person;
-document.querySelectorAll(".person-choice").forEach(choice=>{choice.classList.toggle("selected",choice===button);choice.setAttribute("aria-pressed",choice===button?"true":"false")});
-document.getElementById("noteSave").disabled=!document.getElementById("noteText").value.trim();
-});
-});
 function renderSavedNotes(){
 const container=document.getElementById("savedNotes");
 container.innerHTML="";
-const notes=notesByPassage[normalizePassage(selectedPassage)]||[];
-if(!notes.length){container.innerHTML='<p class="saved-notes-empty">Nog geen aantekeningen bij deze passage.</p>';return}
+const key=normalizePassage(selectedPassage);
+const notes=notesByPassage[key]||[];
+if(!notes.length){
+const empty=document.createElement("p");
+empty.className="saved-notes-empty";
+empty.textContent="Er zijn nog geen aantekeningen bij deze passage.";
+container.appendChild(empty);
+return;
+}
 notes.forEach(note=>{
 const item=document.createElement("div");
-const person=String(note.persoon||"");
+const person=String(note.persoon||"").trim();
 const personClass=person.toLowerCase()==="sanne"?"sanne":person.toLowerCase()==="ramon"?"ramon":"unknown";
 item.className="saved-note "+personClass;
-const personLabel=document.createElement("span");personLabel.className="saved-note-person";personLabel.textContent=person||"Onbekend";
-const text=document.createElement("div");text.textContent=note.aantekening||"";
-const date=document.createElement("span");date.className="saved-note-date";date.textContent=note.datum||"";
-item.appendChild(personLabel);item.appendChild(text);item.appendChild(date);
-if(person===selectedPerson){
-const tools=document.createElement("div");tools.className="saved-note-tools";
-const edit=document.createElement("button");edit.type="button";edit.textContent="Wijzigen";
-edit.addEventListener("click",()=>{
-editingNoteRow=note.row;
-document.getElementById("noteText").value=note.aantekening||"";
-document.getElementById("noteSave").disabled=!document.getElementById("noteText").value.trim();
-document.getElementById("noteEditCancel").hidden=false;
-document.getElementById("noteStatus").textContent="Je wijzigt je eigen aantekening.";
-});
-const remove=document.createElement("button");remove.type="button";remove.textContent="Verwijderen";
-remove.addEventListener("click",()=>deleteNote(note.row));
-tools.appendChild(edit);tools.appendChild(remove);item.appendChild(tools);
+const personLabel=document.createElement("span");
+personLabel.className="saved-note-person";
+personLabel.textContent=person||"Eerder opgeslagen";
+const text=document.createElement("div");
+text.textContent=note.aantekening||"";
+const date=document.createElement("span");
+date.className="saved-note-date";
+date.textContent=note.datum||"";
+item.appendChild(personLabel);
+item.appendChild(text);
+if(note.datum)item.appendChild(date);
+if(selectedPerson&&person===selectedPerson&&note.row){
+const tools=document.createElement("div");
+tools.className="saved-note-tools";
+const edit=document.createElement("button");
+edit.type="button";edit.textContent="Wijzigen";
+edit.addEventListener("click",()=>startEditingNote(note));
+const remove=document.createElement("button");
+remove.type="button";remove.textContent="Verwijderen";
+remove.addEventListener("click",()=>deleteNote(note));
+tools.append(edit,remove);
+item.appendChild(tools);
 }
 container.appendChild(item);
 });
 }
-document.getElementById("noteEditCancel").addEventListener("click",()=>{
-editingNoteRow=null;
-document.getElementById("noteText").value="";
-document.getElementById("noteEditCancel").hidden=true;
-document.getElementById("noteSave").disabled=true;
-document.getElementById("noteStatus").textContent="";
+
+function setSelectedPerson(person){
+selectedPerson=person;
+document.querySelectorAll(".person-choice").forEach(button=>{
+const selected=button.dataset.person===person;
+button.classList.toggle("selected",selected);
+button.setAttribute("aria-pressed",selected?"true":"false");
 });
-async function sendNote(data){
-const formData=new URLSearchParams();
-Object.keys(data).forEach(key=>formData.set(key,data[key]));
-formData.set("token",localStorage.getItem(ACCESS_STORAGE_KEY)||"");
-try{
-await fetch(NOTES_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:formData.toString()});
-return true;
-}catch(error){console.error(error);return false}
-}
-document.getElementById("noteForm").addEventListener("submit",async event=>{
-event.preventDefault();
-const text=document.getElementById("noteText").value.trim();
-if(!text||!selectedPerson)return;
-const save=document.getElementById("noteSave");
-save.disabled=true;
-document.getElementById("noteStatus").textContent="Bezig met bewaren...";
-const data={action:editingNoteRow?"update":"create",gedicht:selectedPoemTitle,passage:selectedPassage,aantekening:text,persoon:selectedPerson};
-if(editingNoteRow)data.row=String(editingNoteRow);
-const success=await sendNote(data);
-if(success){
-document.getElementById("noteStatus").textContent="De aantekening is verzonden. De lijst wordt bijgewerkt.";
-editingNoteRow=null;
-document.getElementById("noteText").value="";
-document.getElementById("noteEditCancel").hidden=true;
-setTimeout(loadNotesForCurrentPoem,1200);
-}else{
-document.getElementById("noteStatus").textContent="Verzenden is niet gelukt. Probeer het opnieuw.";
-save.disabled=false;
-}
-});
-async function deleteNote(row){
-if(!confirm("Weet je zeker dat je deze aantekening wilt verwijderen?"))return;
-document.getElementById("noteStatus").textContent="Bezig met verwijderen...";
-const success=await sendNote({action:"delete",gedicht:selectedPoemTitle,row:String(row),persoon:selectedPerson});
-if(success){
-document.getElementById("noteStatus").textContent="De aantekening is verwijderd.";
-setTimeout(loadNotesForCurrentPoem,1200);
-}else{
-document.getElementById("noteStatus").textContent="Verwijderen is niet gelukt.";
-}
+document.getElementById("noteSave").disabled=!person;
+renderSavedNotes();
 }
 
+document.querySelectorAll(".person-choice").forEach(button=>button.addEventListener("click",()=>setSelectedPerson(button.dataset.person)));
+
+function resetNoteEditor(){
+editingNoteRow=null;
+document.getElementById("noteText").value="";
+document.getElementById("noteText").placeholder="Schrijf hier een nieuwe aantekening...";
+document.getElementById("noteSave").textContent="Bewaren";
+document.getElementById("noteEditCancel").hidden=true;
+document.getElementById("noteStatus").textContent="";
+}
+
+function openNoteModal(){
+document.getElementById("notePoemTitle").textContent=selectedPoemTitle;
+document.getElementById("notePassage").textContent=selectedPassage;
+resetNoteEditor();
+setSelectedPerson("");
+renderSavedNotes();
+document.getElementById("noteSave").disabled=true;
+noteBackdrop.classList.add("visible");
+}
+
+function startEditingNote(note){
+if(!selectedPerson||note.persoon!==selectedPerson)return;
+editingNoteRow=Number(note.row);
+document.getElementById("noteText").value=note.aantekening||"";
+document.getElementById("noteText").placeholder="Pas je aantekening aan...";
+document.getElementById("noteSave").textContent="Wijziging bewaren";
+document.getElementById("noteEditCancel").hidden=false;
+document.getElementById("noteStatus").textContent="Je wijzigt je eigen aantekening.";
+document.getElementById("noteText").focus();
+}
+
+document.getElementById("noteEditCancel").addEventListener("click",resetNoteEditor);
+
+async function sendNoteAction(action,note){
+const token=localStorage.getItem(ACCESS_STORAGE_KEY);
+const formData=new URLSearchParams();
+formData.append("action",action);
+formData.append("token",token||"");
+formData.append("persoon",selectedPerson);
+formData.append("row",String(note.row));
+await fetch(NOTES_URL,{method:"POST",mode:"no-cors",body:formData});
+}
+
+async function deleteNote(note){
+if(!selectedPerson||note.persoon!==selectedPerson)return;
+if(!window.confirm("Wil je deze eigen aantekening definitief verwijderen?"))return;
+const status=document.getElementById("noteStatus");
+status.textContent="Aantekening wordt verwijderd...";
+try{
+await sendNoteAction("delete",note);
+status.textContent="Verwijderverzoek verzonden.";
+setTimeout(loadNotesForCurrentPoem,1200);
+}catch(error){status.textContent="Verwijderen is niet gelukt. Probeer opnieuw."}
+}
+
+function closeNoteModal(){noteBackdrop.classList.remove("visible")}
+document.getElementById("noteCancel").addEventListener("click",closeNoteModal);
+
+document.getElementById("noteForm").addEventListener("submit",async event=>{
+event.preventDefault();
+const noteText=document.getElementById("noteText").value.trim();
+const token=localStorage.getItem(ACCESS_STORAGE_KEY);
+const statusElement=document.getElementById("noteStatus");
+const saveButton=document.getElementById("noteSave");
+if(!token){closeNoteModal();openAccessModal();return}
+if(!selectedPerson){statusElement.textContent="Kies eerst Sanne of Ramon.";return}
+if(!noteText){statusElement.textContent="Schrijf eerst een aantekening.";return}
+saveButton.disabled=true;
+statusElement.textContent=editingNoteRow?"Wijziging wordt opgeslagen...":"Aantekening wordt opgeslagen...";
+const formData=new URLSearchParams();
+formData.append("action",editingNoteRow?"update":"create");
+formData.append("token",token);
+formData.append("gedicht",selectedPoemTitle);
+formData.append("passage",selectedPassage);
+formData.append("aantekening",noteText);
+formData.append("persoon",selectedPerson);
+if(editingNoteRow)formData.append("row",String(editingNoteRow));
+try{
+await fetch(NOTES_URL,{method:"POST",mode:"no-cors",body:formData});
+statusElement.textContent=editingNoteRow?"Wijzigverzoek verzonden.":"Opslagverzoek verzonden.";
+resetNoteEditor();
+saveButton.disabled=!selectedPerson;
+setTimeout(loadNotesForCurrentPoem,1200);
+}catch(error){
+console.error("Fout bij opslaan van aantekening:",error);
+statusElement.textContent="Opslaan is niet gelukt. Controleer je internetverbinding.";
+saveButton.disabled=!selectedPerson;
+}
+});
+
+accessBackdrop.addEventListener("click",event=>{if(event.target===accessBackdrop)closeAccessModal()});
+noteBackdrop.addEventListener("click",event=>{if(event.target===noteBackdrop)closeNoteModal()});
+document.addEventListener("keydown",event=>{if(event.key==="Escape"){closeAccessModal();closeNoteModal()}});
 loadPoems();
-setInterval(loadPoems,300000);
+setInterval(loadPoems,5*60*1000);
 </script>
 </body>
 </html>
