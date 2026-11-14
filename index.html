@@ -12,7 +12,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&display=swap" rel="stylesheet">
 
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 
@@ -75,22 +75,28 @@ h1 {
 }
 
 .poem-paragraph {
+    position: relative;
     margin: 0 0 1.15em;
     font-size: inherit;
     font-weight: 400;
     line-height: inherit;
     color: #302c26;
+    transform: scale(1);
+    transform-origin: left center;
     transition:
-        font-size 0.18s ease,
-        font-weight 0.18s ease,
-        color 0.18s ease;
+        transform 420ms cubic-bezier(0.22, 1, 0.36, 1),
+        font-weight 350ms ease,
+        color 400ms ease,
+        text-shadow 400ms ease;
+    will-change: transform;
 }
 
 .poem-paragraph.active {
-    font-size: 1.24em;
+    transform: scale(1.09);
     font-weight: 600;
     color: #211b14;
-    line-height: 1.35;
+    text-shadow: 0 0 0.01px #211b14;
+    z-index: 2;
 }
 
 .navigation {
@@ -115,10 +121,16 @@ button {
     padding: 8px 0;
 }
 
+.nav-button:active {
+    color: #302c26;
+}
+
 .counter {
     font-size: 17px;
     color: #887e70;
 }
+
+/* Ronde hitbox en hamsa-aanwijzer */
 
 .hand {
     position: fixed;
@@ -126,22 +138,20 @@ button {
     top: 105px;
     right: max(24px, calc((100vw - 770px) / 2));
 
-    width: 54px;
-    height: 54px;
+    width: 58px;
+    height: 58px;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    border: 1px solid #bfb3a2;
+    border: 1px solid #c9beae;
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.94);
 
-    color: #756b5e;
-    font-size: 32px;
-    line-height: 1;
-
-    box-shadow: 0 2px 8px rgba(50, 40, 25, 0.12);
+    box-shadow:
+        0 2px 8px rgba(50, 40, 25, 0.10),
+        inset 0 0 0 3px rgba(201, 190, 174, 0.10);
 
     cursor: grab;
     touch-action: none;
@@ -150,21 +160,36 @@ button {
     -webkit-appearance: none;
     appearance: none;
     padding: 0;
-}
 
-.hand-symbol {
-    display: block;
-    transform: rotate(-25deg);
-    pointer-events: none;
+    transition:
+        width 180ms ease,
+        height 180ms ease,
+        box-shadow 180ms ease,
+        background 180ms ease;
 }
 
 .hand.dragging {
-    width: 58px;
-    height: 58px;
-    font-size: 35px;
+    width: 62px;
+    height: 62px;
     cursor: grabbing;
     background: #fffdf9;
-    box-shadow: 0 4px 14px rgba(50, 40, 25, 0.19);
+
+    box-shadow:
+        0 4px 15px rgba(50, 40, 25, 0.16),
+        inset 0 0 0 3px rgba(201, 190, 174, 0.16);
+}
+
+.hand svg {
+    width: 39px;
+    height: 39px;
+    display: block;
+    overflow: visible;
+    pointer-events: none;
+}
+
+.hand.dragging svg {
+    width: 42px;
+    height: 42px;
 }
 
 .hand-hint {
@@ -200,11 +225,6 @@ button {
         line-height: 1.45;
     }
 
-    .poem-paragraph.active {
-        font-size: 1.24em;
-        line-height: 1.35;
-    }
-
     header {
         margin-bottom: 48px;
     }
@@ -216,6 +236,18 @@ button {
     .hand {
         top: 76px;
         right: 16px;
+    }
+
+    .poem-paragraph.active {
+        transform: scale(1.07);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .poem-paragraph,
+    .hand,
+    .hand svg {
+        transition: none !important;
     }
 }
 </style>
@@ -232,7 +264,9 @@ button {
 
     <main>
         <div class="poem" id="poem"></div>
-        <div class="hand-hint">Sleep het handje over het gedicht om tekst te vergroten</div>
+        <div class="hand-hint">
+            Sleep het handje over het gedicht om tekst te vergroten
+        </div>
     </main>
 
     <div class="navigation">
@@ -243,8 +277,72 @@ button {
 
 </div>
 
-<button type="button" class="hand" id="hand" aria-label="Sleep om tekst te vergroten">
-    <span class="hand-symbol">☚</span>
+<button
+    type="button"
+    class="hand"
+    id="hand"
+    aria-label="Sleep om tekst te vergroten"
+>
+    <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+
+        <g transform="rotate(-25 32 32)"
+           fill="none"
+           stroke="#756b5e"
+           stroke-linecap="round"
+           stroke-linejoin="round">
+
+            <!-- Wijzende vinger en hand -->
+            <path
+                d="M27 48
+                   C25 46 23 44 21 42
+                   L13 34
+                   C11 32 11 29 13 27
+                   C15 25 18 25 20 27
+                   L27 33
+                   L27 13
+                   C27 10 29 8 32 8
+                   C35 8 37 10 37 13
+                   L37 29
+                   L42 25
+                   C44 23 47 24 48 26
+                   C50 28 49 31 47 33
+                   L42 39
+                   L40 46
+                   C39 49 36 52 32 52
+                   L29 52
+                   C28 52 27 50 27 48 Z"
+                stroke-width="1.8"
+            />
+
+            <!-- Binnenlijn handpalm -->
+            <path
+                d="M27 37 C30 35 34 35 38 37"
+                stroke-width="1.1"
+            />
+
+            <!-- Klein decoratief oog -->
+            <path
+                d="M29 43
+                   C31 40 35 40 37 43
+                   C35 46 31 46 29 43 Z"
+                stroke-width="1.1"
+            />
+            <circle cx="33" cy="43" r="1.2"
+                    fill="#756b5e" stroke="none"/>
+
+            <!-- Kleine ornamenten -->
+            <path d="M32 18 L32 22" stroke-width="1"/>
+            <path d="M30 20 L34 20" stroke-width="1"/>
+            <path d="M24 38 L21 35" stroke-width="1"/>
+            <path d="M40 32 L44 29" stroke-width="1"/>
+
+            <!-- Kleine sierstipjes -->
+            <circle cx="24" cy="46" r="0.8"
+                    fill="#a09688" stroke="none"/>
+            <circle cx="40" cy="45" r="0.8"
+                    fill="#a09688" stroke="none"/>
+        </g>
+    </svg>
 </button>
 
 <script>
@@ -304,7 +402,8 @@ async function loadPoems() {
 function show(direction) {
     if (!poems.length) return;
 
-    currentIndex = (currentIndex + direction + poems.length) % poems.length;
+    currentIndex =
+        (currentIndex + direction + poems.length) % poems.length;
 
     const item = poems[currentIndex];
 
@@ -340,8 +439,7 @@ function clearMagnification() {
     });
 }
 
-// Meet de afstand tussen de cirkel en de alinea.
-// Een alinea wordt actief zodra de cirkel haar raakt.
+// Bepaal of de ronde hitbox een alinea raakt.
 function circleTouchesRectangle(cx, cy, radius, rect) {
     const nearestX = Math.max(rect.left, Math.min(cx, rect.right));
     const nearestY = Math.max(rect.top, Math.min(cy, rect.bottom));
@@ -353,7 +451,8 @@ function circleTouchesRectangle(cx, cy, radius, rect) {
 }
 
 function magnifyAt(cx, cy) {
-    const radius = 27;
+    const radius = 29;
+
     const paragraphs = Array.from(
         poemElement.querySelectorAll(".poem-paragraph")
     );
@@ -382,13 +481,8 @@ function magnifyAt(cx, cy) {
 }
 
 let dragging = false;
-let lastX = 0;
-let lastY = 0;
 
 function moveHand(x, y) {
-    lastX = x;
-    lastY = y;
-
     hand.style.left = (x - hand.offsetWidth / 2) + "px";
     hand.style.top = (y - hand.offsetHeight / 2) + "px";
     hand.style.right = "auto";
@@ -396,6 +490,7 @@ function moveHand(x, y) {
     magnifyAt(x, y);
 }
 
+// iPad en andere touchschermen
 hand.addEventListener("touchstart", event => {
     event.preventDefault();
 
@@ -420,6 +515,12 @@ document.addEventListener("touchend", () => {
     hand.classList.remove("dragging");
 });
 
+document.addEventListener("touchcancel", () => {
+    dragging = false;
+    hand.classList.remove("dragging");
+});
+
+// MacBook en andere muisbediening
 hand.addEventListener("mousedown", event => {
     event.preventDefault();
 
@@ -440,8 +541,10 @@ document.addEventListener("mouseup", () => {
     hand.classList.remove("dragging");
 });
 
+// Eerste gedicht laden
 loadPoems();
 
+// Iedere vijf minuten controleren op nieuwe gedichten
 setInterval(loadPoems, 5 * 60 * 1000);
 </script>
 
