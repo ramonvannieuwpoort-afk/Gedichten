@@ -120,14 +120,14 @@ button { font-family: inherit; }
     color: #887e70;
 }
 
-/* Twee afzonderlijke hamsahandjes */
+/* Compacte handjes in de zijmarges */
 
 .hand {
     position: fixed;
     z-index: 9999;
     top: 105px;
-    width: 58px;
-    height: 58px;
+    width: 42px;
+    height: 42px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -151,21 +151,22 @@ button { font-family: inherit; }
         background 180ms ease;
 }
 
+/* Positie binnen de zijmarges van de pagina */
+
 #hand1 {
-    right: max(24px, calc((100vw - 770px) / 2));
+    left: max(8px, calc((100vw - 900px) / 2 + 8px));
 }
 
 #hand2 {
-    left: max(24px, calc((100vw - 770px) / 2));
+    right: max(8px, calc((100vw - 900px) / 2 + 8px));
 }
 
-/* Brede, kleurrijke Andean binnenring.
-   De kleurvlakken vervagen geleidelijk naar de buitenrand. */
+/* Brede kleurrijke Andean binnenring met zachte buitenrand */
 
 .hand::before {
     content: "";
     position: absolute;
-    inset: 2px;
+    inset: 1px;
     border-radius: 50%;
 
     background: repeating-conic-gradient(
@@ -203,15 +204,15 @@ button { font-family: inherit; }
 .hand::after {
     content: "";
     position: absolute;
-    inset: 7px;
+    inset: 5px;
     border: 1px solid rgba(164,119,66,0.45);
     border-radius: 50%;
     pointer-events: none;
 }
 
 .hand.dragging {
-    width: 62px;
-    height: 62px;
+    width: 46px;
+    height: 46px;
     cursor: grabbing;
     background: #fffdf9;
     box-shadow: 0 4px 15px rgba(50,40,25,0.16);
@@ -220,16 +221,16 @@ button { font-family: inherit; }
 .hand svg {
     position: relative;
     z-index: 1;
-    width: 39px;
-    height: 39px;
+    width: 30px;
+    height: 30px;
     display: block;
     overflow: visible;
     pointer-events: none;
 }
 
 .hand.dragging svg {
-    width: 42px;
-    height: 42px;
+    width: 33px;
+    height: 33px;
 }
 
 .hand-hint {
@@ -265,12 +266,32 @@ button { font-family: inherit; }
 
     #hand1 {
         top: 76px;
-        right: 16px;
+        left: 3px;
     }
 
     #hand2 {
         top: 76px;
-        left: 16px;
+        right: 3px;
+    }
+
+    .hand {
+        width: 34px;
+        height: 34px;
+    }
+
+    .hand.dragging {
+        width: 38px;
+        height: 38px;
+    }
+
+    .hand svg {
+        width: 25px;
+        height: 25px;
+    }
+
+    .hand.dragging svg {
+        width: 28px;
+        height: 28px;
     }
 
     .poem-paragraph.active {
@@ -499,7 +520,7 @@ function updateMagnification() {
         paragraphs.forEach(paragraph => {
             const rect = paragraph.getBoundingClientRect();
 
-            if (circleTouchesRectangle(state.x, state.y, 29, rect)) {
+            if (circleTouchesRectangle(state.x, state.y, 21, rect)) {
                 const centerX = (rect.left + rect.right) / 2;
                 const centerY = (rect.top + rect.bottom) / 2;
                 const distance = Math.hypot(
