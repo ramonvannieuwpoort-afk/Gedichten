@@ -21,25 +21,33 @@
 }
 
 html {
-  background: #eee9df;
+  background: #f7f4ed;
   scroll-behavior: smooth;
 }
 
 body {
   margin: 0;
-  background: #eee9df;
+  background: #f7f4ed;
   color: #302c26;
   font-family: 'Cormorant Garamond', Georgia, serif;
   -webkit-font-smoothing: antialiased;
 }
 
+/* De pagina */
 .page {
   max-width: 900px;
   margin: 0 auto;
   padding: 105px 65px 65px;
   min-height: 100vh;
+  background: linear-gradient(
+    to bottom,
+    #f7f4ed 0px,
+    #f7f4ed 180px,
+    #eee9df 300px
+  );
 }
 
+/* Titel en dichter */
 header {
   margin-bottom: 58px;
   padding-bottom: 25px;
@@ -63,6 +71,7 @@ h1 {
   text-align: center;
 }
 
+/* Gedicht */
 .poem {
   font-size: 25px;
   font-weight: 400;
@@ -73,6 +82,7 @@ h1 {
   text-align: left;
 }
 
+/* Navigatie */
 .navigation {
   margin-top: 70px;
   padding-top: 20px;
@@ -109,9 +119,16 @@ button:disabled {
   padding-top: 30px;
 }
 
+/* Kleine schermen */
 @media (max-width: 600px) {
   .page {
     padding: 75px 27px 50px;
+    background: linear-gradient(
+      to bottom,
+      #f7f4ed 0px,
+      #f7f4ed 150px,
+      #eee9df 260px
+    );
   }
 
   h1 {
