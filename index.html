@@ -32,11 +32,19 @@ button{font-family:inherit}
 .hand{position:fixed;z-index:9999;top:105px;width:42px;height:42px;display:flex;align-items:center;justify-content:center;border:0;border-radius:50%;background:transparent;box-shadow:0 2px 8px rgba(50,40,25,.14);cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-appearance:none;appearance:none;padding:0;transition:width 180ms ease,height 180ms ease,box-shadow 180ms ease}
 #hand1{left:max(8px,calc((100vw - 900px)/2 + 8px))}
 #hand2{right:max(8px,calc((100vw - 900px)/2 + 8px))}
+#sentenceHand{top:158px;left:max(8px,calc((100vw - 900px)/2 + 8px))}
+#wordHand{top:158px;right:max(8px,calc((100vw - 900px)/2 + 8px))}
 .hand-icon{width:100%;height:100%;display:block;overflow:visible;pointer-events:none;transform-origin:50% 50%}
 #hand1 .hand-icon{transform:rotate(60deg)}
 #hand2 .hand-icon{transform:rotate(-60deg)}
+.finger-icon{width:100%;height:100%;display:block;pointer-events:none;overflow:visible}
 .hand.dragging{width:46px;height:46px;cursor:grabbing;box-shadow:0 4px 15px rgba(50,40,25,.2)}
 .hand-hint{margin-top:18px;font-size:15px;color:#a09688;text-align:center;font-style:italic}
+.poem-sentence{border-radius:3px;transition:background-color 180ms ease,box-shadow 180ms ease}
+.poem-sentence.sentence-active{background:rgba(255,190,70,.28);box-shadow:0 0 0 2px rgba(190,130,50,.16)}
+.poem-word{border-radius:2px;transition:background-color 160ms ease,box-shadow 160ms ease}
+.poem-word.word-active{background:rgba(38,183,190,.25);box-shadow:0 0 0 2px rgba(38,150,160,.15)}
+.poem-sentence.has-notes,.poem-word.has-notes{text-decoration:underline;text-decoration-color:#bda27b;text-decoration-thickness:1px;text-underline-offset:3px;cursor:pointer}
 .modal-backdrop{display:none;position:fixed;top:0;right:0;bottom:0;left:0;width:100%;height:100%;z-index:20000;background:rgba(35,30,24,.42);align-items:center;justify-content:center;padding:20px;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .modal-backdrop.visible{display:-webkit-box;display:-webkit-flex;display:flex}
 .modal{width:100%;max-width:460px;background:#f7f4ed;border:1px solid #d5cdbf;border-radius:4px;padding:30px;box-shadow:0 12px 40px rgba(35,30,24,.2);position:relative;margin:auto;flex-shrink:0}
@@ -80,8 +88,12 @@ header{margin-bottom:48px}
 .navigation{margin-top:55px}
 #hand1{top:76px;left:3px}
 #hand2{top:76px;right:3px}
+#sentenceHand{top:119px;left:3px}
+#wordHand{top:119px;right:3px}
 .hand{width:34px;height:34px}
 .hand.dragging{width:38px;height:38px}
+#sentenceHand,#wordHand{width:34px;height:34px}
+#sentenceHand.dragging,#wordHand.dragging{width:38px;height:38px}
 .hand svg{width:25px;height:25px}
 .hand.dragging svg{width:28px;height:28px}
 .poem-paragraph.active{transform:scale(1.07)}
@@ -99,7 +111,7 @@ header{margin-bottom:48px}
 </header>
 <main>
 <div class="poem" id="poem"></div>
-<div class="hand-hint">Sleep de handjes over het gedicht om twee passages te vergroten. Tik op een handje om een aantekening toe te voegen.</div>
+<div class="hand-hint">Sleep de bovenste handjes over het gedicht om passages te vergroten. Gebruik de linker vinger voor regels en de rechter vinger voor woorden. Tik op een handje om een aantekening toe te voegen.</div>
 </main>
 <div class="navigation">
 <button class="nav-button" id="previous">← Vorige</button>
@@ -110,6 +122,8 @@ header{margin-bottom:48px}
 
 <button type="button" class="hand" id="hand1" aria-label="Eerste Hamsa-hand"></button>
 <button type="button" class="hand" id="hand2" aria-label="Tweede Hamsa-hand"></button>
+<button type="button" class="hand" id="sentenceHand" aria-label="Wijzende vinger voor regels"></button>
+<button type="button" class="hand" id="wordHand" aria-label="Wijzende vinger voor woorden"></button>
 
 <div class="modal-backdrop" id="accessBackdrop">
 <div class="modal" role="dialog" aria-modal="true" aria-labelledby="accessTitle">
@@ -220,7 +234,19 @@ svg.innerHTML=`
 return svg;
 }
 
-document.querySelectorAll(".hand").forEach(hand=>hand.appendChild(buildHamsaIcon()));
+document.querySelectorAll("#hand1,#hand2").forEach(hand=>hand.appendChild(buildHamsaIcon()));
+
+function buildFingerIcon(direction){
+const svg=document.createElementNS("http://www.w3.org/2000/svg","svg");
+svg.setAttribute("viewBox","0 0 100 100");
+svg.setAttribute("class","finger-icon");
+svg.setAttribute("aria-hidden","true");
+const flip=direction==="left"?"translate(100 0) scale(-1 1)":"";
+svg.innerHTML=`<g transform="${flip}"><path d="M42 91 Q30 89 27 77 L18 52 Q15 43 22 40 Q29 37 33 45 L39 59 L39 18 Q39 8 48 8 Q57 8 57 18 L57 52 L61 43 Q65 35 72 39 Q79 43 74 52 L66 79 Q62 91 51 93Z" fill="#ffe12e" stroke="#352b2b" stroke-width="4" stroke-linejoin="round"/><path d="M42 17 Q48 11 54 17 L54 28 L42 28Z" fill="#ff4fa3"/><path d="M39 59 L57 59 L57 69 L39 69Z" fill="#13c9d5"/><path d="M29 78 Q47 87 65 78" fill="none" stroke="#8b5cf6" stroke-width="5" stroke-linecap="round"/><circle cx="48" cy="43" r="4" fill="#ff8a24" stroke="#352b2b" stroke-width="1.5"/></g>`;
+return svg;
+}
+document.getElementById("sentenceHand").appendChild(buildFingerIcon("left"));
+document.getElementById("wordHand").appendChild(buildFingerIcon("right"));
 
 const CSV_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vSyqrEB__RKjtVvARlIYLBkIdwVlXFh0PYBN615AgXk1RrlmrRzqFfV8r7DRWIuEbeRTeetKTBBWNBd/pub?gid=0&single=true&output=csv";
 const NOTES_URL="https://script.google.com/macros/s/AKfycbximcSly2Yp2TyiIzJWdNZ2gt5QcQ5Is9rf4ITK3SHQfMaWQH6NCAUGYMw3kgJvHl36kQ/exec";
@@ -236,10 +262,10 @@ const titleElement=document.getElementById("title");
 const authorElement=document.getElementById("author");
 const poemElement=document.getElementById("poem");
 const counterElement=document.getElementById("counter");
-const hands=[document.getElementById("hand1"),document.getElementById("hand2")];
+const hands=[document.getElementById("hand1"),document.getElementById("hand2"),document.getElementById("sentenceHand"),document.getElementById("wordHand")];
 const accessBackdrop=document.getElementById("accessBackdrop");
 const noteBackdrop=document.getElementById("noteBackdrop");
-const handStates=hands.map(hand=>({element:hand,dragging:false,pointerId:null,startX:0,startY:0,moved:false,x:null,y:null,target:null}));
+const handStates=hands.map((hand,index)=>({element:hand,type:index===2?"sentence":index===3?"word":"passage",dragging:false,pointerId:null,startX:0,startY:0,moved:false,x:null,y:null,target:null}));
 
 function findColumn(row,possibleNames){
 const keys=Object.keys(row);
@@ -284,9 +310,32 @@ document.head.appendChild(script);
 }
 
 function applyNoteHighlights(){
-poemElement.querySelectorAll(".poem-paragraph").forEach(paragraph=>{
-const key=normalizePassage(paragraph.textContent);
-paragraph.classList.toggle("has-notes",!!(notesByPassage[key]&&notesByPassage[key].length));
+poemElement.querySelectorAll(".poem-paragraph,.poem-sentence,.poem-word").forEach(element=>{
+const key=normalizePassage(element.textContent);
+element.classList.toggle("has-notes",!!(notesByPassage[key]&&notesByPassage[key].length));
+});
+}
+
+/* Elke zichtbare dichtregel wordt één afzonderlijk selecteerbare eenheid.
+   Woorden blijven daarbinnen afzonderlijk selecteerbaar. */
+function renderPoemParagraph(paragraph,text){
+const lines=text.split("\n");
+lines.forEach((line,lineIndex)=>{
+const sentence=document.createElement("span");
+sentence.className="poem-sentence";
+const wordPattern=/\S+/g;
+let wordMatch,wordLast=0;
+while((wordMatch=wordPattern.exec(line))!==null){
+if(wordMatch.index>wordLast)sentence.appendChild(document.createTextNode(line.slice(wordLast,wordMatch.index)));
+const word=document.createElement("span");
+word.className="poem-word";
+word.textContent=wordMatch[0];
+sentence.appendChild(word);
+wordLast=wordMatch.index+wordMatch[0].length;
+}
+if(wordLast<line.length)sentence.appendChild(document.createTextNode(line.slice(wordLast)));
+paragraph.appendChild(sentence);
+if(lineIndex<lines.length-1)paragraph.appendChild(document.createTextNode("\n"));
 });
 }
 
@@ -299,7 +348,7 @@ authorElement.textContent=item.author||"";
 poemElement.innerHTML="";
 const decodedPoem=String(item.poem||"").replace(/\\n/g,"\n");
 const paragraphs=decodedPoem.trim().split(/\n\s*\n/).filter(part=>part.trim());
-paragraphs.forEach(text=>{const paragraph=document.createElement("p");paragraph.className="poem-paragraph";paragraph.textContent=text.trimEnd();poemElement.appendChild(paragraph)});
+paragraphs.forEach(text=>{const paragraph=document.createElement("p");paragraph.className="poem-paragraph";renderPoemParagraph(paragraph,text.trimEnd());poemElement.appendChild(paragraph)});
 counterElement.textContent=(currentIndex+1)+" / "+poems.length;
 clearMagnification();
 notesByPassage={};
@@ -309,9 +358,14 @@ loadNotesForCurrentPoem();
 document.getElementById("previous").addEventListener("click",()=>show(-1));
 document.getElementById("next").addEventListener("click",()=>show(1));
 poemElement.addEventListener("click",event=>{
+const word=event.target.closest(".poem-word");
+const sentence=event.target.closest(".poem-sentence");
 const paragraph=event.target.closest(".poem-paragraph");
-if(!paragraph||!paragraph.classList.contains("has-notes"))return;
-selectedPassage=paragraph.textContent.trim();
+const target=word||sentence||paragraph;
+if(!target)return;
+const key=normalizePassage(target.textContent);
+if(!notesByPassage[key]||!notesByPassage[key].length)return;
+selectedPassage=target.textContent.trim();
 selectedPoemTitle=titleElement.textContent.trim();
 openNoteModal();
 });
@@ -331,9 +385,20 @@ return(dx*dx+dy*dy)<=radius*radius;
 function updateMagnification(){
 const paragraphs=Array.from(poemElement.querySelectorAll(".poem-paragraph"));
 const activeParagraphs=new Set();
+poemElement.querySelectorAll(".sentence-active,.word-active").forEach(el=>el.classList.remove("sentence-active","word-active"));
 handStates.forEach(state=>{
 state.target=null;
 if(state.x===null||state.y===null)return;
+if(state.type==="sentence"||state.type==="word"){
+const hit=document.elementFromPoint(state.x,state.y);
+const selector=state.type==="sentence"?".poem-sentence":".poem-word";
+const target=hit&&hit.closest?hit.closest(selector):null;
+if(target&&poemElement.contains(target)){
+state.target=target;
+target.classList.add(state.type==="sentence"?"sentence-active":"word-active");
+}
+return;
+}
 let target=null,nearestDistance=Infinity;
 paragraphs.forEach(paragraph=>{
 const rect=paragraph.getBoundingClientRect();
@@ -341,10 +406,10 @@ if(circleTouchesRectangle(state.x,state.y,21,rect)){
 const centerX=(rect.left+rect.right)/2;
 const centerY=(rect.top+rect.bottom)/2;
 const distance=Math.hypot(state.x-centerX,state.y-centerY);
-if(distance<nearestDistance){nearestDistance=distance;target=paragraph}
+if(distance<nearestDistance){nearestDistance=distance;target=paragraph;}
 }
 });
-if(target){state.target=target;activeParagraphs.add(target)}
+if(target){state.target=target;activeParagraphs.add(target);}
 });
 paragraphs.forEach(paragraph=>paragraph.classList.toggle("active",activeParagraphs.has(paragraph)));
 }
@@ -362,7 +427,11 @@ handStates.forEach(state=>{
 state.element.addEventListener("pointerdown",event=>{
 if(event.button!==undefined&&event.button!==0)return;
 event.preventDefault();
-state.dragging=true;state.pointerId=event.pointerId;state.startX=event.clientX;state.startY=event.clientY;state.moved=false;
+state.dragging=true;
+state.pointerId=event.pointerId;
+state.startX=event.clientX;
+state.startY=event.clientY;
+state.moved=false;
 state.element.classList.add("dragging");
 if(state.element.setPointerCapture)state.element.setPointerCapture(event.pointerId);
 moveHand(state,event.clientX,event.clientY);
@@ -375,13 +444,17 @@ moveHand(state,event.clientX,event.clientY);
 });
 function finishPointer(event){
 if(!state.dragging||state.pointerId!==event.pointerId)return;
-state.dragging=false;state.pointerId=null;state.element.classList.remove("dragging");
+state.dragging=false;
+state.pointerId=null;
+state.element.classList.remove("dragging");
 if(!state.moved)openNoteForHand(state);
 }
 state.element.addEventListener("pointerup",finishPointer);
 state.element.addEventListener("pointercancel",event=>{
 if(state.pointerId!==event.pointerId)return;
-state.dragging=false;state.pointerId=null;state.element.classList.remove("dragging");
+state.dragging=false;
+state.pointerId=null;
+state.element.classList.remove("dragging");
 });
 });
 
