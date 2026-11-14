@@ -1,99 +1,111 @@
 
 <!DOCTYPE html>
-<html lang="nl">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>Gedichten</title>
+<title>October Salmon — Ted Hughes</title>
 
-<!-- iPad: openen als zelfstandige webapp -->
+<!-- iPad standalone display -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Gedichten">
+<meta name="apple-mobile-web-app-title" content="Poetry">
 
-<!-- Typografie -->
+<!-- Typography -->
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&display=swap" rel="stylesheet">
 
 <style>
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: #eee9df;
+  scroll-behavior: smooth;
+}
 
 body {
   margin: 0;
-  background: #f4f0e8;
-  color: #25231f;
+  background: #eee9df;
+  color: #302c26;
   font-family: 'Cormorant Garamond', Georgia, serif;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 8vw;
+  -webkit-font-smoothing: antialiased;
 }
 
-main {
-  max-width: 780px;
-  width: 100%;
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 75px 65px 110px;
 }
 
-.title {
-  font-size: 18px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  margin-bottom: 45px;
-  color: #777064;
+header {
+  margin-bottom: 58px;
+  padding-bottom: 25px;
+  border-bottom: 1px solid #d5cdbf;
 }
 
-.poem {
-  font-size: clamp(25px, 4vw, 42px);
-  line-height: 1.42;
-  white-space: pre-line;
+h1 {
+  font-size: 43px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  margin: 0 0 10px;
+  line-height: 1.1;
 }
 
 .author {
-  margin-top: 55px;
-  font-size: 23px;
-  color: #777064;
+  font-size: 21px;
+  font-weight: 400;
+  font-style: italic;
+  color: #887e70;
 }
 
-nav {
-  margin-top: 65px;
-  display: flex;
-  justify-content: space-between;
+.poem {
+  font-size: 25px;
+  font-weight: 400;
+  line-height: 1.48;
+  white-space: pre-line;
+  letter-spacing: 0.05px;
 }
 
-button {
-  background: none;
-  border: 0;
-  color: #777064;
-  font: 18px Georgia, serif;
-  padding: 12px;
+footer {
+  margin-top: 85px;
+  border-top: 1px solid #d5cdbf;
+  padding-top: 20px;
+  font-size: 14px;
+  letter-spacing: 2px;
+  color: #a69b8c;
+  text-transform: uppercase;
 }
 
+@media (max-width: 600px) {
+  .page {
+    padding: 45px 27px 80px;
+  }
+
+  h1 {
+    font-size: 36px;
+  }
+
+  .poem {
+    font-size: 22px;
+    line-height: 1.45;
+  }
+}
 </style>
 </head>
 
 <body>
 
-<main>
-  <div class="title" id="title"></div>
-  <div class="poem" id="poem"></div>
-  <div class="author" id="author"></div>
+<div class="page">
 
-  <nav>
-    <button onclick="show(-1)">← Vorige</button>
-    <button onclick="show(1)">Volgende →</button>
-  </nav>
-</main>
+<header>
+  <h1>October Salmon</h1>
+  <div class="author">Ted Hughes</div>
+</header>
 
-<script>
-
-const poems = [
-  {
-    title: "October Salmon",
-    author: "Ted Hughes",
-    text: 
-
-He’s lying in poor water, a yard or so depth of poor safety,
+<article class="poem" id="poem">
+He's lying in poor water, a yard or so depth of poor safety,
 Maybe only two feet under the no-protection of an outleaning
 small oak,
 Half-under a tangle of brambles.
@@ -105,10 +117,10 @@ In his graveyard pool.
 About six pounds weight,
 Four years old at most, and hardly a winter at sea –
 But already a veteran,
-Already a death-patched hero. So quickly it’s over!
+Already a death-patched hero. So quickly it's over!
 
 So briefly he roamed the gallery of marvels!
-Such sweet months, so richly embroidered into earth’s
+Such sweet months, so richly embroidered into earth's
 beauty-dress,
 Her life-robe –
 Now worn out with her tirelessness, her insatiable quest,
@@ -137,7 +149,7 @@ The flow will not let up for a minute.
 What change! from that covenant of Polar Light
 To this shroud in a gutter!
 What a death-in-life – to be his own spectre!
-His living body become death’s puppet,
+His living body become death's puppet,
 Dolled by death in her crude paints and drapes
 He haunts his own staring vigil
 And suffers the subjection, and the dumbness,
@@ -171,29 +183,14 @@ All this, too, is stitched into the torn richness,
 The epic poise
 That holds him so steady in his wounds, so loyal to his doom,
 so patient
-In the machinery of heaven."
-  },
-  {
-    title: "Gedicht 2",
-    author: "Dichter",
-    text: "Hier komt een tweede gedicht.\n\nOok dit kun je vervangen."
-  }
-];
+In the machinery of heaven.
+</article>
 
-let current = 0;
+<footer>
+A poem by Ted Hughes
+</footer>
 
-function show(direction) {
-  current = (current + direction + poems.length) % poems.length;
+</div>
 
-  const p = poems[current];
-
-  document.getElementById("title").textContent = p.title;
-  document.getElementById("poem").textContent = p.text;
-  document.getElementById("author").textContent = "— " + p.author;
-}
-
-show(0);
-
-</script>
 </body>
 </html>
