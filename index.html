@@ -24,7 +24,7 @@ h1{font-size:43px;font-weight:500;line-height:1.1;margin:0 0 8px}
 .poem-paragraph{white-space:pre-wrap}
 .poem-paragraph{position:relative;margin:0 0 1.15em;font-size:inherit;font-weight:400;line-height:inherit;color:#302c26;transform:scale(1);transform-origin:left center;transition:transform 420ms cubic-bezier(.22,1,.36,1),font-weight 350ms ease,color 400ms ease,text-shadow 400ms ease;will-change:transform}
 .poem-paragraph.active{transform:scale(1.09);font-weight:600;color:#211b14;text-shadow:0 0 .01px #211b14;z-index:2}
-.poem-paragraph.has-notes{background:linear-gradient(to right,rgba(182,154,112,.20),rgba(182,154,112,.07));border-left:2px solid #bda27b;padding-left:9px;margin-left:-11px;cursor:pointer;border-radius:2px}
+.poem-paragraph.has-notes{background:linear-gradient(to right,rgba(182,154,112,.20),rgba(182,154,112,.07));border-left:2px solid #bda27b;padding-left:9px;margin-left:-11px;cursor:pointer; border-radius:2px}
 .navigation{display:flex;justify-content:space-between;align-items:center;margin-top:70px;padding-top:20px;border-top:1px solid #d5cdbf}
 button{font-family:inherit}
 .nav-button{border:0;background:none;color:#887e70;font-size:20px;cursor:pointer;padding:8px 0}
@@ -288,26 +288,22 @@ svg.innerHTML=`
   <path d="M31 84 Q47 91 61 84" fill="none" stroke="#8b5cf6" stroke-width="4"/>
   <circle cx="48" cy="53" r="4" fill="#a8e63f" stroke-width="1.5"/>
   <circle cx="48" cy="53" r="1.5" fill="#352b2b" stroke="none"/>
-  <path d="M21 57 Q25 54 29 60" fill="none" stroke="#ffe12e" stroke-width="3"/>
-  <path d="M65 58 Q70 52 75 55" fill="none" stroke="#ff8a24" stroke-width="3"/>
 </g>`;
 return svg;
 }
-document.getElementById("sentenceHand").appendChild(buildFingerIcon("left"));
-document.getElementById("wordHand").appendChild(buildFingerIcon("right"));
+document.getElementById("sentenceHand").appendChild(buildFingerIcon(1));
+document.getElementById("wordHand").appendChild(buildFingerIcon(-1));
 
 const CSV_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vSyqrEB__RKjtVvARlIYLBkIdwVlXFh0PYBN615AgXk1RrlmrRzqFfV8r7DRWIuEbeRTeetKTBBWNBd/pub?gid=0&single=true&output=csv";
 const NOTES_URL="https://script.google.com/macros/s/AKfycbximcSly2Yp2TyiIzJWdNZ2gt5QcQ5Is9rf4ITK3SHQfMaWQH6NCAUGYMw3kgJvHl36kQ/exec";
-const ACCESS_STORAGE_KEY="gedichten_toegangscode";
+const ACCESS_STORAGE_KEY="gedichten_access_token";
 let poems=[];
 let currentIndex=0;
+let notesByPassage={};
 let selectedPassage="";
 let selectedPoemTitle="";
-let notesByPassage={};
 let selectedPerson="";
 let editingNoteRow=null;
-let dailyDayKey="";
-let dailySwitchTimer=null;
 const titleElement=document.getElementById("title");
 const authorElement=document.getElementById("author");
 const poemElement=document.getElementById("poem");
@@ -325,39 +321,25 @@ const match=keys.find(key=>possibleNames.includes(key.trim().toLowerCase()));
 return match?row[match]:"";
 }
 
-function getPoemDayKey(now=new Date()){
-const day=new Date(now);
-if(day.getHours()<5)day.setDate(day.getDate()-1);
-const year=day.getFullYear();
-const month=String(day.getMonth()+1).padStart(2,"0");
-const date=String(day.getDate()).padStart(2,"0");
-return `${year}-${month}-${date}`;
+function getLocalDateKey(date=new Date()){
+const year=date.getFullYear();
+const month=String(date.getMonth()+1).padStart(2,"0");
+const day=String(date.getDate()).padStart(2,"0");
+return `${year}-${month}-${day}`;
 }
-function hashDayKey(key){
-let hash=2166136261;
-for(let i=0;i<key.length;i++){hash^=key.charCodeAt(i);hash=Math.imul(hash,16777619);}
-return hash>>>0;
-}
-function dailyPoemIndex(key,count){
-if(count<=1)return 0;
-let index=hashDayKey(key)%count;
-const previous=new Date(key+"T12:00:00");
-previous.setDate(previous.getDate()-1);
-const previousKey=`${previous.getFullYear()}-${String(previous.getMonth()+1).padStart(2,"0")}-${String(previous.getDate()).padStart(2,"0")}`;
-if(index===hashDayKey(previousKey)%count)index=(index+1)%count;
+function getDailyPoemIndex(date=new Date()){
+if(!poems.length)return 0;
+const dateKey=getLocalDateKey(date);
+let hash=0;
+for(let i=0;i<dateKey.length;i++)hash=(hash*31+dateKey.charCodeAt(i))>>>0;
+let index=hash%poems.length;
+const previousDate=new Date(date.getFullYear(),date.getMonth(),date.getDate()-1);
+const previousKey=getLocalDateKey(previousDate);
+let previousHash=0;
+for(let i=0;i<previousKey.length;i++)previousHash=(previousHash*31+previousKey.charCodeAt(i))>>>0;
+const previousIndex=previousHash%poems.length;
+if(poems.length>1&&index===previousIndex)index=(index+1)%poems.length;
 return index;
-}
-function scheduleDailySwitch(){
-if(dailySwitchTimer)clearTimeout(dailySwitchTimer);
-const now=new Date();
-const next=new Date(now);
-next.setHours(5,0,0,0);
-if(next<=now)next.setDate(next.getDate()+1);
-dailySwitchTimer=setTimeout(()=>{
-const key=getPoemDayKey();
-if(poems.length&&key!==dailyDayKey){dailyDayKey=key;show(dailyPoemIndex(key,poems.length),true);renderPoemMenu();}
-scheduleDailySwitch();
-},Math.max(1000,next-now));
 }
 async function loadPoems(){
 try{
@@ -365,16 +347,13 @@ const response=await fetch(CSV_URL+"&refresh="+Date.now(),{cache:"no-store"});
 if(!response.ok)throw new Error("Kon gedichten niet laden");
 const csv=await response.text();
 const result=Papa.parse(csv,{header:true,skipEmptyLines:"greedy"});
-const loaded=result.data.map(row=>({title:findColumn(row,["titel","title"]),author:findColumn(row,["dichter","auteur","author"]),poem:findColumn(row,["gedicht","tekst","poem"])})).filter(item=>item.poem&&item.poem.trim());
-if(!loaded.length){poems=[];poemElement.textContent="Er zijn geen gedichten beschikbaar.";return;}
-const key=getPoemDayKey();
-const firstLoad=!poems.length;
-poems=loaded;
-if(firstLoad||key!==dailyDayKey){dailyDayKey=key;show(dailyPoemIndex(key,poems.length),true);}
-else if(currentIndex>=poems.length){show(dailyPoemIndex(key,poems.length),true);}
+poems=result.data.map(row=>({title:findColumn(row,["titel","title"]),author:findColumn(row,["dichter","auteur","author"]),poem:findColumn(row,["gedicht","tekst","poem"])})).filter(item=>item.poem&&item.poem.trim());
+if(poems.length>0){
+const dailyIndex=getDailyPoemIndex();
+if(currentIndex!==dailyIndex||!titleElement.textContent.trim())show(dailyIndex,true);
 renderPoemMenu();
-scheduleDailySwitch();
-}catch(error){if(!poems.length)poemElement.textContent="De gedichten konden niet worden geladen.";console.error(error)}
+}
+}catch(error){poemElement.textContent="De gedichten konden niet worden geladen.";console.error(error)}
 }
 
 function normalizePassage(text){return String(text||"").trim().replace(/\s+/g," ")}
@@ -405,10 +384,7 @@ document.head.appendChild(script);
 function applyNoteHighlights(){
 poemElement.querySelectorAll(".poem-paragraph,.poem-sentence,.poem-word").forEach(element=>{
 const key=normalizePassage(element.textContent);
-const hasNotes=!!(notesByPassage[key]&&notesByPassage[key].length);
-element.classList.toggle("has-notes",hasNotes);
-if(hasNotes){element.setAttribute("tabindex","0");element.setAttribute("role","button");element.setAttribute("aria-label","Bekijk aantekening bij deze passage");}
-else{element.removeAttribute("tabindex");element.removeAttribute("role");element.removeAttribute("aria-label");}
+element.classList.toggle("has-notes",!!(notesByPassage[key]&&notesByPassage[key].length));
 });
 }
 
@@ -465,33 +441,17 @@ poemMenuBackdrop.addEventListener("click",event=>{if(event.target===poemMenuBack
 
 document.getElementById("previous").addEventListener("click",()=>show(-1));
 document.getElementById("next").addEventListener("click",()=>show(1));
-
-function openNoteFromElement(element){
-let target=element&&element.closest?element.closest(".poem-word,.poem-sentence,.poem-paragraph"):null;
-while(target&&poemElement.contains(target)){
+poemElement.addEventListener("click",event=>{
+const word=event.target.closest(".poem-word");
+const sentence=event.target.closest(".poem-sentence");
+const paragraph=event.target.closest(".poem-paragraph");
+const target=word||sentence||paragraph;
+if(!target)return;
 const key=normalizePassage(target.textContent);
-if(notesByPassage[key]&&notesByPassage[key].length){
+if(!notesByPassage[key]||!notesByPassage[key].length)return;
 selectedPassage=target.textContent.trim();
 selectedPoemTitle=titleElement.textContent.trim();
-if(!localStorage.getItem(ACCESS_STORAGE_KEY)){openAccessModal();return true;}
 openNoteModal();
-return true;
-}
-if(target.classList.contains("poem-paragraph"))break;
-target=target.parentElement&&target.parentElement.closest?target.parentElement.closest(".poem-sentence,.poem-paragraph"):null;
-}
-return false;
-}
-poemElement.addEventListener("click",event=>{
-const path=typeof event.composedPath==="function"?event.composedPath():[event.target];
-for(const element of path){if(element===poemElement)break;if(element&&element.classList&&((element.classList.contains("poem-word"))||(element.classList.contains("poem-sentence"))||(element.classList.contains("poem-paragraph")))){if(openNoteFromElement(element))return;}}
-});
-poemElement.addEventListener("keydown",event=>{
-if(event.key!=="Enter"&&event.key!==" ")return;
-const target=event.target;
-if(!target||!target.classList||!target.classList.contains("has-notes"))return;
-event.preventDefault();
-openNoteFromElement(target);
 });
 
 function clearMagnification(){
@@ -842,10 +802,8 @@ formData.append("persoon",selectedPerson);
 if(editingNoteRow)formData.append("row",String(editingNoteRow));
 try{
 await fetch(NOTES_URL,{method:"POST",mode:"no-cors",body:formData});
-statusElement.textContent=editingNoteRow?"Wijzigverzoek verzonden.":"Opslagverzoek verzonden.";
-resetNoteEditor();
-saveButton.disabled=!selectedPerson;
 setTimeout(loadNotesForCurrentPoem,1200);
+closeNoteModal();
 }catch(error){
 console.error("Fout bij opslaan van aantekening:",error);
 statusElement.textContent="Opslaan is niet gelukt. Controleer je internetverbinding.";
