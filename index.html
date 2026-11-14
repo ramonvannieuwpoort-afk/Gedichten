@@ -47,6 +47,7 @@ body {
 }
 
 header {
+    position: relative;
     text-align: center;
     margin-bottom: 58px;
     padding-bottom: 25px;
@@ -75,13 +76,21 @@ h1 {
 
 .poem-paragraph {
     margin: 0 0 1.15em;
-    transition: font-size 0.22s ease, color 0.22s ease;
+    font-size: inherit;
+    font-weight: 400;
+    line-height: inherit;
+    color: #302c26;
+    transition:
+        font-size 0.18s ease,
+        font-weight 0.18s ease,
+        color 0.18s ease;
 }
 
 .poem-paragraph.active {
-    font-size: 31px;
-    line-height: 1.4;
-    color: #211e19;
+    font-size: 1.24em;
+    font-weight: 600;
+    color: #211b14;
+    line-height: 1.35;
 }
 
 .navigation {
@@ -106,10 +115,6 @@ button {
     padding: 8px 0;
 }
 
-.nav-button:active {
-    color: #302c26;
-}
-
 .counter {
     font-size: 17px;
     color: #887e70;
@@ -117,33 +122,49 @@ button {
 
 .hand {
     position: fixed;
-    z-index: 1000;
-    width: 42px;
-    height: 42px;
+    z-index: 9999;
+    top: 105px;
+    right: max(24px, calc((100vw - 770px) / 2));
+
+    width: 54px;
+    height: 54px;
+
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid #c9beae;
+
+    border: 1px solid #bfb3a2;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.88);
-    color: #887e70;
-    font-size: 23px;
+    background: rgba(255, 255, 255, 0.94);
+
+    color: #756b5e;
+    font-size: 32px;
     line-height: 1;
-    box-shadow: 0 2px 8px rgba(50, 40, 25, 0.08);
+
+    box-shadow: 0 2px 8px rgba(50, 40, 25, 0.12);
+
     cursor: grab;
     touch-action: none;
     user-select: none;
     -webkit-user-select: none;
-    transition: width 0.18s ease, height 0.18s ease,
-                font-size 0.18s ease, box-shadow 0.18s ease;
+    -webkit-appearance: none;
+    appearance: none;
+    padding: 0;
+}
+
+.hand-symbol {
+    display: block;
+    transform: rotate(-25deg);
+    pointer-events: none;
 }
 
 .hand.dragging {
-    width: 50px;
-    height: 50px;
-    font-size: 28px;
+    width: 58px;
+    height: 58px;
+    font-size: 35px;
     cursor: grabbing;
-    box-shadow: 0 4px 14px rgba(50, 40, 25, 0.16);
+    background: #fffdf9;
+    box-shadow: 0 4px 14px rgba(50, 40, 25, 0.19);
 }
 
 .hand-hint {
@@ -180,8 +201,8 @@ button {
     }
 
     .poem-paragraph.active {
-        font-size: 28px;
-        line-height: 1.4;
+        font-size: 1.24em;
+        line-height: 1.35;
     }
 
     header {
@@ -190,6 +211,11 @@ button {
 
     .navigation {
         margin-top: 55px;
+    }
+
+    .hand {
+        top: 76px;
+        right: 16px;
     }
 }
 </style>
@@ -217,7 +243,9 @@ button {
 
 </div>
 
-<button class="hand" id="hand" aria-label="Sleep om tekst te vergroten">☞</button>
+<button type="button" class="hand" id="hand" aria-label="Sleep om tekst te vergroten">
+    <span class="hand-symbol">☚</span>
+</button>
 
 <script>
 const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSyqrEB__RKjtVvARlIYLBkIdwVlXFh0PYBN615AgXk1RrlmrRzqFfV8r7DRWIuEbeRTeetKTBBWNBd/pub?gid=0&single=true&output=csv";
@@ -266,6 +294,7 @@ async function loadPoems() {
         if (poems.length > 0) {
             show(0);
         }
+
     } catch (error) {
         poemElement.textContent = "De gedichten konden niet worden geladen.";
         console.error(error);
@@ -311,39 +340,65 @@ function clearMagnification() {
     });
 }
 
-function magnifyAt(x, y) {
-    const element = document.elementFromPoint(x, y);
+// Meet de afstand tussen de cirkel en de alinea.
+// Een alinea wordt actief zodra de cirkel haar raakt.
+function circleTouchesRectangle(cx, cy, radius, rect) {
+    const nearestX = Math.max(rect.left, Math.min(cx, rect.right));
+    const nearestY = Math.max(rect.top, Math.min(cy, rect.bottom));
 
-    if (!element) return;
+    const dx = cx - nearestX;
+    const dy = cy - nearestY;
 
-    const paragraph = element.closest(".poem-paragraph");
+    return (dx * dx + dy * dy) <= radius * radius;
+}
 
-    document.querySelectorAll(".poem-paragraph.active").forEach(item => {
-        if (item !== paragraph) {
-            item.classList.remove("active");
+function magnifyAt(cx, cy) {
+    const radius = 27;
+    const paragraphs = Array.from(
+        poemElement.querySelectorAll(".poem-paragraph")
+    );
+
+    let target = null;
+    let nearestDistance = Infinity;
+
+    paragraphs.forEach(paragraph => {
+        const rect = paragraph.getBoundingClientRect();
+
+        if (circleTouchesRectangle(cx, cy, radius, rect)) {
+            const centerX = (rect.left + rect.right) / 2;
+            const centerY = (rect.top + rect.bottom) / 2;
+            const distance = Math.hypot(cx - centerX, cy - centerY);
+
+            if (distance < nearestDistance) {
+                nearestDistance = distance;
+                target = paragraph;
+            }
         }
     });
 
-    if (paragraph && poemElement.contains(paragraph)) {
-        paragraph.classList.add("active");
-    } else {
-        clearMagnification();
-    }
+    paragraphs.forEach(paragraph => {
+        paragraph.classList.toggle("active", paragraph === target);
+    });
 }
 
 let dragging = false;
+let lastX = 0;
+let lastY = 0;
 
 function moveHand(x, y) {
+    lastX = x;
+    lastY = y;
+
     hand.style.left = (x - hand.offsetWidth / 2) + "px";
     hand.style.top = (y - hand.offsetHeight / 2) + "px";
+    hand.style.right = "auto";
 
-    // Meet iets onder het handje, zodat het handje zelf
-    // de tekst onder de aanwijzer niet afdekt.
-    magnifyAt(x, y + 22);
+    magnifyAt(x, y);
 }
 
 hand.addEventListener("touchstart", event => {
     event.preventDefault();
+
     dragging = true;
     hand.classList.add("dragging");
 
@@ -367,13 +422,16 @@ document.addEventListener("touchend", () => {
 
 hand.addEventListener("mousedown", event => {
     event.preventDefault();
+
     dragging = true;
     hand.classList.add("dragging");
+
     moveHand(event.clientX, event.clientY);
 });
 
 document.addEventListener("mousemove", event => {
     if (!dragging) return;
+
     moveHand(event.clientX, event.clientY);
 });
 
@@ -382,18 +440,8 @@ document.addEventListener("mouseup", () => {
     hand.classList.remove("dragging");
 });
 
-// Plaats het handje aanvankelijk bij de titel.
-window.addEventListener("load", () => {
-    const header = document.querySelector("header");
-    const rect = header.getBoundingClientRect();
-
-    hand.style.left = (rect.right - 65) + "px";
-    hand.style.top = (rect.top + 8) + "px";
-});
-
 loadPoems();
 
-// Controleer iedere vijf minuten op nieuwe gedichten.
 setInterval(loadPoems, 5 * 60 * 1000);
 </script>
 
