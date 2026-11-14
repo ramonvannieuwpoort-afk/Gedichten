@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="theme-color" content="#ffffff">
 <title>Gedichten</title>
-<!-- Testversie 5: 14 november 2026 -->
+<!-- Testversie 6: 14 november 2026 -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&display=swap" rel="stylesheet">
@@ -24,7 +24,7 @@ h1{font-size:43px;font-weight:500;line-height:1.1;margin:0 0 8px}
 .poem-paragraph{white-space:pre-wrap}
 .poem-paragraph{position:relative;margin:0 0 1.15em;font-size:inherit;font-weight:400;line-height:inherit;color:#302c26;transform:scale(1);transform-origin:left center;transition:transform 420ms cubic-bezier(.22,1,.36,1),font-weight 350ms ease,color 400ms ease,text-shadow 400ms ease;will-change:transform}
 .poem-paragraph.active{transform:scale(1.09);font-weight:600;color:#211b14;text-shadow:0 0 .01px #211b14;z-index:2}
-.poem-paragraph.has-notes{background:linear-gradient(to right,rgba(182,154,112,.20),rgba(182,154,112,.07));border-left:2px solid #bda27b;padding-left:9px;margin-left:-11px;cursor:pointer; border-radius:2px}
+.poem-paragraph.has-notes{background:linear-gradient(to right,rgba(182,154,112,.20),rgba(182,154,112,.07));border-left:2px solid #bda27b;padding-left:9px;margin-left:-11px;cursor:pointer;border-radius:2px}
 .navigation{display:flex;justify-content:space-between;align-items:center;margin-top:70px;padding-top:20px;border-top:1px solid #d5cdbf}
 button{font-family:inherit}
 .nav-button{border:0;background:none;color:#887e70;font-size:20px;cursor:pointer;padding:8px 0}
@@ -150,7 +150,7 @@ header{margin-bottom:48px}
 <button type="button" class="hand" id="hand2" aria-label="Tweede Hamsa-hand"></button>
 <button type="button" class="hand" id="sentenceHand" aria-label="Wijzende vinger voor regels"></button>
 <button type="button" class="hand" id="wordHand" aria-label="Wijzende vinger voor woorden"></button>
-<div class="test-version" aria-label="Testversie 5">TEST v5</div>
+<div class="test-version" aria-label="Testversie 6">TEST v6</div>
 <button type="button" class="reset-hands-button" id="resetHandsButton" aria-label="Zet alle handjes terug naar hun beginposities" title="Handjes terugzetten">⟲</button>
 <button type="button" class="poem-menu-button" id="poemMenuButton" aria-label="Open gedichtenmenu" title="Gedichten">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M4 6.5h16M4 12h16M4 17.5h16"/></svg>
@@ -459,11 +459,11 @@ poemMenuBackdrop.addEventListener("click",event=>{if(event.target===poemMenuBack
 document.getElementById("previous").addEventListener("click",()=>show(-1));
 document.getElementById("next").addEventListener("click",()=>show(1));
 poemElement.addEventListener("click",event=>{
-const word=event.target.closest(".poem-word");
-const sentence=event.target.closest(".poem-sentence");
-const paragraph=event.target.closest(".poem-paragraph");
-const target=word||sentence||paragraph;
-if(!target)return;
+// Open de aantekening van het kleinste gearceerde element dat is aangeklikt.
+// Daardoor is een volledige zin of passage ook klikbaar wanneer je op een
+// woord binnen die zin of passage klikt.
+const target=event.target.closest(".poem-word.has-notes, .poem-sentence.has-notes, .poem-paragraph.has-notes");
+if(!target||!poemElement.contains(target))return;
 const key=normalizePassage(target.textContent);
 if(!notesByPassage[key]||!notesByPassage[key].length)return;
 selectedPassage=target.textContent.trim();
@@ -568,6 +568,7 @@ if(target){state.target=target;activeParagraphs.add(target);}
 });
 paragraphs.forEach(paragraph=>paragraph.classList.toggle("active",activeParagraphs.has(paragraph)));
 }
+
 function moveHand(state,x,y){
 state.x=x;state.y=y;
 const hand=state.element;
