@@ -44,6 +44,7 @@ header {
   margin-bottom: 58px;
   padding-bottom: 25px;
   border-bottom: 1px solid #d5cdbf;
+  text-align: center;
 }
 
 h1 {
@@ -67,6 +68,7 @@ h1 {
   white-space: pre-wrap;
   overflow-wrap: break-word;
   letter-spacing: 0.05px;
+  text-align: left;
 }
 
 .navigation {
@@ -145,18 +147,10 @@ button:disabled {
 
 <script>
 
-// Google Sheets CSV
 const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSyqrEB__RKjtVvARlIYLBkIdwVlXFh0PYBN615AgXk1RrlmrRzqFfV8r7DRWIuEbeRTeetKTBBWNBd/pub?gid=0&single=true&output=csv";
 
 let poems = [];
 let current = 0;
-
-function findColumn(row, name) {
-  const key = Object.keys(row).find(
-    k => k.trim().toLowerCase() === name.toLowerCase()
-  );
-  return key ? row[key] : "";
-}
 
 async function loadPoems() {
   const status = document.getElementById("status");
@@ -174,18 +168,23 @@ async function loadPoems() {
     const csv = await response.text();
 
     const result = Papa.parse(csv, {
-      header: true,
-      skipEmptyLines: "greedy"
+      skipEmptyLines: false
     });
 
-    const updated = result.data.map(row => ({
-      title: findColumn(row, "Titel").trim(),
-      author: findColumn(row, "Dichter").trim(),
-      text: findColumn(row, "Gedicht").trim()
+    const rows = result.data;
+
+    // Kolom A = Titel
+    // Kolom B = Dichter
+    // Kolom C = Volledig gedicht
+
+    const updated = rows.slice(1).map(row => ({
+      title: String(row[0] || "").trim(),
+      author: String(row[1] || "").trim(),
+      text: String(row[2] || "").trim()
     })).filter(p => p.title && p.text);
 
     if (!updated.length) {
-      throw new Error("Geen gedichten gevonden. Controleer de kolomnamen.");
+      throw new Error("Geen gedichten gevonden. Controleer kolom A, B en C.");
     }
 
     const previousTitle = poems[current]?.title;
@@ -232,10 +231,10 @@ function show(direction) {
   window.scrollTo(0, 0);
 }
 
-// Eerste keer ophalen
+// Gedichten ophalen bij openen
 loadPoems();
 
-// Iedere vijf minuten de nieuwste gedichten ophalen
+// Iedere vijf minuten opnieuw ophalen
 setInterval(loadPoems, 5 * 60 * 1000);
 
 </script>
