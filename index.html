@@ -120,7 +120,7 @@ button { font-family: inherit; }
     color: #887e70;
 }
 
-/* Compacte handjes in de zijmarges */
+/* Twee compacte handjes in de zijmarges */
 
 .hand {
     position: fixed;
@@ -151,8 +151,6 @@ button { font-family: inherit; }
         background 180ms ease;
 }
 
-/* Positie binnen de zijmarges van de pagina */
-
 #hand1 {
     left: max(8px, calc((100vw - 900px) / 2 + 8px));
 }
@@ -161,7 +159,12 @@ button { font-family: inherit; }
     right: max(8px, calc((100vw - 900px) / 2 + 8px));
 }
 
-/* Brede kleurrijke Andean binnenring met zachte buitenrand */
+/*
+  Andean kleurenring.
+  Geen CSS-mask meer: de binnen- en buitenrand worden
+  met gewone radiale verlopen transparant gemaakt.
+  Deze methode is bedoeld voor betere Safari-compatibiliteit.
+*/
 
 .hand::before {
     content: "";
@@ -169,34 +172,26 @@ button { font-family: inherit; }
     inset: 1px;
     border-radius: 50%;
 
-    background: repeating-conic-gradient(
-        from -8deg,
-        #bd4938 0deg 12deg,
-        #d87937 12deg 24deg,
-        #e5b84e 24deg 36deg,
-        #829b55 36deg 48deg,
-        #278b91 48deg 60deg,
-        #315b96 60deg 72deg,
-        #73558a 72deg 84deg
-    );
-
-    -webkit-mask: radial-gradient(
-        circle,
-        transparent 0 49%,
-        rgba(0,0,0,0.75) 57%,
-        #000 72%,
-        rgba(0,0,0,0.85) 80%,
-        transparent 100%
-    );
-
-    mask: radial-gradient(
-        circle,
-        transparent 0 49%,
-        rgba(0,0,0,0.75) 57%,
-        #000 72%,
-        rgba(0,0,0,0.85) 80%,
-        transparent 100%
-    );
+    background:
+        radial-gradient(
+            circle,
+            #fffdf8 0%,
+            #fffdf8 47%,
+            rgba(255,253,248,0) 51%,
+            rgba(255,253,248,0.04) 68%,
+            rgba(255,253,248,0.35) 79%,
+            #fffdf8 100%
+        ),
+        repeating-conic-gradient(
+            from -8deg,
+            #bd4938 0deg 12deg,
+            #d87937 12deg 24deg,
+            #e5b84e 24deg 36deg,
+            #829b55 36deg 48deg,
+            #278b91 48deg 60deg,
+            #315b96 60deg 72deg,
+            #73558a 72deg 84deg
+        );
 
     pointer-events: none;
 }
