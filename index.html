@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -161,38 +160,47 @@ button { font-family: inherit; }
 
 /*
   Andean kleurenring.
-  Geen CSS-mask meer: de binnen- en buitenrand worden
-  met gewone radiale verlopen transparant gemaakt.
-  Deze methode is bedoeld voor betere Safari-compatibiliteit.
+  Opgebouwd uit een gewone conic-gradient en een
+  effen binnenste cirkel, zonder CSS-maskers.
 */
 
 .hand::before {
     content: "";
     position: absolute;
-    inset: 1px;
+    inset: 0;
     border-radius: 50%;
-
-    background:
-        radial-gradient(
-            circle,
-            #fffdf8 0%,
-            #fffdf8 47%,
-            rgba(255,253,248,0) 51%,
-            rgba(255,253,248,0.04) 68%,
-            rgba(255,253,248,0.35) 79%,
-            #fffdf8 100%
-        ),
-        repeating-conic-gradient(
-            from -8deg,
-            #bd4938 0deg 12deg,
-            #d87937 12deg 24deg,
-            #e5b84e 24deg 36deg,
-            #829b55 36deg 48deg,
-            #278b91 48deg 60deg,
-            #315b96 60deg 72deg,
-            #73558a 72deg 84deg
-        );
-
+    background: conic-gradient(
+        from -8deg,
+        #bd4938 0deg 12deg,
+        #d87937 12deg 24deg,
+        #e5b84e 24deg 36deg,
+        #829b55 36deg 48deg,
+        #278b91 48deg 60deg,
+        #315b96 60deg 72deg,
+        #73558a 72deg 84deg,
+        #bd4938 84deg 96deg,
+        #d87937 96deg 108deg,
+        #e5b84e 108deg 120deg,
+        #829b55 120deg 132deg,
+        #278b91 132deg 144deg,
+        #315b96 144deg 156deg,
+        #73558a 156deg 168deg,
+        #bd4938 168deg 180deg,
+        #d87937 180deg 192deg,
+        #e5b84e 192deg 204deg,
+        #829b55 204deg 216deg,
+        #278b91 216deg 228deg,
+        #315b96 228deg 240deg,
+        #73558a 240deg 252deg,
+        #bd4938 252deg 264deg,
+        #d87937 264deg 276deg,
+        #e5b84e 276deg 288deg,
+        #829b55 288deg 300deg,
+        #278b91 300deg 312deg,
+        #315b96 312deg 324deg,
+        #73558a 324deg 336deg,
+        #bd4938 336deg 360deg
+    );
     pointer-events: none;
 }
 
@@ -202,6 +210,7 @@ button { font-family: inherit; }
     inset: 5px;
     border: 1px solid rgba(164,119,66,0.45);
     border-radius: 50%;
+    background: #fffdf8;
     pointer-events: none;
 }
 
