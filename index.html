@@ -19,7 +19,8 @@ body{margin:0;background:#eee9df;color:#302c26;font-family:'Cormorant Garamond',
 header{position:relative;text-align:center;margin-bottom:58px;padding-bottom:25px;border-bottom:1px solid #d5cdbf}
 h1{font-size:43px;font-weight:500;line-height:1.1;margin:0 0 8px}
 .author{font-size:21px;font-style:italic;color:#887e70}
-.poem{font-size:25px;line-height:1.48;text-align:left;overflow-wrap:break-word}
+.poem{font-size:25px;line-height:1.48;text-align:left;overflow-wrap:break-word;white-space:normal}
+.poem-paragraph{white-space:pre-line}
 .poem-paragraph{position:relative;margin:0 0 1.15em;font-size:inherit;font-weight:400;line-height:inherit;color:#302c26;transform:scale(1);transform-origin:left center;transition:transform 420ms cubic-bezier(.22,1,.36,1),font-weight 350ms ease,color 400ms ease,text-shadow 400ms ease;will-change:transform}
 .poem-paragraph.active{transform:scale(1.09);font-weight:600;color:#211b14;text-shadow:0 0 .01px #211b14;z-index:2}
 .poem-paragraph.has-notes{background:linear-gradient(to right,rgba(182,154,112,.17),rgba(182,154,112,.055));border-left:2px solid #bda27b;padding-left:9px;margin-left:-11px;cursor:pointer}
@@ -296,7 +297,8 @@ const item=poems[currentIndex];
 titleElement.textContent=item.title||"";
 authorElement.textContent=item.author||"";
 poemElement.innerHTML="";
-const paragraphs=item.poem.trim().split(/\n\s*\n/).filter(part=>part.trim());
+const decodedPoem=String(item.poem||"").replace(/\\n/g,"\n");
+const paragraphs=decodedPoem.trim().split(/\n\s*\n/).filter(part=>part.trim());
 paragraphs.forEach(text=>{const paragraph=document.createElement("p");paragraph.className="poem-paragraph";paragraph.textContent=text.trim();poemElement.appendChild(paragraph)});
 counterElement.textContent=(currentIndex+1)+" / "+poems.length;
 clearMagnification();
