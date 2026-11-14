@@ -93,6 +93,12 @@ h1 {
     z-index: 2;
 }
 
+.poem-paragraph.has-note::after {
+    content: " ·";
+    color: #a77c48;
+    font-weight: 600;
+}
+
 .navigation {
     display: flex;
     justify-content: space-between;
@@ -120,7 +126,7 @@ button { font-family: inherit; }
     color: #887e70;
 }
 
-/* Handjes met warme zandkleurige omlijsting */
+/* Hamsa-handjes */
 
 .hand {
     position: fixed;
@@ -147,13 +153,8 @@ button { font-family: inherit; }
     transition: width 180ms ease, height 180ms ease, box-shadow 180ms ease;
 }
 
-#hand1 {
-    left: max(8px, calc((100vw - 900px) / 2 + 8px));
-}
-
-#hand2 {
-    right: max(8px, calc((100vw - 900px) / 2 + 8px));
-}
+#hand1 { left: max(8px, calc((100vw - 900px) / 2 + 8px)); }
+#hand2 { right: max(8px, calc((100vw - 900px) / 2 + 8px)); }
 
 .hand-icon {
     width: 100%;
@@ -181,6 +182,181 @@ button { font-family: inherit; }
     color: #a09688;
     text-align: center;
     font-style: italic;
+}
+
+/* Notitievenster */
+
+.note-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 20000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(48, 44, 38, 0.35);
+    font-family: 'Cormorant Garamond', Georgia, serif;
+}
+
+.note-overlay.visible {
+    display: flex;
+}
+
+.note-card {
+    width: 100%;
+    max-width: 440px;
+    padding: 28px;
+    border-radius: 4px;
+    background: #f7f4ed;
+    box-shadow: 0 12px 40px rgba(40, 30, 20, 0.2);
+}
+
+.note-card h2 {
+    margin: 0 0 8px;
+    font-size: 29px;
+    font-weight: 500;
+}
+
+.note-context {
+    margin: 0 0 20px;
+    padding: 12px 14px;
+    border-left: 2px solid #c4a46d;
+    color: #776d60;
+    font-size: 19px;
+    font-style: italic;
+    line-height: 1.4;
+    max-height: 130px;
+    overflow-y: auto;
+}
+
+.note-card label {
+    display: block;
+    margin-bottom: 7px;
+    color: #887e70;
+    font-size: 17px;
+}
+
+.note-card textarea {
+    display: block;
+    width: 100%;
+    min-height: 125px;
+    resize: vertical;
+    border: 1px solid #d5cdbf;
+    border-radius: 3px;
+    background: #fffdf8;
+    color: #302c26;
+    padding: 12px;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 19px;
+    line-height: 1.4;
+    outline: none;
+}
+
+.note-card textarea:focus {
+    border-color: #a77c48;
+}
+
+.note-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-top: 18px;
+}
+
+.note-actions button {
+    border: 0;
+    border-radius: 3px;
+    padding: 9px 17px;
+    font-size: 17px;
+    cursor: pointer;
+}
+
+.note-cancel {
+    background: transparent;
+    color: #887e70;
+}
+
+.note-save {
+    background: #a77c48;
+    color: white;
+}
+
+.note-save:disabled {
+    opacity: 0.5;
+    cursor: wait;
+}
+
+.note-status {
+    min-height: 22px;
+    margin-top: 12px;
+    color: #887e70;
+    font-size: 16px;
+}
+
+.access-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 30000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(48, 44, 38, 0.5);
+    font-family: 'Cormorant Garamond', Georgia, serif;
+}
+
+.access-overlay.visible {
+    display: flex;
+}
+
+.access-card {
+    width: 100%;
+    max-width: 380px;
+    padding: 28px;
+    background: #f7f4ed;
+    border-radius: 4px;
+    box-shadow: 0 12px 40px rgba(40, 30, 20, 0.2);
+}
+
+.access-card h2 {
+    margin: 0 0 8px;
+    font-size: 29px;
+    font-weight: 500;
+}
+
+.access-card p {
+    margin: 0 0 18px;
+    color: #776d60;
+    font-size: 18px;
+}
+
+.access-card input {
+    width: 100%;
+    padding: 11px;
+    border: 1px solid #d5cdbf;
+    background: #fffdf8;
+    font-family: inherit;
+    font-size: 19px;
+}
+
+.access-card button {
+    width: 100%;
+    margin-top: 15px;
+    padding: 10px;
+    border: 0;
+    border-radius: 3px;
+    background: #a77c48;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.access-error {
+    min-height: 22px;
+    margin-top: 10px;
+    color: #a34d3e;
+    font-size: 16px;
 }
 
 @media (max-width: 600px) {
@@ -239,6 +415,10 @@ button { font-family: inherit; }
     .poem-paragraph.active {
         transform: scale(1.07);
     }
+
+    .note-card {
+        padding: 22px;
+    }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -263,7 +443,8 @@ button { font-family: inherit; }
     <main>
         <div class="poem" id="poem"></div>
         <div class="hand-hint">
-            Sleep de handjes over het gedicht om twee passages te vergroten
+            Sleep de handjes over het gedicht om passages te vergroten.
+            Klik op een handje om een aantekening te maken.
         </div>
     </main>
 
@@ -278,10 +459,39 @@ button { font-family: inherit; }
 <button type="button" class="hand" id="hand1" aria-label="Eerste vergroothand"></button>
 <button type="button" class="hand" id="hand2" aria-label="Tweede vergroothand"></button>
 
+<!-- Notitievenster -->
+<div class="note-overlay" id="noteOverlay">
+    <div class="note-card">
+        <h2>Een persoonlijke aantekening</h2>
+        <div class="note-context" id="noteContext"></div>
+
+        <label for="noteText">Wat wil je hierover bewaren?</label>
+        <textarea id="noteText" maxlength="3000"
+            placeholder="Een herinnering, gedachte of interpretatie voor Sanne..."></textarea>
+
+        <div class="note-actions">
+            <button class="note-cancel" id="noteCancel">Annuleren</button>
+            <button class="note-save" id="noteSave">Bewaren</button>
+        </div>
+        <div class="note-status" id="noteStatus"></div>
+    </div>
+</div>
+
+<!-- Eenmalige toegangscode -->
+<div class="access-overlay" id="accessOverlay">
+    <div class="access-card">
+        <h2>Toegang tot aantekeningen</h2>
+        <p>Voer de gedeelde toegangscode in. Dit hoeft maar één keer op dit apparaat.</p>
+        <input type="password" id="accessInput"
+            autocomplete="off" placeholder="Toegangscode">
+        <button id="accessSave">Doorgaan</button>
+        <div class="access-error" id="accessError"></div>
+    </div>
+</div>
+
 <script>
 
-/* Hamsa-illustratie: symmetrisch, met centrale aanwijzende vinger.
-   De illustratie zelf is ongewijzigd gebleven. */
+/* Hamsa-illustratie: inline SVG, zonder CSS-maskers of gradients. */
 
 function buildHamsaIcon() {
     const ns = "http://www.w3.org/2000/svg";
@@ -291,8 +501,7 @@ function buildHamsaIcon() {
     svg.setAttribute("aria-hidden", "true");
 
     const clipId = "hamsaClip" + Math.random().toString(36).slice(2);
-
-    const silhouette = "M25 73 L7 55 Q1 48 6 40 Q12 32 21 37 L25 40 L25 29 Q25 19 34 19 Q42 19 43 28 L43 20 Q43 12 50 4 Q57 12 57 20 L57 28 Q58 19 66 19 Q75 19 75 29 L75 40 L79 37 Q88 32 94 40 Q99 48 93 55 L75 73 Q72 98 62 108 Q56 114 50 116 Q44 114 38 108 Q28 98 25 73 Z";
+    const silhouette = "M24 76 L8 53 Q2 44 8 36 Q15 28 23 34 L23 29 Q23 18 32 18 Q41 18 41 29 L41 17 Q41 4 50 4 Q59 4 59 17 L59 29 Q59 18 68 18 Q77 18 77 29 L77 34 Q85 28 92 36 Q98 44 92 53 L76 76 Q73 99 62 108 Q56 114 50 115 Q44 114 38 108 Q27 99 24 76 Z";
 
     svg.innerHTML = `
       <defs>
@@ -301,76 +510,54 @@ function buildHamsaIcon() {
         </clipPath>
       </defs>
 
-      <path d="${silhouette}" fill="#fff9e9" stroke="#30242d"
+      <path d="${silhouette}" fill="#fff8e9" stroke="#352b2b"
             stroke-width="3.2" stroke-linejoin="round"/>
 
       <g clip-path="url(#${clipId})">
+        <rect x="5" y="3" width="90" height="113" fill="#13c9d5"/>
 
-        <rect x="3" y="3" width="94" height="114" fill="#18d7df"/>
+        <path d="M5 27 L24 27 L24 62 L5 62Z" fill="#ff8a24" stroke="#352b2b" stroke-width="1.5"/>
+        <path d="M76 27 L95 27 L95 62 L76 62Z" fill="#ff8a24" stroke="#352b2b" stroke-width="1.5"/>
+        <path d="M7 36 L23 36 L23 43 L7 43Z" fill="#ffe12e"/>
+        <path d="M77 36 L93 36 L93 43 L77 43Z" fill="#ffe12e"/>
 
-        <path d="M4 37 Q14 28 25 43 L25 67 L4 58Z"
-              fill="#ff8b24" stroke="#30242d" stroke-width="1.6"/>
-        <path d="M96 37 Q86 28 75 43 L75 67 L96 58Z"
-              fill="#ff8b24" stroke="#30242d" stroke-width="1.6"/>
+        <path d="M23 17 L41 17 L41 64 L23 64Z" fill="#ff4fa3" stroke="#352b2b" stroke-width="1.5"/>
+        <path d="M59 17 L77 17 L77 64 L59 64Z" fill="#ff4fa3" stroke="#352b2b" stroke-width="1.5"/>
+        <path d="M25 23 L39 23 L39 30 L25 30Z" fill="#ffe12e"/>
+        <path d="M61 23 L75 23 L75 30 L61 30Z" fill="#ffe12e"/>
 
-        <path d="M25 24 Q25 18 34 18 Q43 18 43 28 L43 65 L25 65Z"
-              fill="#ff4f9a" stroke="#30242d" stroke-width="1.6"/>
-        <path d="M75 24 Q75 18 66 18 Q57 18 57 28 L57 65 L75 65Z"
-              fill="#ff4f9a" stroke="#30242d" stroke-width="1.6"/>
+        <path d="M41 4 L59 4 L59 65 L41 65Z" fill="#ffe12e" stroke="#352b2b" stroke-width="1.6"/>
+        <path d="M44 12 Q50 5 56 12 L56 21 Q50 27 44 21Z" fill="#8b5cf6" stroke="#352b2b" stroke-width="1.2"/>
+        <circle cx="50" cy="15" r="3" fill="#13c9d5" stroke="#352b2b" stroke-width="1"/>
+        <path d="M44 31 L50 25 L56 31 L50 37Z" fill="#ff4fa3" stroke="#352b2b" stroke-width="1.2"/>
+        <path d="M45 45 L50 39 L55 45 L50 51Z" fill="#13c9d5" stroke="#352b2b" stroke-width="1.2"/>
 
-        <path d="M50 4 Q57 12 57 21 L57 66 L43 66 L43 21 Q43 12 50 4Z"
-              fill="#ffe52e" stroke="#30242d" stroke-width="1.8"/>
-        <path d="M50 10 L55 20 L50 26 L45 20Z"
-              fill="#ff4f9a" stroke="#30242d" stroke-width="1.2"/>
-        <circle cx="50" cy="17" r="2.6"
-                fill="#18d7df" stroke="#30242d" stroke-width="1"/>
-        <path d="M45 34 L50 29 L55 34 L50 39Z"
-              fill="#8b4df5" stroke="#30242d" stroke-width="1.1"/>
-        <path d="M45 48 L50 42 L55 48 L50 54Z"
-              fill="#ff4f9a" stroke="#30242d" stroke-width="1.1"/>
-
-        <g stroke="#30242d" stroke-width="1.1" stroke-linejoin="round">
-          <path d="M29 30 L34 25 L39 30 L34 35Z" fill="#ffe52e"/>
-          <path d="M71 30 L66 25 L61 30 L66 35Z" fill="#ffe52e"/>
-          <path d="M29 46 L34 40 L39 46 L34 52Z" fill="#18d7df"/>
-          <path d="M71 46 L66 40 L61 46 L66 52Z" fill="#18d7df"/>
-          <path d="M10 48 L16 42 L22 48 L16 54Z" fill="#ff4f9a"/>
-          <path d="M90 48 L84 42 L78 48 L84 54Z" fill="#ff4f9a"/>
+        <g fill="#ffe12e" stroke="#352b2b" stroke-width="1">
+          <path d="M29 39 L33 34 L37 39 L33 44Z"/>
+          <path d="M63 39 L67 34 L71 39 L67 44Z"/>
+          <path d="M12 49 L16 44 L20 49 L16 54Z"/>
+          <path d="M80 49 L84 44 L88 49 L84 54Z"/>
+        </g>
+        <g fill="#8b5cf6" stroke="#352b2b" stroke-width="0.8">
+          <circle cx="33" cy="53" r="2.3"/>
+          <circle cx="67" cy="53" r="2.3"/>
+          <circle cx="16" cy="58" r="2"/>
+          <circle cx="84" cy="58" r="2"/>
         </g>
 
-        <g fill="#ffe52e" stroke="#30242d" stroke-width="0.9">
-          <circle cx="34" cy="58" r="2.2"/>
-          <circle cx="66" cy="58" r="2.2"/>
-          <circle cx="16" cy="60" r="2"/>
-          <circle cx="84" cy="60" r="2"/>
+        <path d="M13 64 Q50 48 87 64 L83 91 Q75 111 50 116 Q25 111 17 91Z"
+              fill="#ff4fa3" stroke="#352b2b" stroke-width="2"/>
+
+        <g stroke="#352b2b" stroke-width="1.4" stroke-linejoin="round">
+          <path d="M18 86 Q20 65 36 72 Q36 88 18 86Z" fill="#a8e63f"/>
+          <path d="M82 86 Q80 65 64 72 Q64 88 82 86Z" fill="#a8e63f"/>
+          <path d="M21 83 Q27 76 32 75" fill="none" stroke="#ff8a24" stroke-width="2"/>
+          <path d="M79 83 Q73 76 68 75" fill="none" stroke="#ff8a24" stroke-width="2"/>
         </g>
 
-        <path d="M5 43 Q15 35 26 52 L35 75 L23 88 Q14 77 7 65Z"
-              fill="#ffb52e" stroke="#30242d" stroke-width="1.8"/>
-        <path d="M95 43 Q85 35 74 52 L65 75 L77 88 Q86 77 93 65Z"
-              fill="#ffb52e" stroke="#30242d" stroke-width="1.8"/>
-
-        <path d="M9 51 Q17 44 24 57 L18 67Z"
-              fill="#8b4df5" stroke="#30242d" stroke-width="1.2"/>
-        <path d="M91 51 Q83 44 76 57 L82 67Z"
-              fill="#8b4df5" stroke="#30242d" stroke-width="1.2"/>
-
-        <path d="M17 65 Q50 51 83 65 L80 91 Q73 110 50 116 Q27 110 20 91Z"
-              fill="#ff4f9a" stroke="#30242d" stroke-width="2"/>
-
-        <g stroke="#30242d" stroke-width="1.4" stroke-linejoin="round">
-          <path d="M19 88 Q19 67 36 70 Q37 87 19 88Z" fill="#a8ef36"/>
-          <path d="M81 88 Q81 67 64 70 Q63 87 81 88Z" fill="#a8ef36"/>
-          <path d="M22 84 Q28 76 34 73" fill="none" stroke="#ff8b24" stroke-width="2"/>
-          <path d="M78 84 Q72 76 66 73" fill="none" stroke="#ff8b24" stroke-width="2"/>
-          <path d="M25 91 L34 82 L39 94 L31 100Z" fill="#18d7df"/>
-          <path d="M75 91 L66 82 L61 94 L69 100Z" fill="#18d7df"/>
-        </g>
-
-        <g transform="translate(50 84)">
-          <circle r="23" fill="#ffe52e" stroke="#30242d" stroke-width="2"/>
-
-          <g fill="#18d7df" stroke="#30242d" stroke-width="1.1">
+        <g transform="translate(50 83)">
+          <circle r="23" fill="#ffe12e" stroke="#352b2b" stroke-width="2"/>
+          <g fill="#13c9d5" stroke="#352b2b" stroke-width="1.2">
             <path d="M0 -22 Q7 -14 0 -9 Q-7 -14 0 -22Z"/>
             <path d="M0 -22 Q7 -14 0 -9 Q-7 -14 0 -22Z" transform="rotate(45)"/>
             <path d="M0 -22 Q7 -14 0 -9 Q-7 -14 0 -22Z" transform="rotate(90)"/>
@@ -380,27 +567,29 @@ function buildHamsaIcon() {
             <path d="M0 -22 Q7 -14 0 -9 Q-7 -14 0 -22Z" transform="rotate(270)"/>
             <path d="M0 -22 Q7 -14 0 -9 Q-7 -14 0 -22Z" transform="rotate(315)"/>
           </g>
-
-          <circle r="14.5" fill="#8b4df5" stroke="#30242d" stroke-width="1.5"/>
-          <circle r="11" fill="#ffe52e" stroke="#30242d" stroke-width="1.2"/>
-          <ellipse rx="9.5" ry="6.5" fill="#fff9e9" stroke="#30242d" stroke-width="1.2"/>
-          <circle r="4" fill="#18d7df" stroke="#30242d" stroke-width="1"/>
-          <circle r="1.8" fill="#24202a"/>
+          <circle r="14" fill="#8b5cf6" stroke="#352b2b" stroke-width="1.5"/>
+          <ellipse rx="11" ry="7.5" fill="#fff8e9" stroke="#352b2b" stroke-width="1.2"/>
+          <circle r="4.2" fill="#13c9d5" stroke="#352b2b" stroke-width="1"/>
+          <circle r="1.8" fill="#252525"/>
+          <circle cx="-17" cy="0" r="1.6" fill="#ff4fa3"/>
+          <circle cx="17" cy="0" r="1.6" fill="#ff4fa3"/>
         </g>
 
-        <path d="M20 101 Q50 120 80 101"
-              fill="none" stroke="#ffe52e" stroke-width="4"/>
-
-        <g fill="#8b4df5" stroke="#30242d" stroke-width="0.8">
+        <path d="M20 101 Q50 120 80 101" fill="none" stroke="#ffe12e" stroke-width="4"/>
+        <g fill="#8b5cf6" stroke="#352b2b" stroke-width="0.8">
           <circle cx="27" cy="103" r="3"/>
           <circle cx="39" cy="109" r="3"/>
           <circle cx="50" cy="112" r="3"/>
           <circle cx="61" cy="109" r="3"/>
           <circle cx="73" cy="103" r="3"/>
         </g>
+        <g fill="#ffe12e" stroke="#352b2b" stroke-width="0.7">
+          <circle cx="32" cy="94" r="2"/>
+          <circle cx="68" cy="94" r="2"/>
+        </g>
       </g>
 
-      <path d="${silhouette}" fill="none" stroke="#30242d"
+      <path d="${silhouette}" fill="none" stroke="#352b2b"
             stroke-width="3" stroke-linejoin="round"/>
       <path d="${silhouette}" fill="none" stroke="#fffdf8"
             stroke-width="0.9" stroke-linejoin="round"
@@ -414,16 +603,34 @@ document.querySelectorAll(".hand").forEach(hand => {
     hand.appendChild(buildHamsaIcon());
 });
 
+/* Gedichten laden */
 
 const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSyqrEB__RKjtVvARlIYLBkIdwVlXFh0PYBN615AgXk1RrlmrRzqFfV8r7DRWIuEbeRTeetKTBBWNBd/pub?gid=0&single=true&output=csv";
 
+/* Apps Script webapp */
+const NOTES_URL = "https://script.google.com/macros/s/AKfycbximcSly2Yp2TyiIzJWdNZ2gt5QcQ5Is9rf4ITK3SHQfMaWQH6NCAUGYMw3kgJvHl36kQ/exec";
+
+const TOKEN_STORAGE_KEY = "gedichten_toegangscode";
+
 let poems = [];
 let currentIndex = 0;
+let selectedParagraph = null;
+let selectedHand = null;
 
 const titleElement = document.getElementById("title");
 const authorElement = document.getElementById("author");
 const poemElement = document.getElementById("poem");
 const counterElement = document.getElementById("counter");
+
+const noteOverlay = document.getElementById("noteOverlay");
+const noteContext = document.getElementById("noteContext");
+const noteText = document.getElementById("noteText");
+const noteSave = document.getElementById("noteSave");
+const noteStatus = document.getElementById("noteStatus");
+
+const accessOverlay = document.getElementById("accessOverlay");
+const accessInput = document.getElementById("accessInput");
+const accessError = document.getElementById("accessError");
 
 const hands = [
     document.getElementById("hand1"),
@@ -435,7 +642,10 @@ const handStates = hands.map(hand => ({
     dragging: false,
     x: null,
     y: null,
-    touchId: null
+    touchId: null,
+    startX: null,
+    startY: null,
+    moved: false
 }));
 
 function findColumn(row, possibleNames) {
@@ -531,6 +741,37 @@ function circleTouchesRectangle(cx, cy, radius, rect) {
     return (dx * dx + dy * dy) <= radius * radius;
 }
 
+function findTargetParagraph(state) {
+    if (state.x === null || state.y === null) return null;
+
+    const paragraphs = Array.from(
+        poemElement.querySelectorAll(".poem-paragraph")
+    );
+
+    let target = null;
+    let nearestDistance = Infinity;
+
+    paragraphs.forEach(paragraph => {
+        const rect = paragraph.getBoundingClientRect();
+
+        if (circleTouchesRectangle(state.x, state.y, 21, rect)) {
+            const centerX = (rect.left + rect.right) / 2;
+            const centerY = (rect.top + rect.bottom) / 2;
+            const distance = Math.hypot(
+                state.x - centerX,
+                state.y - centerY
+            );
+
+            if (distance < nearestDistance) {
+                nearestDistance = distance;
+                target = paragraph;
+            }
+        }
+    });
+
+    return target;
+}
+
 function updateMagnification() {
     const paragraphs = Array.from(
         poemElement.querySelectorAll(".poem-paragraph")
@@ -539,29 +780,7 @@ function updateMagnification() {
     const activeParagraphs = new Set();
 
     handStates.forEach(state => {
-        if (state.x === null || state.y === null) return;
-
-        let target = null;
-        let nearestDistance = Infinity;
-
-        paragraphs.forEach(paragraph => {
-            const rect = paragraph.getBoundingClientRect();
-
-            if (circleTouchesRectangle(state.x, state.y, 21, rect)) {
-                const centerX = (rect.left + rect.right) / 2;
-                const centerY = (rect.top + rect.bottom) / 2;
-                const distance = Math.hypot(
-                    state.x - centerX,
-                    state.y - centerY
-                );
-
-                if (distance < nearestDistance) {
-                    nearestDistance = distance;
-                    target = paragraph;
-                }
-            }
-        });
-
+        const target = findTargetParagraph(state);
         if (target) activeParagraphs.add(target);
     });
 
@@ -574,6 +793,11 @@ function updateMagnification() {
 }
 
 function moveHand(state, x, y) {
+    if (state.startX !== null &&
+        Math.hypot(x - state.startX, y - state.startY) > 8) {
+        state.moved = true;
+    }
+
     state.x = x;
     state.y = y;
 
@@ -585,6 +809,137 @@ function moveHand(state, x, y) {
     updateMagnification();
 }
 
+/* Toegangscode */
+
+function getAccessToken() {
+    return localStorage.getItem(TOKEN_STORAGE_KEY) || "";
+}
+
+function requestAccess() {
+    accessOverlay.classList.add("visible");
+    accessInput.focus();
+}
+
+document.getElementById("accessSave").addEventListener("click", () => {
+    const token = accessInput.value.trim();
+
+    if (!token) {
+        accessError.textContent = "Vul de toegangscode in.";
+        return;
+    }
+
+    localStorage.setItem(TOKEN_STORAGE_KEY, token);
+    accessOverlay.classList.remove("visible");
+    accessInput.value = "";
+    accessError.textContent = "";
+});
+
+accessInput.addEventListener("keydown", event => {
+    if (event.key === "Enter") {
+        document.getElementById("accessSave").click();
+    }
+});
+
+/* Notitievenster openen */
+
+function openNote(state) {
+    const paragraph = findTargetParagraph(state);
+
+    if (!paragraph) {
+        return;
+    }
+
+    selectedParagraph = paragraph;
+    selectedHand = state;
+
+    noteContext.textContent = paragraph.textContent;
+    noteText.value = "";
+    noteStatus.textContent = "";
+
+    noteOverlay.classList.add("visible");
+
+    if (!getAccessToken()) {
+        noteOverlay.classList.remove("visible");
+        requestAccess();
+        return;
+    }
+
+    setTimeout(() => noteText.focus(), 100);
+}
+
+function closeNote() {
+    noteOverlay.classList.remove("visible");
+    selectedParagraph = null;
+    selectedHand = null;
+}
+
+document.getElementById("noteCancel")
+    .addEventListener("click", closeNote);
+
+noteOverlay.addEventListener("click", event => {
+    if (event.target === noteOverlay) closeNote();
+});
+
+/* Notitie opslaan */
+
+noteSave.addEventListener("click", async () => {
+    const token = getAccessToken();
+    const aantekening = noteText.value.trim();
+
+    if (!token) {
+        closeNote();
+        requestAccess();
+        return;
+    }
+
+    if (!aantekening) {
+        noteStatus.textContent = "Schrijf eerst een aantekening.";
+        return;
+    }
+
+    if (!selectedParagraph || !poems[currentIndex]) {
+        noteStatus.textContent = "Geen passage geselecteerd.";
+        return;
+    }
+
+    const passage = selectedParagraph.textContent;
+    const gedicht = titleElement.textContent;
+
+    noteSave.disabled = true;
+    noteStatus.textContent = "Aantekening wordt verstuurd...";
+
+    try {
+        const formData = new URLSearchParams();
+        formData.append("token", token);
+        formData.append("gedicht", gedicht);
+        formData.append("passage", passage);
+        formData.append("aantekening", aantekening);
+
+        await fetch(NOTES_URL, {
+            method: "POST",
+            mode: "no-cors",
+            body: formData
+        });
+
+        selectedParagraph.classList.add("has-note");
+        noteStatus.textContent =
+            "Verzoek verstuurd. Controleer het tabblad Aantekeningen in Google Sheets.";
+
+        noteText.value = "";
+
+        setTimeout(() => {
+            closeNote();
+        }, 2200);
+
+    } catch (error) {
+        console.error(error);
+        noteStatus.textContent =
+            "Versturen is niet gelukt. Controleer je internetverbinding.";
+    } finally {
+        noteSave.disabled = false;
+    }
+});
+
 /* Touchbediening met onafhankelijke vingerregistratie */
 
 handStates.forEach(state => {
@@ -592,8 +947,12 @@ handStates.forEach(state => {
         event.preventDefault();
 
         const touch = event.changedTouches[0];
+
         state.touchId = touch.identifier;
         state.dragging = true;
+        state.moved = false;
+        state.startX = touch.clientX;
+        state.startY = touch.clientY;
 
         state.element.classList.add("dragging");
         moveHand(state, touch.clientX, touch.clientY);
@@ -624,9 +983,17 @@ document.addEventListener("touchend", event => {
         );
 
         if (ended) {
+            const wasTap = !state.moved;
+
             state.dragging = false;
             state.touchId = null;
+            state.startX = null;
+            state.startY = null;
             state.element.classList.remove("dragging");
+
+            if (wasTap) {
+                openNote(state);
+            }
         }
     });
 });
@@ -635,6 +1002,8 @@ document.addEventListener("touchcancel", () => {
     handStates.forEach(state => {
         state.dragging = false;
         state.touchId = null;
+        state.startX = null;
+        state.startY = null;
         state.element.classList.remove("dragging");
     });
 });
@@ -646,9 +1015,18 @@ handStates.forEach(state => {
         event.preventDefault();
 
         state.dragging = true;
-        state.element.classList.add("dragging");
+        state.moved = false;
+        state.startX = event.clientX;
+        state.startY = event.clientY;
 
+        state.element.classList.add("dragging");
         moveHand(state, event.clientX, event.clientY);
+    });
+
+    state.element.addEventListener("click", () => {
+        if (!state.moved) {
+            openNote(state);
+        }
     });
 });
 
@@ -663,12 +1041,21 @@ document.addEventListener("mousemove", event => {
 document.addEventListener("mouseup", () => {
     handStates.forEach(state => {
         state.dragging = false;
+        state.startX = null;
+        state.startY = null;
         state.element.classList.remove("dragging");
     });
 });
 
+/* Start */
+
+if (!getAccessToken()) {
+    requestAccess();
+}
+
 loadPoems();
 setInterval(loadPoems, 5 * 60 * 1000);
+
 </script>
 
 </body>
