@@ -8,7 +8,6 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="theme-color" content="#ffffff">
 <title>Gedichten</title>
-
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&display=swap" rel="stylesheet">
@@ -16,30 +15,20 @@
 
 <style>
 * { box-sizing: border-box; }
-
 html { background: #fff; }
-
 body {
     margin: 0;
     background: #eee9df;
     color: #302c26;
     font-family: 'Cormorant Garamond', Georgia, serif;
 }
-
 .page {
     max-width: 900px;
     min-height: 100vh;
     margin: 0 auto;
     padding: 105px 65px 65px;
-    background: linear-gradient(
-        to bottom,
-        #fff 0px,
-        #fff 25px,
-        #f7f4ed 85px,
-        #eee9df 210px
-    );
+    background: linear-gradient(to bottom, #fff 0px, #fff 25px, #f7f4ed 85px, #eee9df 210px);
 }
-
 header {
     position: relative;
     text-align: center;
@@ -47,27 +36,23 @@ header {
     padding-bottom: 25px;
     border-bottom: 1px solid #d5cdbf;
 }
-
 h1 {
     font-size: 43px;
     font-weight: 500;
     line-height: 1.1;
     margin: 0 0 8px;
 }
-
 .author {
     font-size: 21px;
     font-style: italic;
     color: #887e70;
 }
-
 .poem {
     font-size: 25px;
     line-height: 1.48;
     text-align: left;
     overflow-wrap: break-word;
 }
-
 .poem-paragraph {
     position: relative;
     margin: 0 0 1.15em;
@@ -77,14 +62,9 @@ h1 {
     color: #302c26;
     transform: scale(1);
     transform-origin: left center;
-    transition:
-        transform 420ms cubic-bezier(0.22, 1, 0.36, 1),
-        font-weight 350ms ease,
-        color 400ms ease,
-        text-shadow 400ms ease;
+    transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1), font-weight 350ms ease, color 400ms ease, text-shadow 400ms ease;
     will-change: transform;
 }
-
 .poem-paragraph.active {
     transform: scale(1.09);
     font-weight: 600;
@@ -92,7 +72,13 @@ h1 {
     text-shadow: 0 0 0.01px #211b14;
     z-index: 2;
 }
-
+.poem-paragraph.has-notes {
+    background: linear-gradient(to right, rgba(182,154,112,0.13), rgba(182,154,112,0.035));
+    border-left: 2px solid #c6ad88;
+    padding-left: 9px;
+    margin-left: -11px;
+    cursor: pointer;
+}
 .navigation {
     display: flex;
     justify-content: space-between;
@@ -101,9 +87,7 @@ h1 {
     padding-top: 20px;
     border-top: 1px solid #d5cdbf;
 }
-
 button { font-family: inherit; }
-
 .nav-button {
     border: 0;
     background: none;
@@ -112,16 +96,10 @@ button { font-family: inherit; }
     cursor: pointer;
     padding: 8px 0;
 }
-
 .nav-button:active { color: #302c26; }
+.counter { font-size: 17px; color: #887e70; }
 
-.counter {
-    font-size: 17px;
-    color: #887e70;
-}
-
-/* De twee Hamsa-handjes */
-
+/* Hamsa-handjes */
 .hand {
     position: fixed;
     z-index: 9999;
@@ -134,7 +112,7 @@ button { font-family: inherit; }
     border: 0;
     border-radius: 50%;
     background: transparent;
-    box-shadow: 0 2px 8px rgba(50, 40, 25, 0.14);
+    box-shadow: 0 2px 8px rgba(50,40,25,0.14);
     cursor: grab;
     touch-action: none;
     user-select: none;
@@ -144,10 +122,8 @@ button { font-family: inherit; }
     padding: 0;
     transition: width 180ms ease, height 180ms ease, box-shadow 180ms ease;
 }
-
 #hand1 { left: max(8px, calc((100vw - 900px) / 2 + 8px)); }
 #hand2 { right: max(8px, calc((100vw - 900px) / 2 + 8px)); }
-
 .hand-icon {
     width: 100%;
     height: 100%;
@@ -156,17 +132,14 @@ button { font-family: inherit; }
     pointer-events: none;
     transform-origin: 50% 50%;
 }
-
 #hand1 .hand-icon { transform: rotate(60deg); }
 #hand2 .hand-icon { transform: rotate(-60deg); }
-
 .hand.dragging {
     width: 46px;
     height: 46px;
     cursor: grabbing;
     box-shadow: 0 4px 15px rgba(50,40,25,0.2);
 }
-
 .hand-hint {
     margin-top: 18px;
     font-size: 15px;
@@ -175,35 +148,29 @@ button { font-family: inherit; }
     font-style: italic;
 }
 
-/* Toegangscode- en aantekeningenvensters */
-
+/* Vensters */
 .modal-backdrop {
     display: none;
     position: fixed;
-
-    /* Expliciete positionering voor oudere Safari-versies */
     top: 0;
     right: 0;
     bottom: 0;
     left: 0;
-
     width: 100%;
     height: 100%;
     z-index: 20000;
-    background: rgba(35, 30, 24, 0.42);
+    background: rgba(35,30,24,0.42);
     align-items: center;
     justify-content: center;
     padding: 20px;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
 }
-
 .modal-backdrop.visible {
     display: -webkit-box;
     display: -webkit-flex;
     display: flex;
 }
-
 .modal {
     width: 100%;
     max-width: 460px;
@@ -211,25 +178,22 @@ button { font-family: inherit; }
     border: 1px solid #d5cdbf;
     border-radius: 4px;
     padding: 30px;
-    box-shadow: 0 12px 40px rgba(35, 30, 24, 0.2);
+    box-shadow: 0 12px 40px rgba(35,30,24,0.2);
     position: relative;
     margin: auto;
     flex-shrink: 0;
 }
-
 .modal h2 {
     margin: 0 0 8px;
     font-size: 29px;
     font-weight: 500;
 }
-
 .modal-description {
     margin: 0 0 20px;
     color: #887e70;
     font-size: 18px;
     line-height: 1.35;
 }
-
 .modal-passage {
     padding: 12px 14px;
     margin-bottom: 18px;
@@ -240,9 +204,29 @@ button { font-family: inherit; }
     max-height: 125px;
     overflow-y: auto;
 }
-
-.modal input,
-.modal textarea {
+.saved-notes { margin: 0 0 18px; }
+.saved-note {
+    padding: 11px 0;
+    border-bottom: 1px solid #d5cdbf;
+    font-size: 18px;
+    line-height: 1.4;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+.saved-note-date {
+    display: block;
+    margin-top: 4px;
+    color: #998d7d;
+    font-size: 14px;
+    font-style: italic;
+}
+.saved-notes-empty {
+    margin: 0 0 16px;
+    color: #998d7d;
+    font-size: 16px;
+    font-style: italic;
+}
+.modal input, .modal textarea {
     display: block;
     width: 100%;
     border: 1px solid #cfc5b5;
@@ -256,13 +240,11 @@ button { font-family: inherit; }
     -webkit-appearance: none;
     appearance: none;
 }
-
 .modal textarea {
     min-height: 150px;
     resize: vertical;
     line-height: 1.4;
 }
-
 .modal-actions {
     display: flex;
     justify-content: flex-end;
@@ -270,7 +252,6 @@ button { font-family: inherit; }
     align-items: center;
     margin-top: 8px;
 }
-
 .modal-button {
     border: 0;
     background: none;
@@ -279,18 +260,12 @@ button { font-family: inherit; }
     padding: 8px 4px;
     cursor: pointer;
 }
-
 .modal-button.primary {
     color: #302c26;
     border-bottom: 1px solid #a77c48;
     font-weight: 600;
 }
-
-.modal-button:disabled {
-    opacity: 0.5;
-    cursor: wait;
-}
-
+.modal-button:disabled { opacity: 0.5; cursor: wait; }
 .modal-status {
     min-height: 22px;
     margin-top: 12px;
@@ -302,85 +277,38 @@ button { font-family: inherit; }
 @media (max-width: 600px) {
     .page {
         padding: 75px 27px 50px;
-        background: linear-gradient(
-            to bottom,
-            #fff 0px,
-            #fff 20px,
-            #f7f4ed 65px,
-            #eee9df 175px
-        );
+        background: linear-gradient(to bottom, #fff 0px, #fff 20px, #f7f4ed 65px, #eee9df 175px);
     }
-
     h1 { font-size: 36px; }
     .author { font-size: 20px; }
-
-    .poem {
-        font-size: 22px;
-        line-height: 1.45;
-    }
-
+    .poem { font-size: 22px; line-height: 1.45; }
     header { margin-bottom: 48px; }
     .navigation { margin-top: 55px; }
-
-    #hand1 {
-        top: 76px;
-        left: 3px;
+    #hand1 { top: 76px; left: 3px; }
+    #hand2 { top: 76px; right: 3px; }
+    .hand { width: 34px; height: 34px; }
+    .hand.dragging { width: 38px; height: 38px; }
+    .hand svg { width: 25px; height: 25px; }
+    .hand.dragging svg { width: 28px; height: 28px; }
+    .poem-paragraph.active { transform: scale(1.07); }
+    .poem-paragraph.has-notes {
+        padding-left: 7px;
+        margin-left: -9px;
     }
-
-    #hand2 {
-        top: 76px;
-        right: 3px;
-    }
-
-    .hand {
-        width: 34px;
-        height: 34px;
-    }
-
-    .hand.dragging {
-        width: 38px;
-        height: 38px;
-    }
-
-    .hand svg {
-        width: 25px;
-        height: 25px;
-    }
-
-    .hand.dragging svg {
-        width: 28px;
-        height: 28px;
-    }
-
-    .poem-paragraph.active {
-        transform: scale(1.07);
-    }
-
-    .modal {
-        padding: 23px;
-        max-width: 100%;
-    }
+    .modal { padding: 23px; max-width: 100%; }
 }
-
 @media (prefers-reduced-motion: reduce) {
-    .poem-paragraph,
-    .hand,
-    .hand svg {
-        transition: none !important;
-    }
+    .poem-paragraph, .hand, .hand svg { transition: none !important; }
 }
 </style>
 </head>
 
 <body>
-
 <div class="page">
-
     <header>
         <h1 id="title">Gedichten</h1>
         <div class="author" id="author"></div>
     </header>
-
     <main>
         <div class="poem" id="poem"></div>
         <div class="hand-hint">
@@ -388,19 +316,16 @@ button { font-family: inherit; }
             Tik op een handje om een aantekening toe te voegen.
         </div>
     </main>
-
     <div class="navigation">
         <button class="nav-button" id="previous">← Vorige</button>
         <div class="counter" id="counter"></div>
         <button class="nav-button" id="next">Volgende →</button>
     </div>
-
 </div>
 
 <button type="button" class="hand" id="hand1" aria-label="Eerste Hamsa-hand"></button>
 <button type="button" class="hand" id="hand2" aria-label="Tweede Hamsa-hand"></button>
 
-<!-- Toegangscodevenster -->
 <div class="modal-backdrop" id="accessBackdrop">
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="accessTitle">
         <h2 id="accessTitle">Toegang</h2>
@@ -408,15 +333,8 @@ button { font-family: inherit; }
             Voer de toegangscode in om aantekeningen te kunnen bewaren.
             Je hoeft dit op dit apparaat maar één keer te doen.
         </p>
-
         <form id="accessForm">
-            <input
-                type="password"
-                id="accessCode"
-                placeholder="Toegangscode"
-                autocomplete="current-password"
-                required
-            >
+            <input type="password" id="accessCode" placeholder="Toegangscode" autocomplete="current-password" required>
             <div class="modal-actions">
                 <button type="button" class="modal-button" id="accessCancel">Annuleren</button>
                 <button type="submit" class="modal-button primary">Verder</button>
@@ -426,23 +344,16 @@ button { font-family: inherit; }
     </div>
 </div>
 
-<!-- Aantekeningenvenster -->
 <div class="modal-backdrop" id="noteBackdrop">
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="noteTitle">
-        <h2 id="noteTitle">Aantekening</h2>
+        <h2 id="noteTitle">Aantekeningen</h2>
         <p class="modal-description" id="notePoemTitle"></p>
         <div class="modal-passage" id="notePassage"></div>
-
+        <div class="saved-notes" id="savedNotes"></div>
         <form id="noteForm">
-            <textarea
-                id="noteText"
-                placeholder="Schrijf hier je aantekening..."
-                maxlength="3000"
-                required
-            ></textarea>
-
+            <textarea id="noteText" placeholder="Schrijf hier een nieuwe aantekening..." maxlength="3000" required></textarea>
             <div class="modal-actions">
-                <button type="button" class="modal-button" id="noteCancel">Annuleren</button>
+                <button type="button" class="modal-button" id="noteCancel">Sluiten</button>
                 <button type="submit" class="modal-button primary" id="noteSave">Bewaren</button>
             </div>
         </form>
@@ -451,12 +362,10 @@ button { font-family: inherit; }
 </div>
 
 <script>
-
 /* Hamsa-illustratie */
 
 function buildHamsaIcon() {
-    const ns = "http://www.w3.org/2000/svg";
-    const svg = document.createElementNS(ns, "svg");
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     svg.setAttribute("viewBox", "0 0 100 120");
     svg.setAttribute("class", "hand-icon");
     svg.setAttribute("aria-hidden", "true");
@@ -466,57 +375,43 @@ function buildHamsaIcon() {
 
     svg.innerHTML = `
       <defs>
-        <clipPath id="${clipId}">
-          <path d="${silhouette}"/>
-        </clipPath>
+        <clipPath id="${clipId}"><path d="${silhouette}"/></clipPath>
       </defs>
-
-      <path d="${silhouette}" fill="#fff8e9" stroke="#352b2b"
-            stroke-width="3.2" stroke-linejoin="round"/>
-
+      <path d="${silhouette}" fill="#fff8e9" stroke="#352b2b" stroke-width="3.2" stroke-linejoin="round"/>
       <g clip-path="url(#${clipId})">
         <rect x="5" y="3" width="90" height="113" fill="#13c9d5"/>
-
         <path d="M5 27 L24 27 L24 62 L5 62Z" fill="#ff8a24" stroke="#352b2b" stroke-width="1.5"/>
         <path d="M76 27 L95 27 L95 62 L76 62Z" fill="#ff8a24" stroke="#352b2b" stroke-width="1.5"/>
         <path d="M7 36 L23 36 L23 43 L7 43Z" fill="#ffe12e"/>
         <path d="M77 36 L93 36 L93 43 L77 43Z" fill="#ffe12e"/>
-
         <path d="M23 17 L41 17 L41 64 L23 64Z" fill="#ff4fa3" stroke="#352b2b" stroke-width="1.5"/>
         <path d="M59 17 L77 17 L77 64 L59 64Z" fill="#ff4fa3" stroke="#352b2b" stroke-width="1.5"/>
         <path d="M25 23 L39 23 L39 30 L25 30Z" fill="#ffe12e"/>
         <path d="M61 23 L75 23 L75 30 L61 30Z" fill="#ffe12e"/>
-
         <path d="M41 4 L59 4 L59 65 L41 65Z" fill="#ffe12e" stroke="#352b2b" stroke-width="1.6"/>
         <path d="M44 12 Q50 5 56 12 L56 21 Q50 27 44 21Z" fill="#8b5cf6" stroke="#352b2b" stroke-width="1.2"/>
         <circle cx="50" cy="15" r="3" fill="#13c9d5" stroke="#352b2b" stroke-width="1"/>
         <path d="M44 31 L50 25 L56 31 L50 37Z" fill="#ff4fa3" stroke="#352b2b" stroke-width="1.2"/>
         <path d="M45 45 L50 39 L55 45 L50 51Z" fill="#13c9d5" stroke="#352b2b" stroke-width="1.2"/>
-
         <g fill="#ffe12e" stroke="#352b2b" stroke-width="1">
           <path d="M29 39 L33 34 L37 39 L33 44Z"/>
           <path d="M63 39 L67 34 L71 39 L67 44Z"/>
           <path d="M12 49 L16 44 L20 49 L16 54Z"/>
           <path d="M80 49 L84 44 L88 49 L84 54Z"/>
         </g>
-
         <g fill="#8b5cf6" stroke="#352b2b" stroke-width="0.8">
           <circle cx="33" cy="53" r="2.3"/>
           <circle cx="67" cy="53" r="2.3"/>
           <circle cx="16" cy="58" r="2"/>
           <circle cx="84" cy="58" r="2"/>
         </g>
-
-        <path d="M13 64 Q50 48 87 64 L83 91 Q75 111 50 116 Q25 111 17 91Z"
-              fill="#ff4fa3" stroke="#352b2b" stroke-width="2"/>
-
+        <path d="M13 64 Q50 48 87 64 L83 91 Q75 111 50 116 Q25 111 17 91Z" fill="#ff4fa3" stroke="#352b2b" stroke-width="2"/>
         <g stroke="#352b2b" stroke-width="1.4" stroke-linejoin="round">
           <path d="M18 86 Q20 65 36 72 Q36 88 18 86Z" fill="#a8e63f"/>
           <path d="M82 86 Q80 65 64 72 Q64 88 82 86Z" fill="#a8e63f"/>
           <path d="M21 83 Q27 76 32 75" fill="none" stroke="#ff8a24" stroke-width="2"/>
           <path d="M79 83 Q73 76 68 75" fill="none" stroke="#ff8a24" stroke-width="2"/>
         </g>
-
         <g transform="translate(50 83)">
           <circle r="23" fill="#ffe12e" stroke="#352b2b" stroke-width="2"/>
           <g fill="#13c9d5" stroke="#352b2b" stroke-width="1.2">
@@ -536,7 +431,6 @@ function buildHamsaIcon() {
           <circle cx="-17" cy="0" r="1.6" fill="#ff4fa3"/>
           <circle cx="17" cy="0" r="1.6" fill="#ff4fa3"/>
         </g>
-
         <path d="M20 101 Q50 120 80 101" fill="none" stroke="#ffe12e" stroke-width="4"/>
         <g fill="#8b5cf6" stroke="#352b2b" stroke-width="0.8">
           <circle cx="27" cy="103" r="3"/>
@@ -550,44 +444,30 @@ function buildHamsaIcon() {
           <circle cx="68" cy="94" r="2"/>
         </g>
       </g>
-
-      <path d="${silhouette}" fill="none" stroke="#352b2b"
-            stroke-width="3" stroke-linejoin="round"/>
-      <path d="${silhouette}" fill="none" stroke="#fffdf8"
-            stroke-width="0.9" stroke-linejoin="round"
-            transform="translate(0.7 0.7)"/>
+      <path d="${silhouette}" fill="none" stroke="#352b2b" stroke-width="3" stroke-linejoin="round"/>
+      <path d="${silhouette}" fill="none" stroke="#fffdf8" stroke-width="0.9" stroke-linejoin="round" transform="translate(0.7 0.7)"/>
     `;
-
     return svg;
 }
 
-document.querySelectorAll(".hand").forEach(hand => {
-    hand.appendChild(buildHamsaIcon());
-});
+document.querySelectorAll(".hand").forEach(hand => hand.appendChild(buildHamsaIcon()));
 
 /* Instellingen */
-
 const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSyqrEB__RKjtVvARlIYLBkIdwVlXFh0PYBN615AgXk1RrlmrRzqFfV8r7DRWIuEbeRTeetKTBBWNBd/pub?gid=0&single=true&output=csv";
-
 const NOTES_URL = "https://script.google.com/macros/s/AKfycbximcSly2Yp2TyiIzJWdNZ2gt5QcQ5Is9rf4ITK3SHQfMaWQH6NCAUGYMw3kgJvHl36kQ/exec";
-
 const ACCESS_STORAGE_KEY = "gedichten_toegangscode";
 
 let poems = [];
 let currentIndex = 0;
 let selectedPassage = "";
 let selectedPoemTitle = "";
+let notesByPassage = {};
 
 const titleElement = document.getElementById("title");
 const authorElement = document.getElementById("author");
 const poemElement = document.getElementById("poem");
 const counterElement = document.getElementById("counter");
-
-const hands = [
-    document.getElementById("hand1"),
-    document.getElementById("hand2")
-];
-
+const hands = [document.getElementById("hand1"), document.getElementById("hand2")];
 const accessBackdrop = document.getElementById("accessBackdrop");
 const noteBackdrop = document.getElementById("noteBackdrop");
 
@@ -604,32 +484,19 @@ const handStates = hands.map(hand => ({
 }));
 
 /* Gedichten laden */
-
 function findColumn(row, possibleNames) {
     const keys = Object.keys(row);
-    const match = keys.find(key =>
-        possibleNames.includes(key.trim().toLowerCase())
-    );
+    const match = keys.find(key => possibleNames.includes(key.trim().toLowerCase()));
     return match ? row[match] : "";
 }
 
 async function loadPoems() {
     try {
-        const response = await fetch(
-            CSV_URL + "&refresh=" + Date.now(),
-            { cache: "no-store" }
-        );
-
-        if (!response.ok) {
-            throw new Error("Kon gedichten niet laden");
-        }
+        const response = await fetch(CSV_URL + "&refresh=" + Date.now(), { cache: "no-store" });
+        if (!response.ok) throw new Error("Kon gedichten niet laden");
 
         const csv = await response.text();
-
-        const result = Papa.parse(csv, {
-            header: true,
-            skipEmptyLines: "greedy"
-        });
+        const result = Papa.parse(csv, { header: true, skipEmptyLines: "greedy" });
 
         poems = result.data.map(row => ({
             title: findColumn(row, ["titel", "title"]),
@@ -637,32 +504,85 @@ async function loadPoems() {
             poem: findColumn(row, ["gedicht", "tekst", "poem"])
         })).filter(item => item.poem && item.poem.trim());
 
-        if (poems.length > 0) {
-            show(0);
-        }
-
+        if (poems.length > 0) show(0);
     } catch (error) {
         poemElement.textContent = "De gedichten konden niet worden geladen.";
         console.error(error);
     }
 }
 
+/* Aantekeningen ophalen via JSONP */
+function normalizePassage(text) {
+    return String(text || "").trim().replace(/\s+/g, " ");
+}
+
+function loadNotesForCurrentPoem() {
+    if (!titleElement.textContent.trim()) return;
+
+    const callbackName = "gedichtenNotesCallback" + Date.now() + Math.floor(Math.random() * 100000);
+    const script = document.createElement("script");
+    const url = new URL(NOTES_URL);
+
+    url.searchParams.set("action", "notes");
+    url.searchParams.set("gedicht", titleElement.textContent.trim());
+    url.searchParams.set("callback", callbackName);
+
+    let finished = false;
+
+    function cleanup() {
+        if (finished) return;
+        finished = true;
+        delete window[callbackName];
+        if (script.parentNode) script.parentNode.removeChild(script);
+    }
+
+    window[callbackName] = function(data) {
+        cleanup();
+
+        if (!data || !data.success || !Array.isArray(data.notes)) {
+            console.error("Aantekeningen konden niet worden opgehaald.", data);
+            return;
+        }
+
+        notesByPassage = {};
+        data.notes.forEach(note => {
+            const key = normalizePassage(note.passage);
+            if (!notesByPassage[key]) notesByPassage[key] = [];
+            notesByPassage[key].push(note);
+        });
+
+        applyNoteHighlights();
+
+        if (noteBackdrop.classList.contains("visible")) renderSavedNotes();
+    };
+
+    script.onerror = function() {
+        cleanup();
+        console.error("Verbinding met de aantekeningen is mislukt.");
+    };
+
+    script.src = url.toString();
+    document.head.appendChild(script);
+}
+
+function applyNoteHighlights() {
+    poemElement.querySelectorAll(".poem-paragraph").forEach(paragraph => {
+        const key = normalizePassage(paragraph.textContent);
+        paragraph.classList.toggle("has-notes", !!(notesByPassage[key] && notesByPassage[key].length));
+    });
+}
+
 function show(direction) {
     if (!poems.length) return;
 
-    currentIndex =
-        (currentIndex + direction + poems.length) % poems.length;
-
+    currentIndex = (currentIndex + direction + poems.length) % poems.length;
     const item = poems[currentIndex];
 
     titleElement.textContent = item.title || "";
     authorElement.textContent = item.author || "";
     poemElement.innerHTML = "";
 
-    const paragraphs = item.poem
-        .trim()
-        .split(/\n\s*\n/)
-        .filter(part => part.trim());
+    const paragraphs = item.poem.trim().split(/\n\s*\n/).filter(part => part.trim());
 
     paragraphs.forEach(text => {
         const paragraph = document.createElement("p");
@@ -671,49 +591,45 @@ function show(direction) {
         poemElement.appendChild(paragraph);
     });
 
-    counterElement.textContent =
-        (currentIndex + 1) + " / " + poems.length;
-
+    counterElement.textContent = (currentIndex + 1) + " / " + poems.length;
     clearMagnification();
+    notesByPassage = {};
+    loadNotesForCurrentPoem();
 }
 
-document.getElementById("previous")
-    .addEventListener("click", () => show(-1));
+document.getElementById("previous").addEventListener("click", () => show(-1));
+document.getElementById("next").addEventListener("click", () => show(1));
 
-document.getElementById("next")
-    .addEventListener("click", () => show(1));
+/* Tik op een gemarkeerde passage om de bestaande aantekeningen te lezen */
+poemElement.addEventListener("click", event => {
+    const paragraph = event.target.closest(".poem-paragraph");
+    if (!paragraph || !paragraph.classList.contains("has-notes")) return;
+
+    selectedPassage = paragraph.textContent.trim();
+    selectedPoemTitle = titleElement.textContent.trim();
+    openNoteModal();
+});
 
 /* Vergroten van passages */
-
 function clearMagnification() {
-    document.querySelectorAll(".poem-paragraph.active")
-        .forEach(element => element.classList.remove("active"));
-
-    handStates.forEach(state => {
-        state.target = null;
-    });
+    document.querySelectorAll(".poem-paragraph.active").forEach(element => element.classList.remove("active"));
+    handStates.forEach(state => { state.target = null; });
 }
 
 function circleTouchesRectangle(cx, cy, radius, rect) {
     const nearestX = Math.max(rect.left, Math.min(cx, rect.right));
     const nearestY = Math.max(rect.top, Math.min(cy, rect.bottom));
-
     const dx = cx - nearestX;
     const dy = cy - nearestY;
-
     return (dx * dx + dy * dy) <= radius * radius;
 }
 
 function updateMagnification() {
-    const paragraphs = Array.from(
-        poemElement.querySelectorAll(".poem-paragraph")
-    );
-
+    const paragraphs = Array.from(poemElement.querySelectorAll(".poem-paragraph"));
     const activeParagraphs = new Set();
 
     handStates.forEach(state => {
         state.target = null;
-
         if (state.x === null || state.y === null) return;
 
         let target = null;
@@ -721,14 +637,10 @@ function updateMagnification() {
 
         paragraphs.forEach(paragraph => {
             const rect = paragraph.getBoundingClientRect();
-
             if (circleTouchesRectangle(state.x, state.y, 21, rect)) {
                 const centerX = (rect.left + rect.right) / 2;
                 const centerY = (rect.top + rect.bottom) / 2;
-                const distance = Math.hypot(
-                    state.x - centerX,
-                    state.y - centerY
-                );
+                const distance = Math.hypot(state.x - centerX, state.y - centerY);
 
                 if (distance < nearestDistance) {
                     nearestDistance = distance;
@@ -744,31 +656,24 @@ function updateMagnification() {
     });
 
     paragraphs.forEach(paragraph => {
-        paragraph.classList.toggle(
-            "active",
-            activeParagraphs.has(paragraph)
-        );
+        paragraph.classList.toggle("active", activeParagraphs.has(paragraph));
     });
 }
 
 function moveHand(state, x, y) {
     state.x = x;
     state.y = y;
-
     const hand = state.element;
     hand.style.left = (x - hand.offsetWidth / 2) + "px";
     hand.style.top = (y - hand.offsetHeight / 2) + "px";
     hand.style.right = "auto";
-
     updateMagnification();
 }
 
 /* Onafhankelijke bediening van beide handjes */
-
 handStates.forEach(state => {
     state.element.addEventListener("pointerdown", event => {
         if (event.button !== undefined && event.button !== 0) return;
-
         event.preventDefault();
 
         state.dragging = true;
@@ -776,50 +681,33 @@ handStates.forEach(state => {
         state.startX = event.clientX;
         state.startY = event.clientY;
         state.moved = false;
-
         state.element.classList.add("dragging");
 
-        if (state.element.setPointerCapture) {
-            state.element.setPointerCapture(event.pointerId);
-        }
-
+        if (state.element.setPointerCapture) state.element.setPointerCapture(event.pointerId);
         moveHand(state, event.clientX, event.clientY);
     });
 
     state.element.addEventListener("pointermove", event => {
         if (!state.dragging || state.pointerId !== event.pointerId) return;
-
         event.preventDefault();
 
-        if (
-            Math.hypot(
-                event.clientX - state.startX,
-                event.clientY - state.startY
-            ) > 8
-        ) {
+        if (Math.hypot(event.clientX - state.startX, event.clientY - state.startY) > 8) {
             state.moved = true;
         }
-
         moveHand(state, event.clientX, event.clientY);
     });
 
     function finishPointer(event) {
         if (!state.dragging || state.pointerId !== event.pointerId) return;
-
         state.dragging = false;
         state.pointerId = null;
         state.element.classList.remove("dragging");
-
-        if (!state.moved) {
-            openNoteForHand(state);
-        }
+        if (!state.moved) openNoteForHand(state);
     }
 
     state.element.addEventListener("pointerup", finishPointer);
-
     state.element.addEventListener("pointercancel", event => {
         if (state.pointerId !== event.pointerId) return;
-
         state.dragging = false;
         state.pointerId = null;
         state.element.classList.remove("dragging");
@@ -827,53 +715,38 @@ handStates.forEach(state => {
 });
 
 /* Aantekening openen bij de passage onder het handje */
-
 function openNoteForHand(state) {
-    if (!state.target || !state.target.isConnected) {
-        return;
-    }
+    if (!state.target || !state.target.isConnected) return;
 
     selectedPassage = state.target.textContent.trim();
     selectedPoemTitle = titleElement.textContent.trim();
-
     if (!selectedPassage || !selectedPoemTitle) return;
 
     const savedCode = localStorage.getItem(ACCESS_STORAGE_KEY);
-
     if (!savedCode) {
         openAccessModal();
         return;
     }
-
     openNoteModal();
 }
 
 /* Toegangscode */
-
 function openAccessModal() {
     document.getElementById("accessCode").value = "";
     document.getElementById("accessStatus").textContent = "";
-
     accessBackdrop.classList.add("visible");
-
-    setTimeout(() => {
-        document.getElementById("accessCode").focus();
-    }, 300);
+    setTimeout(() => document.getElementById("accessCode").focus(), 300);
 }
 
 function closeAccessModal() {
     accessBackdrop.classList.remove("visible");
 }
 
-document.getElementById("accessCancel").addEventListener("click", () => {
-    closeAccessModal();
-});
+document.getElementById("accessCancel").addEventListener("click", closeAccessModal);
 
 document.getElementById("accessForm").addEventListener("submit", event => {
     event.preventDefault();
-
     const code = document.getElementById("accessCode").value.trim();
-
     if (!code) return;
 
     localStorage.setItem(ACCESS_STORAGE_KEY, code);
@@ -881,42 +754,62 @@ document.getElementById("accessForm").addEventListener("submit", event => {
     openNoteModal();
 });
 
-/* Aantekeningvenster */
+/* Bestaande aantekeningen tonen */
+function renderSavedNotes() {
+    const container = document.getElementById("savedNotes");
+    container.innerHTML = "";
+
+    const key = normalizePassage(selectedPassage);
+    const notes = notesByPassage[key] || [];
+
+    if (!notes.length) {
+        const empty = document.createElement("p");
+        empty.className = "saved-notes-empty";
+        empty.textContent = "Er zijn nog geen aantekeningen bij deze passage.";
+        container.appendChild(empty);
+        return;
+    }
+
+    notes.forEach(note => {
+        const item = document.createElement("div");
+        item.className = "saved-note";
+
+        const text = document.createElement("div");
+        text.textContent = note.aantekening || "";
+
+        const date = document.createElement("span");
+        date.className = "saved-note-date";
+        date.textContent = note.datum || "";
+
+        item.appendChild(text);
+        if (note.datum) item.appendChild(date);
+        container.appendChild(item);
+    });
+}
 
 function openNoteModal() {
-    document.getElementById("notePoemTitle").textContent =
-        selectedPoemTitle;
-
-    document.getElementById("notePassage").textContent =
-        selectedPassage;
+    document.getElementById("notePoemTitle").textContent = selectedPoemTitle;
+    document.getElementById("notePassage").textContent = selectedPassage;
+    renderSavedNotes();
 
     document.getElementById("noteText").value = "";
     document.getElementById("noteStatus").textContent = "";
     document.getElementById("noteSave").disabled = false;
-
     noteBackdrop.classList.add("visible");
-
-    setTimeout(() => {
-        document.getElementById("noteText").focus();
-    }, 300);
 }
 
 function closeNoteModal() {
     noteBackdrop.classList.remove("visible");
 }
 
-document.getElementById("noteCancel").addEventListener("click", () => {
-    closeNoteModal();
-});
+document.getElementById("noteCancel").addEventListener("click", closeNoteModal);
 
-/* Aantekening versturen naar Google Sheets */
-
+/* Nieuwe aantekening opslaan in Google Sheets */
 document.getElementById("noteForm").addEventListener("submit", async event => {
     event.preventDefault();
 
     const noteText = document.getElementById("noteText").value.trim();
     const token = localStorage.getItem(ACCESS_STORAGE_KEY);
-
     const statusElement = document.getElementById("noteStatus");
     const saveButton = document.getElementById("noteSave");
 
@@ -947,37 +840,25 @@ document.getElementById("noteForm").addEventListener("submit", async event => {
             body: formData
         });
 
-        statusElement.textContent =
-            "Het verzoek is verzonden. Controleer het tabblad Aantekeningen in Google Sheets om te zien of de regel is opgeslagen.";
-
+        statusElement.textContent = "Het verzoek is verzonden. De aantekening verschijnt zodra Google Sheets is bijgewerkt.";
         saveButton.disabled = false;
+
+        setTimeout(() => loadNotesForCurrentPoem(), 1500);
 
     } catch (error) {
         console.error("Fout bij versturen van aantekening:", error);
-
-        statusElement.textContent =
-            "Versturen is niet gelukt. Controleer je internetverbinding en probeer opnieuw.";
-
+        statusElement.textContent = "Versturen is niet gelukt. Controleer je internetverbinding en probeer opnieuw.";
         saveButton.disabled = false;
     }
 });
 
-/* Vensters sluiten door buiten het venster te klikken */
-
+/* Vensters sluiten */
 accessBackdrop.addEventListener("click", event => {
-    if (event.target === accessBackdrop) {
-        closeAccessModal();
-    }
+    if (event.target === accessBackdrop) closeAccessModal();
 });
-
 noteBackdrop.addEventListener("click", event => {
-    if (event.target === noteBackdrop) {
-        closeNoteModal();
-    }
+    if (event.target === noteBackdrop) closeNoteModal();
 });
-
-/* Escape sluit een geopend venster */
-
 document.addEventListener("keydown", event => {
     if (event.key === "Escape") {
         closeAccessModal();
@@ -986,11 +867,8 @@ document.addEventListener("keydown", event => {
 });
 
 /* Start */
-
 loadPoems();
 setInterval(loadPoems, 5 * 60 * 1000);
-
 </script>
-
 </body>
 </html>
