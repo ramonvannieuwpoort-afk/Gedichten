@@ -158,51 +158,19 @@ button { font-family: inherit; }
     right: max(8px, calc((100vw - 900px) / 2 + 8px));
 }
 
-/*
-  Andean kleurenring.
-  Opgebouwd uit een gewone conic-gradient en een
-  effen binnenste cirkel, zonder CSS-maskers.
-*/
+/* Kleurenring: SVG-strokes, zonder CSS-gradients of maskers */
 
-.hand::before {
-    content: "";
+.hand-ring {
     position: absolute;
     inset: 0;
-    border-radius: 50%;
-    background: conic-gradient(
-        from -8deg,
-        #bd4938 0deg 12deg,
-        #d87937 12deg 24deg,
-        #e5b84e 24deg 36deg,
-        #829b55 36deg 48deg,
-        #278b91 48deg 60deg,
-        #315b96 60deg 72deg,
-        #73558a 72deg 84deg,
-        #bd4938 84deg 96deg,
-        #d87937 96deg 108deg,
-        #e5b84e 108deg 120deg,
-        #829b55 120deg 132deg,
-        #278b91 132deg 144deg,
-        #315b96 144deg 156deg,
-        #73558a 156deg 168deg,
-        #bd4938 168deg 180deg,
-        #d87937 180deg 192deg,
-        #e5b84e 192deg 204deg,
-        #829b55 204deg 216deg,
-        #278b91 216deg 228deg,
-        #315b96 228deg 240deg,
-        #73558a 240deg 252deg,
-        #bd4938 252deg 264deg,
-        #d87937 264deg 276deg,
-        #e5b84e 276deg 288deg,
-        #829b55 288deg 300deg,
-        #278b91 300deg 312deg,
-        #315b96 312deg 324deg,
-        #73558a 324deg 336deg,
-        #bd4938 336deg 360deg
-    );
+    width: 100%;
+    height: 100%;
+    display: block;
+    z-index: 0;
     pointer-events: none;
 }
+
+.hand::before { content: none; }
 
 .hand::after {
     content: "";
@@ -212,6 +180,7 @@ button { font-family: inherit; }
     border-radius: 50%;
     background: #fffdf8;
     pointer-events: none;
+    z-index: 1;
 }
 
 .hand.dragging {
@@ -222,9 +191,9 @@ button { font-family: inherit; }
     box-shadow: 0 4px 15px rgba(50,40,25,0.16);
 }
 
-.hand svg {
+.hand svg:not(.hand-ring) {
     position: relative;
-    z-index: 1;
+    z-index: 2;
     width: 30px;
     height: 30px;
     display: block;
@@ -232,7 +201,7 @@ button { font-family: inherit; }
     pointer-events: none;
 }
 
-.hand.dragging svg {
+.hand.dragging svg:not(.hand-ring) {
     width: 33px;
     height: 33px;
 }
@@ -288,12 +257,12 @@ button { font-family: inherit; }
         height: 38px;
     }
 
-    .hand svg {
+    .hand svg:not(.hand-ring) {
         width: 25px;
         height: 25px;
     }
 
-    .hand.dragging svg {
+    .hand.dragging svg:not(.hand-ring) {
         width: 28px;
         height: 28px;
     }
@@ -306,7 +275,7 @@ button { font-family: inherit; }
 @media (prefers-reduced-motion: reduce) {
     .poem-paragraph,
     .hand,
-    .hand svg {
+    .hand svg:not(.hand-ring) {
         transition: none !important;
     }
 }
@@ -340,6 +309,15 @@ button { font-family: inherit; }
 <!-- Eerste hand -->
 <button type="button" class="hand" id="hand1"
         aria-label="Eerste vergroothand">
+    <svg class="hand-ring" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <circle cx="32" cy="32" r="27" fill="none" stroke="#bd4938" stroke-width="6" stroke-dasharray="18 151.65" stroke-dashoffset="0" transform="rotate(-90 32 32)"/>
+        <circle cx="32" cy="32" r="27" fill="none" stroke="#d87937" stroke-width="6" stroke-dasharray="18 151.65" stroke-dashoffset="-24" transform="rotate(-90 32 32)"/>
+        <circle cx="32" cy="32" r="27" fill="none" stroke="#e5b84e" stroke-width="6" stroke-dasharray="18 151.65" stroke-dashoffset="-48" transform="rotate(-90 32 32)"/>
+        <circle cx="32" cy="32" r="27" fill="none" stroke="#829b55" stroke-width="6" stroke-dasharray="18 151.65" stroke-dashoffset="-72" transform="rotate(-90 32 32)"/>
+        <circle cx="32" cy="32" r="27" fill="none" stroke="#278b91" stroke-width="6" stroke-dasharray="18 151.65" stroke-dashoffset="-96" transform="rotate(-90 32 32)"/>
+        <circle cx="32" cy="32" r="27" fill="none" stroke="#315b96" stroke-width="6" stroke-dasharray="18 151.65" stroke-dashoffset="-120" transform="rotate(-90 32 32)"/>
+        <circle cx="32" cy="32" r="27" fill="none" stroke="#73558a" stroke-width="6" stroke-dasharray="18 151.65" stroke-dashoffset="-144" transform="rotate(-90 32 32)"/>
+    </svg>
     <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
         <g transform="rotate(-25 32 32)"
            fill="none" stroke="#72543c"
@@ -367,6 +345,15 @@ button { font-family: inherit; }
 <!-- Tweede hand -->
 <button type="button" class="hand" id="hand2"
         aria-label="Tweede vergroothand">
+    <svg class="hand-ring" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <circle cx="32" cy="32" r="27" fill="none" stroke="#bd4938" stroke-width="6" stroke-dasharray="18 151.65" stroke-dashoffset="0" transform="rotate(-90 32 32)"/>
+        <circle cx="32" cy="32" r="27" fill="none" stroke="#d87937" stroke-width="6" stroke-dasharray="18 151.65" stroke-dashoffset="-24" transform="rotate(-90 32 32)"/>
+        <circle cx="32" cy="32" r="27" fill="none" stroke="#e5b84e" stroke-width="6" stroke-dasharray="18 151.65" stroke-dashoffset="-48" transform="rotate(-90 32 32)"/>
+        <circle cx="32" cy="32" r="27" fill="none" stroke="#829b55" stroke-width="6" stroke-dasharray="18 151.65" stroke-dashoffset="-72" transform="rotate(-90 32 32)"/>
+        <circle cx="32" cy="32" r="27" fill="none" stroke="#278b91" stroke-width="6" stroke-dasharray="18 151.65" stroke-dashoffset="-96" transform="rotate(-90 32 32)"/>
+        <circle cx="32" cy="32" r="27" fill="none" stroke="#315b96" stroke-width="6" stroke-dasharray="18 151.65" stroke-dashoffset="-120" transform="rotate(-90 32 32)"/>
+        <circle cx="32" cy="32" r="27" fill="none" stroke="#73558a" stroke-width="6" stroke-dasharray="18 151.65" stroke-dashoffset="-144" transform="rotate(-90 32 32)"/>
+    </svg>
     <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
         <g transform="rotate(-25 32 32)"
            fill="none" stroke="#72543c"
