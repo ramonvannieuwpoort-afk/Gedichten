@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="theme-color" content="#ffffff">
 <title>Gedichten</title>
-<!-- Testversie 6: 14 november 2026 -->
+<!-- Testversie 7: 15 november 2026 – R/S-knoppen met meldingsgetallen -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&display=swap" rel="stylesheet">
@@ -49,56 +49,14 @@ button{font-family:inherit}
 #hand2 .hand-icon{transform:rotate(-60deg)}
 .hand.dragging{cursor:grabbing}
 .hand-hint{margin-top:18px;font-size:15px;color:#a09688;text-align:center;font-style:italic}
-.test-version{position:fixed;left:14px;bottom:calc(54px + env(safe-area-inset-bottom));z-index:10001;color:#9b9183;font-family:Georgia,serif;font-size:11px;letter-spacing:.08em;opacity:.78;pointer-events:none;user-select:none}
+.test-version{position:fixed;left:14px;bottom:calc(104px + env(safe-area-inset-bottom));z-index:10001;color:#9b9183;font-family:Georgia,serif;font-size:11px;letter-spacing:.08em;opacity:.78;pointer-events:none;user-select:none}
 .reset-hands-button{position:fixed;right:14px;bottom:calc(10px + env(safe-area-inset-bottom));z-index:10002;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(151,133,108,.38);border-radius:50%;padding:0;background:rgba(247,244,237,.94);color:#766b5d;font-family:Georgia,serif;font-size:30px;font-weight:400;line-height:1;padding:0 0 2px;box-shadow:0 2px 9px rgba(55,45,32,.09);cursor:pointer;backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);-webkit-tap-highlight-color:transparent}
 .reset-hands-button:active{background:#e9e1d4;transform:translateY(1px)}
 .reset-hands-button:focus-visible{outline:2px solid #887e70;outline-offset:3px}
 .poem-menu-button{position:fixed;left:14px;bottom:calc(10px + env(safe-area-inset-bottom));z-index:10002;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(151,133,108,.38);border-radius:50%;padding:0;background:rgba(247,244,237,.94);color:#766b5d;box-shadow:0 2px 9px rgba(55,45,32,.09);cursor:pointer;backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);-webkit-tap-highlight-color:transparent}
 .poem-menu-button:active{background:#e9e1d4;transform:translateY(1px)}
 .poem-menu-button:focus-visible{outline:2px solid #887e70;outline-offset:3px}
-
 .poem-menu-button svg{width:21px;height:21px;display:block}
-.reading-mode-button{position:fixed;left:62px;bottom:calc(10px + env(safe-area-inset-bottom));z-index:10003;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(151,133,108,.38);border-radius:50%;padding:0;background:rgba(247,244,237,.94);color:#766b5d;box-shadow:0 2px 9px rgba(55,45,32,.09);cursor:pointer;backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);-webkit-tap-highlight-color:transparent}
-.reading-mode-button:active{background:#e9e1d4;transform:translateY(1px)}
-.reading-mode-button:focus-visible{outline:2px solid #887e70;outline-offset:3px}
-.reading-mode-button svg{width:20px;height:20px;display:block}
-body.reading-mode .hand,
-body.reading-mode .navigation,
-body.reading-mode .hand-hint,
-body.reading-mode .test-version,
-body.reading-mode .reset-hands-button,
-body.reading-mode .poem-menu-button{display:none!important}
-body.reading-mode .page{padding-bottom:45px}
-body.reading-mode .reading-mode-button{left:14px;bottom:calc(10px + env(safe-area-inset-bottom))}
-@media(max-width:600px){body.reading-mode .reading-mode-button{left:9px;bottom:calc(7px + env(safe-area-inset-bottom))}}
-.word-lookup{margin:0 0 18px;padding:14px;background:#eee9df;border-left:2px solid #b69a70}
-.word-lookup[hidden]{display:none}
-.word-lookup-title{margin:0 0 8px;color:#776b5b;font-size:16px}
-.word-lookup-result{margin:10px 0 0;color:#302c26;font-size:17px;line-height:1.45;white-space:pre-wrap}
-.word-lookup-result:empty{display:none}
-
-
-
-/* Auteursinbox en ongelezen-aantallen */
-.author-inbox-button{position:fixed;left:14px;bottom:calc(110px + env(safe-area-inset-bottom));z-index:10004;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(151,133,108,.38);border-radius:50%;padding:0;background:rgba(247,244,237,.96);color:#766b5d;font-family:Georgia,serif;font-size:19px;font-weight:600;box-shadow:0 2px 9px rgba(55,45,32,.09);cursor:pointer;backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);-webkit-tap-highlight-color:transparent}
-#sanneInboxButton{left:62px}
-.author-inbox-button:active{background:#e9e1d4;transform:translateY(1px)}
-.author-inbox-button:focus-visible{outline:2px solid #887e70;outline-offset:3px}
-.notification-badge{position:absolute;top:-6px;right:-6px;min-width:19px;height:19px;padding:0 5px;border:2px solid #f7f4ed;border-radius:12px;background:#d93636;color:white;font-family:Arial,sans-serif;font-size:11px;font-weight:700;line-height:15px;text-align:center}
-.notification-badge[hidden]{display:none}
-.notification-modal{max-height:82vh;display:flex;flex-direction:column;overflow:hidden}
-.notification-list{min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;margin:8px -4px 0;padding:0 4px}
-.notification-entry{display:block;width:100%;border:0;border-bottom:1px solid rgba(213,205,191,.85);padding:13px 4px;background:transparent;color:#302c26;text-align:left;font-family:inherit;cursor:pointer}
-.notification-entry:last-child{border-bottom:0}
-.notification-entry-title{display:block;font-size:20px;font-weight:600;line-height:1.2}
-.notification-entry-passage{display:block;margin-top:4px;color:#776b5b;font-size:17px;line-height:1.3}
-.notification-entry-note{display:block;margin-top:5px;color:#302c26;font-size:17px;line-height:1.35;white-space:pre-wrap}
-.notification-entry-date{display:block;margin-top:5px;color:#998d7d;font-size:14px;font-style:italic}
-.notification-empty{margin:10px 0;color:#998d7d;font-size:17px;font-style:italic}
-.notification-target{animation:notificationPulse 2.2s ease-out;border-radius:3px}
-@keyframes notificationPulse{0%,25%{background:rgba(217,54,54,.22);box-shadow:0 0 0 4px rgba(217,54,54,.12)}100%{background:transparent;box-shadow:none}}
-body.reading-mode .author-inbox-button{display:none!important}
-@media(max-width:600px){.author-inbox-button{left:9px;bottom:calc(103px + env(safe-area-inset-bottom));width:38px;height:38px;font-size:18px}#sanneInboxButton{left:54px}}
 
 /* iPad-vriendelijk menu: geen flexbox op de vaste achtergrondlaag */
 .poem-menu-backdrop{display:none;position:fixed;top:0;right:0;bottom:0;left:0;z-index:21000;background:rgba(35,30,24,.42);padding:1px 20px;overflow-y:auto;-webkit-overflow-scrolling:touch}
@@ -114,11 +72,33 @@ body.reading-mode .author-inbox-button{display:none!important}
 .poem-menu-item-author{display:block;margin-top:3px;color:#887e70;font-size:16px;font-style:italic}
 .poem-menu-item.current .poem-menu-item-title{font-weight:600;color:#8a6845}
 .poem-menu-empty{margin:0;color:#887e70;font-size:18px;font-style:italic}
-@media(max-width:600px){.reading-mode-button{left:54px;bottom:calc(7px + env(safe-area-inset-bottom));width:38px;height:38px}.reading-mode-button svg{width:19px;height:19px}.poem-menu-button{left:9px;bottom:calc(7px + env(safe-area-inset-bottom));width:38px;height:38px}.poem-menu-button svg{width:20px;height:20px}.poem-menu-panel{height:80vh;max-height:calc(100vh - 30px);margin:5vh auto;padding:22px}}
-@media(max-width:600px){.test-version{left:9px;bottom:calc(51px + env(safe-area-inset-bottom));font-size:10px}.reset-hands-button{right:9px;bottom:calc(7px + env(safe-area-inset-bottom));width:38px;height:38px;font-size:29px}}
+@media(max-width:600px){.poem-menu-button{left:9px;bottom:calc(7px + env(safe-area-inset-bottom));width:38px;height:38px}.poem-menu-button svg{width:20px;height:20px}.poem-menu-panel{height:80vh;max-height:calc(100vh - 30px);margin:5vh auto;padding:22px}}
+/* R- en S-knoppen met rood meldingsgetal (zoals op de iPhone) */
+.person-inbox-button{position:fixed;bottom:calc(58px + env(safe-area-inset-bottom));z-index:10002;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(151,133,108,.38);border-radius:50%;padding:0 0 2px;background:rgba(247,244,237,.94);font-family:Georgia,serif;font-size:20px;font-weight:400;line-height:1;box-shadow:0 2px 9px rgba(55,45,32,.09);cursor:pointer;backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);-webkit-tap-highlight-color:transparent}
+.person-inbox-button:active{background:#e9e1d4;transform:translateY(1px)}
+.person-inbox-button:focus-visible{outline:2px solid #887e70;outline-offset:3px}
+#ramonInboxButton{left:14px;color:#607b88}
+#sanneInboxButton{right:14px;color:#987044}
+.inbox-badge{position:absolute;top:-6px;right:-8px;min-width:21px;height:21px;padding:0 6px;border-radius:11px;background:#e5372c;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;font-size:12.5px;font-weight:600;line-height:21px;text-align:center;box-shadow:0 0 0 2px #f7f4ed;pointer-events:none}
+.inbox-badge[hidden]{display:none}
+.inbox-subtitle{flex:0 0 auto;margin:-6px 0 12px;color:#887e70;font-size:16px;font-style:italic}
+.inbox-item{display:block;width:100%;border:0;border-bottom:1px solid rgba(213,205,191,.75);padding:13px 8px;background:transparent;color:#302c26;text-align:left;font-family:inherit;cursor:pointer;border-radius:2px}
+.inbox-item:active{background:#ece5d9}
+.inbox-item.new{background:linear-gradient(to right,rgba(229,55,44,.09),rgba(229,55,44,.02));border-left:3px solid #e5372c;padding-left:10px}
+.inbox-item-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.inbox-item-poem{font-size:19px;font-weight:600;line-height:1.2}
+.inbox-new-label{flex:0 0 auto;color:#c9332a;font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.inbox-item-passage{display:block;margin-top:5px;color:#887e70;font-size:16px;font-style:italic;line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.inbox-item-text{display:block;margin-top:5px;font-size:18px;line-height:1.35;white-space:pre-wrap;overflow-wrap:anywhere}
+.inbox-item-date{display:block;margin-top:4px;color:#998d7d;font-size:14px;font-style:italic}
+.inbox-divider{margin:16px 0 4px;color:#a09688;font-size:14px;font-style:italic;text-align:center}
+@keyframes passageFlash{0%,30%{background:rgba(255,190,70,.55);box-shadow:0 0 0 5px rgba(255,190,70,.55)}100%{background:rgba(255,190,70,0);box-shadow:0 0 0 5px rgba(255,190,70,0)}}
+.passage-flash{animation:passageFlash 3s ease-out;border-radius:3px}
+@media(max-width:600px){.person-inbox-button{bottom:calc(52px + env(safe-area-inset-bottom));width:38px;height:38px;font-size:19px}#ramonInboxButton{left:9px}#sanneInboxButton{right:9px}}
+@media(max-width:600px){.test-version{left:9px;bottom:calc(97px + env(safe-area-inset-bottom));font-size:10px}.reset-hands-button{right:9px;bottom:calc(7px + env(safe-area-inset-bottom));width:38px;height:38px;font-size:29px}}
 .modal-backdrop{display:none;position:fixed;top:0;right:0;bottom:0;left:0;width:100%;height:100%;z-index:20000;background:rgba(35,30,24,.42);align-items:center;justify-content:center;padding:20px;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .modal-backdrop.visible{display:-webkit-box;display:-webkit-flex;display:flex}
-  .modal{width:100%;max-width:460px;background:#f7f4ed;border:1px solid #d5cdbf;border-radius:4px;padding:30px;box-shadow:0 12px 40px rgba(35,30,24,.2);position:relative;margin:auto;flex-shrink:0}
+.modal{width:100%;max-width:460px;background:#f7f4ed;border:1px solid #d5cdbf;border-radius:4px;padding:30px;box-shadow:0 12px 40px rgba(35,30,24,.2);position:relative;margin:auto;flex-shrink:0}
 .modal h2{margin:0 0 8px;font-size:29px;font-weight:500}
 .modal-description{margin:0 0 20px;color:#887e70;font-size:18px;line-height:1.35}
 .modal-passage{padding:12px 14px;margin-bottom:18px;background:#eee9df;border-left:2px solid #b69a70;font-size:17px;line-height:1.4;max-height:125px;overflow-y:auto}
@@ -194,16 +174,20 @@ header{margin-bottom:48px}
 <button type="button" class="hand" id="hand2" aria-label="Tweede Hamsa-hand"></button>
 <button type="button" class="hand" id="sentenceHand" aria-label="Wijzende vinger voor regels"></button>
 <button type="button" class="hand" id="wordHand" aria-label="Wijzende vinger voor woorden"></button>
-<div class="test-version" aria-label="Testversie 6">TEST v6</div>
+<div class="test-version" aria-label="Testversie 7">TEST v7</div>
+<button type="button" class="person-inbox-button" id="ramonInboxButton" data-person="Ramon" aria-label="Aantekeningen van Ramon" title="Aantekeningen van Ramon">R<span class="inbox-badge" hidden></span></button>
+<button type="button" class="person-inbox-button" id="sanneInboxButton" data-person="Sanne" aria-label="Aantekeningen van Sanne" title="Aantekeningen van Sanne">S<span class="inbox-badge" hidden></span></button>
+<div class="poem-menu-backdrop" id="inboxBackdrop" aria-hidden="true">
+  <section class="poem-menu-panel" role="dialog" aria-modal="true" aria-labelledby="inboxTitle">
+    <div class="poem-menu-heading"><h2 id="inboxTitle">Aantekeningen</h2><button type="button" class="poem-menu-close" id="inboxClose" aria-label="Venster sluiten">×</button></div>
+    <p class="inbox-subtitle" id="inboxSubtitle"></p>
+    <div class="poem-menu-list" id="inboxList"></div>
+  </section>
+</div>
 <button type="button" class="reset-hands-button" id="resetHandsButton" aria-label="Zet alle handjes terug naar hun beginposities" title="Handjes terugzetten">⟲</button>
 <button type="button" class="poem-menu-button" id="poemMenuButton" aria-label="Open gedichtenmenu" title="Gedichten">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M4 6.5h16M4 12h16M4 17.5h16"/></svg>
 </button>
-<button type="button" class="reading-mode-button" id="readingModeButton" aria-label="Leesmodus aanzetten" title="Leesmodus">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5.5c3.4-1.5 6.4-1.2 9 1v13c-2.6-2.2-5.6-2.5-9-1z"/><path d="M21 5.5c-3.4-1.5-6.4-1.2-9 1v13c2.6-2.2 5.6-2.5 9-1z"/></svg>
-</button>
-<button type="button" class="author-inbox-button" id="ramonInboxButton" aria-label="Opmerkingen van Ramon" title="Opmerkingen van Ramon">R<span class="notification-badge" id="ramonBadge" hidden>0</span></button>
-<button type="button" class="author-inbox-button" id="sanneInboxButton" aria-label="Opmerkingen van Sanne" title="Opmerkingen van Sanne">S<span class="notification-badge" id="sanneBadge" hidden>0</span></button>
 <div class="poem-menu-backdrop" id="poemMenuBackdrop" aria-hidden="true">
   <section class="poem-menu-panel" role="dialog" aria-modal="true" aria-labelledby="poemMenuTitle">
     <div class="poem-menu-heading"><h2 id="poemMenuTitle">Gedichten</h2><button type="button" class="poem-menu-close" id="poemMenuClose" aria-label="Menu sluiten">×</button></div>
@@ -231,10 +215,783 @@ header{margin-bottom:48px}
 <h2 id="noteTitle">Aantekeningen</h2>
 <p class="modal-description" id="notePoemTitle"></p>
 <div class="modal-passage" id="notePassage"></div>
-<div class="word-lookup" id="wordLookupPanel" hidden><div class="word-lookup-title">Woordenboek</div><button type="button" class="modal-button primary" id="lookupWordButton">Betekenis opzoeken</button><div class="word-lookup-result" id="wordLookupResult" aria-live="polite"></div></div>
 <div class="saved-notes" id="savedNotes"></div>
 <form id="noteForm">
 <div class="person-label">Wie schrijft?</div>
 <div class="person-choices" role="group" aria-label="Kies wie de aantekening schrijft">
 <button type="button" class="person-choice sanne" data-person="Sanne" aria-pressed="false">Sanne</button>
 <button type="button" class="person-choice ramon" data-person="Ramon" aria-pressed="false">Ramon</button>
+</div>
+<textarea id="noteText" placeholder="Schrijf hier een nieuwe aantekening..." maxlength="3000" required></textarea>
+<div class="modal-actions">
+<button type="button" class="modal-button" id="noteCancel">Sluiten</button>
+<button type="button" class="modal-button" id="noteEditCancel" hidden>Wijzigen annuleren</button>
+<button type="submit" class="modal-button primary" id="noteSave" disabled>Bewaren</button>
+</div>
+</form>
+<div class="modal-status" id="noteStatus"></div>
+</div>
+</div>
+
+<script>
+function buildHamsaIcon(){
+const ns="http://www.w3.org/2000/svg";
+const svg=document.createElementNS(ns,"svg");
+svg.setAttribute("viewBox","0 0 100 120");
+svg.setAttribute("class","hand-icon");
+svg.setAttribute("aria-hidden","true");
+const clipId="hamsaClip"+Math.random().toString(36).slice(2);
+const silhouette="M24 76 L8 53 Q2 44 8 36 Q15 28 23 34 L23 29 Q23 18 32 18 Q41 18 41 29 L41 17 Q41 4 50 4 Q59 4 59 17 L59 29 Q59 18 68 18 Q77 18 77 29 L77 34 Q85 28 92 36 Q98 44 92 53 L76 76 Q73 99 62 108 Q56 114 50 115 Q44 114 38 108 Q27 99 24 76 Z";
+svg.innerHTML=`
+<defs><clipPath id="${clipId}"><path d="${silhouette}"/></clipPath></defs>
+<path d="${silhouette}" fill="#fff8e9" stroke="#352b2b" stroke-width="3.2" stroke-linejoin="round"/>
+<g clip-path="url(#${clipId})">
+<rect x="5" y="3" width="90" height="113" fill="#13c9d5"/>
+<path d="M5 27 L24 27 L24 62 L5 62Z" fill="#ff8a24" stroke="#352b2b" stroke-width="1.5"/>
+<path d="M76 27 L95 27 L95 62 L76 62Z" fill="#ff8a24" stroke="#352b2b" stroke-width="1.5"/>
+<path d="M7 36 L23 36 L23 43 L7 43Z" fill="#ffe12e"/>
+<path d="M77 36 L93 36 L93 43 L77 43Z" fill="#ffe12e"/>
+<path d="M23 17 L41 17 L41 64 L23 64Z" fill="#ff4fa3" stroke="#352b2b" stroke-width="1.5"/>
+<path d="M59 17 L77 17 L77 64 L59 64Z" fill="#ff4fa3" stroke="#352b2b" stroke-width="1.5"/>
+<path d="M25 23 L39 23 L39 30 L25 30Z" fill="#ffe12e"/>
+<path d="M61 23 L75 23 L75 30 L61 30Z" fill="#ffe12e"/>
+<path d="M41 4 L59 4 L59 65 L41 65Z" fill="#ffe12e" stroke="#352b2b" stroke-width="1.6"/>
+<path d="M44 12 Q50 5 56 12 L56 21 Q50 27 44 21Z" fill="#8b5cf6" stroke="#352b2b" stroke-width="1.2"/>
+<circle cx="50" cy="15" r="3" fill="#13c9d5" stroke="#352b2b" stroke-width="1"/>
+<path d="M44 31 L50 25 L56 31 L50 37Z" fill="#ff4fa3" stroke="#352b2b" stroke-width="1.2"/>
+<path d="M45 45 L50 39 L55 45 L50 51Z" fill="#13c9d5" stroke="#352b2b" stroke-width="1.2"/>
+<g fill="#ffe12e" stroke="#352b2b" stroke-width="1">
+<path d="M29 39 L33 34 L37 39 L33 44Z"/><path d="M63 39 L67 34 L71 39 L67 44Z"/>
+<path d="M12 49 L16 44 L20 49 L16 54Z"/><path d="M80 49 L84 44 L88 49 L84 54Z"/>
+</g>
+<g fill="#8b5cf6" stroke="#352b2b" stroke-width=".8">
+<circle cx="33" cy="53" r="2.3"/><circle cx="67" cy="53" r="2.3"/><circle cx="16" cy="58" r="2"/><circle cx="84" cy="58" r="2"/>
+</g>
+<path d="M13 64 Q50 48 87 64 L83 91 Q75 111 50 116 Q25 111 17 91Z" fill="#ff4fa3" stroke="#352b2b" stroke-width="2"/>
+<g stroke="#352b2b" stroke-width="1.4" stroke-linejoin="round">
+<path d="M18 86 Q20 65 36 72 Q36 88 18 86Z" fill="#a8e63f"/>
+<path d="M82 86 Q80 65 64 72 Q64 88 82 86Z" fill="#a8e63f"/>
+<path d="M21 83 Q27 76 32 75" fill="none" stroke="#ff8a24" stroke-width="2"/>
+<path d="M79 83 Q73 76 68 75" fill="none" stroke="#ff8a24" stroke-width="2"/>
+</g>
+<g transform="translate(50 83)">
+<circle r="23" fill="#ffe12e" stroke="#352b2b" stroke-width="2"/>
+<g fill="#13c9d5" stroke="#352b2b" stroke-width="1.2">
+<path d="M0 -22 Q7 -14 0 -9 Q-7 -14 0 -22Z"/>
+<path d="M0 -22 Q7 -14 0 -9 Q-7 -14 0 -22Z" transform="rotate(45)"/>
+<path d="M0 -22 Q7 -14 0 -9 Q-7 -14 0 -22Z" transform="rotate(90)"/>
+<path d="M0 -22 Q7 -14 0 -9 Q-7 -14 0 -22Z" transform="rotate(135)"/>
+<path d="M0 -22 Q7 -14 0 -9 Q-7 -14 0 -22Z" transform="rotate(180)"/>
+<path d="M0 -22 Q7 -14 0 -9 Q-7 -14 0 -22Z" transform="rotate(225)"/>
+<path d="M0 -22 Q7 -14 0 -9 Q-7 -14 0 -22Z" transform="rotate(270)"/>
+<path d="M0 -22 Q7 -14 0 -9 Q-7 -14 0 -22Z" transform="rotate(315)"/>
+</g>
+<circle r="14" fill="#8b5cf6" stroke="#352b2b" stroke-width="1.5"/>
+<ellipse rx="11" ry="7.5" fill="#fff8e9" stroke="#352b2b" stroke-width="1.2"/>
+<circle r="4.2" fill="#13c9d5" stroke="#352b2b" stroke-width="1"/>
+<circle r="1.8" fill="#252525"/>
+<circle cx="-17" cy="0" r="1.6" fill="#ff4fa3"/><circle cx="17" cy="0" r="1.6" fill="#ff4fa3"/>
+</g>
+<path d="M20 101 Q50 120 80 101" fill="none" stroke="#ffe12e" stroke-width="4"/>
+<g fill="#8b5cf6" stroke="#352b2b" stroke-width=".8">
+<circle cx="27" cy="103" r="3"/><circle cx="39" cy="109" r="3"/><circle cx="50" cy="112" r="3"/><circle cx="61" cy="109" r="3"/><circle cx="73" cy="103" r="3"/>
+</g>
+<g fill="#ffe12e" stroke="#352b2b" stroke-width=".7"><circle cx="32" cy="94" r="2"/><circle cx="68" cy="94" r="2"/></g>
+</g>
+<path d="${silhouette}" fill="none" stroke="#352b2b" stroke-width="3" stroke-linejoin="round"/>
+<path d="${silhouette}" fill="none" stroke="#fffdf8" stroke-width=".9" stroke-linejoin="round" transform="translate(0.7 0.7)"/>
+`;
+return svg;
+}
+
+document.querySelectorAll("#hand1,#hand2").forEach(hand=>hand.appendChild(buildHamsaIcon()));
+function buildFingerIcon(direction){
+const svg=document.createElementNS("http://www.w3.org/2000/svg","svg");
+svg.setAttribute("viewBox","0 0 100 100");
+svg.setAttribute("class","finger-icon");
+svg.setAttribute("aria-hidden","true");
+svg.innerHTML=`
+<g stroke="#352b2b" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round">
+  <path d="M29 91 Q23 86 24 76 L18 60 Q15 52 21 48 Q27 44 32 52 L38 63 L39 17 Q39 7 48 5 Q57 7 57 17 L57 55 L63 47 Q69 41 75 47 Q80 53 74 60 L67 82 Q64 92 53 94Z" fill="#13c9d5"/>
+  <path d="M39 19 Q39 8 48 5 Q57 8 57 19 L55 33 L41 33Z" fill="#ffe12e"/>
+  <path d="M42 17 Q48 9 54 17 L53 25 L43 25Z" fill="#ff4fa3" stroke-width="1.5"/>
+  <path d="M40 38 L56 38 L56 46 L40 46Z" fill="#ff8a24" stroke-width="1.5"/>
+  <path d="M39 59 L57 59 L57 68 L39 68Z" fill="#ff4fa3" stroke-width="1.5"/>
+  <path d="M28 75 Q46 84 66 75" fill="none" stroke="#ffe12e" stroke-width="5"/>
+  <path d="M31 84 Q47 91 61 84" fill="none" stroke="#8b5cf6" stroke-width="4"/>
+  <circle cx="48" cy="53" r="4" fill="#a8e63f" stroke-width="1.5"/>
+  <circle cx="48" cy="53" r="1.5" fill="#352b2b" stroke="none"/>
+</g>`;
+return svg;
+}
+document.getElementById("sentenceHand").appendChild(buildFingerIcon(1));
+document.getElementById("wordHand").appendChild(buildFingerIcon(-1));
+
+const CSV_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vSyqrEB__RKjtVvARlIYLBkIdwVlXFh0PYBN615AgXk1RrlmrRzqFfV8r7DRWIuEbeRTeetKTBBWNBd/pub?gid=0&single=true&output=csv";
+const NOTES_URL="https://script.google.com/macros/s/AKfycbximcSly2Yp2TyiIzJWdNZ2gt5QcQ5Is9rf4ITK3SHQfMaWQH6NCAUGYMw3kgJvHl36kQ/exec";
+const ACCESS_STORAGE_KEY="gedichten_access_token";
+let poems=[];
+let currentIndex=0;
+let lastDailyKey="";
+let notesByPassage={};
+let selectedPassage="";
+let selectedPoemTitle="";
+let selectedPerson="";
+let editingNoteRow=null;
+const titleElement=document.getElementById("title");
+const authorElement=document.getElementById("author");
+const poemElement=document.getElementById("poem");
+const counterElement=document.getElementById("counter");
+const hands=[document.getElementById("hand1"),document.getElementById("hand2"),document.getElementById("sentenceHand"),document.getElementById("wordHand")];
+const accessBackdrop=document.getElementById("accessBackdrop");
+const noteBackdrop=document.getElementById("noteBackdrop");
+const poemMenuBackdrop=document.getElementById("poemMenuBackdrop");
+const poemMenuList=document.getElementById("poemMenuList");
+const handStates=hands.map((hand,index)=>({element:hand,type:index===2?"sentence":index===3?"word":"passage",dragging:false,pointerId:null,startX:0,startY:0,moved:false,activated:false,x:null,y:null,target:null}));
+
+function findColumn(row,possibleNames){
+const keys=Object.keys(row);
+const match=keys.find(key=>possibleNames.includes(key.trim().toLowerCase()));
+return match?row[match]:"";
+}
+
+function getLocalDateKey(date=new Date()){
+// De gedichtendag loopt van 05:00 tot 04:59.
+const poemDate=new Date(date);
+if(poemDate.getHours()<5)poemDate.setDate(poemDate.getDate()-1);
+const year=poemDate.getFullYear();
+const month=String(poemDate.getMonth()+1).padStart(2,"0");
+const day=String(poemDate.getDate()).padStart(2,"0");
+return `${year}-${month}-${day}`;
+}
+function getDailyPoemIndex(date=new Date()){
+if(!poems.length)return 0;
+const dateKey=getLocalDateKey(date);
+
+// Op 14 november 2026 is Pessoa het daggedicht, tot 05:00 op 15 november.
+if(dateKey==="2026-11-14"){
+const pessoaIndex=poems.findIndex(item=>/pessoa/i.test(String(item.author||"")));
+if(pessoaIndex!==-1)return pessoaIndex;
+}
+let hash=0;
+for(let i=0;i<dateKey.length;i++)hash=(hash*31+dateKey.charCodeAt(i))>>>0;
+let index=hash%poems.length;
+if(poems.length>1){
+const previousDate=new Date(date);
+previousDate.setHours(5,0,0,0);
+previousDate.setDate(previousDate.getDate()-1);
+const previousKey=getLocalDateKey(previousDate);
+let previousHash=0;
+for(let i=0;i<previousKey.length;i++)previousHash=(previousHash*31+previousKey.charCodeAt(i))>>>0;
+const previousIndex=previousHash%poems.length;
+if(index===previousIndex)index=(index+1)%poems.length;
+}
+return index;
+}
+async function loadPoems(){
+try{
+const response=await fetch(CSV_URL+"&refresh="+Date.now(),{cache:"no-store"});
+if(!response.ok)throw new Error("Kon gedichten niet laden");
+const csv=await response.text();
+const result=Papa.parse(csv,{header:true,skipEmptyLines:"greedy"});
+poems=result.data.map(row=>({title:findColumn(row,["titel","title"]),author:findColumn(row,["dichter","auteur","author"]),poem:findColumn(row,["gedicht","tekst","poem"])})).filter(item=>item.poem&&item.poem.trim());
+if(poems.length>0){
+// Toon het daggedicht bij de eerste keer laden en wanneer er een nieuwe gedichtendag begint,
+// maar spring niet terug als iemand zelf naar een ander gedicht is gegaan.
+const todayKey=getLocalDateKey();
+if(lastDailyKey!==todayKey){lastDailyKey=todayKey;show(getDailyPoemIndex(),true);}
+renderPoemMenu();
+refreshInbox();
+}else{
+titleElement.textContent="Gedichten";
+authorElement.textContent="";
+poemElement.textContent="Er zijn nog geen gedichten beschikbaar.";
+}
+}catch(error){poemElement.textContent="De gedichten konden niet worden geladen.";console.error(error)}
+}
+
+function normalizePassage(text){return String(text||"").trim().replace(/\s+/g," ")}
+
+// Haalt de aantekeningen van één gedicht op (JSONP, zoals voorheen).
+function fetchNotesForPoem(poemTitle){
+return new Promise((resolve,reject)=>{
+const callbackName="gedichtenNotesCallback"+Date.now()+Math.floor(Math.random()*100000);
+const script=document.createElement("script");
+const url=new URL(NOTES_URL);
+url.searchParams.set("action","notes");
+url.searchParams.set("gedicht",poemTitle);
+url.searchParams.set("callback",callbackName);
+let finished=false;
+const timer=setTimeout(()=>{cleanup();reject(new Error("Time-out bij ophalen aantekeningen"))},20000);
+function cleanup(){if(finished)return;finished=true;clearTimeout(timer);delete window[callbackName];if(script.parentNode)script.parentNode.removeChild(script)}
+window[callbackName]=function(data){
+cleanup();
+if(!data||!data.success||!Array.isArray(data.notes)){reject(new Error("Ongeldig antwoord"));return}
+resolve(data.notes);
+};
+script.onerror=function(){cleanup();reject(new Error("Verbinding met de aantekeningen is mislukt."))};
+script.src=url.toString();
+document.head.appendChild(script);
+});
+}
+
+function loadNotesForCurrentPoem(){
+const poemTitle=titleElement.textContent.trim();
+if(!poemTitle)return;
+fetchNotesForPoem(poemTitle).then(notes=>{
+if(titleElement.textContent.trim()!==poemTitle)return; // intussen ander gedicht
+notesByPassage={};
+notes.forEach(note=>{const key=normalizePassage(note.passage);if(!notesByPassage[key])notesByPassage[key]=[];notesByPassage[key].push(note)});
+applyNoteHighlights();
+if(noteBackdrop.classList.contains("visible"))renderSavedNotes();
+}).catch(error=>console.error("Aantekeningen konden niet worden opgehaald.",error));
+}
+
+/* ---------- R/S-knoppen: nieuwe aantekeningen per persoon ---------- */
+const SEEN_STORAGE_KEY="gedichten_gezien_v1";
+const inboxBackdrop=document.getElementById("inboxBackdrop");
+const inboxList=document.getElementById("inboxList");
+const inboxButtons={Ramon:document.getElementById("ramonInboxButton"),Sanne:document.getElementById("sanneInboxButton")};
+let allNotes=[];
+let inboxRefreshing=false;
+
+function canonicalPerson(name){const p=String(name||"").trim().toLowerCase();return p==="ramon"?"Ramon":p==="sanne"?"Sanne":""}
+// Een aantekening is 'nieuw' als deze combinatie nog niet gezien is.
+// Een gewijzigde tekst telt dus opnieuw als nieuw.
+function makeNoteKey(person,poemTitle,passage,text){return [person,normalizePassage(poemTitle),normalizePassage(passage),normalizePassage(text)].join("¦")}
+function loadSeen(){try{const raw=localStorage.getItem(SEEN_STORAGE_KEY);return raw?new Set(JSON.parse(raw)):null}catch(e){return null}}
+function saveSeen(set){try{localStorage.setItem(SEEN_STORAGE_KEY,JSON.stringify(Array.from(set)))}catch(e){}}
+
+async function refreshInbox(){
+if(!poems.length||inboxRefreshing)return;
+inboxRefreshing=true;
+try{
+const titles=[...new Set(poems.map(p=>String(p.title||"").trim()).filter(Boolean))];
+let failures=0;
+const results=await Promise.all(titles.map(title=>fetchNotesForPoem(title).then(notes=>({title,notes})).catch(()=>{failures++;return{title,notes:[]}})));
+if(failures===titles.length)return; // geen verbinding: laat de oude stand staan
+const list=[];
+results.forEach(({title,notes})=>notes.forEach(note=>{
+const person=canonicalPerson(note.persoon);
+if(!person)return;
+list.push({key:makeNoteKey(person,title,note.passage,note.aantekening),person,poemTitle:title,passage:String(note.passage||"").trim(),text:String(note.aantekening||""),date:String(note.datum||""),row:Number(note.row)||0});
+}));
+allNotes=list;
+let seen=loadSeen();
+// Allereerste keer op dit apparaat: bestaande aantekeningen gelden als gezien.
+if(seen===null&&failures===0){seen=new Set(allNotes.map(n=>n.key));saveSeen(seen)}
+updateInboxBadges();
+}finally{inboxRefreshing=false}
+}
+
+function updateInboxBadges(){
+const seen=loadSeen()||new Set();
+Object.entries(inboxButtons).forEach(([person,button])=>{
+const count=allNotes.filter(n=>n.person===person&&!seen.has(n.key)).length;
+const badge=button.querySelector(".inbox-badge");
+badge.textContent=count>99?"99+":String(count);
+badge.hidden=count===0;
+button.setAttribute("aria-label",`Aantekeningen van ${person}`+(count?`, ${count} nieuw`:""));
+});
+}
+
+function openInbox(person){
+const seen=loadSeen()||new Set();
+const notes=allNotes.filter(n=>n.person===person);
+const isNew=n=>!seen.has(n.key);
+notes.sort((a,b)=>(isNew(b)-isNew(a))||(b.row-a.row));
+const newCount=notes.filter(isNew).length;
+// Getal verdwijnt zodra het venster opent; de nieuwe blijven in dit venster rood gemarkeerd.
+notes.forEach(n=>seen.add(n.key));
+saveSeen(seen);
+updateInboxBadges();
+
+document.getElementById("inboxTitle").textContent=`Aantekeningen van ${person}`;
+document.getElementById("inboxSubtitle").textContent=newCount?(newCount===1?"1 nieuwe aantekening":`${newCount} nieuwe aantekeningen`):"Niets nieuws – hieronder alles van eerder.";
+inboxList.innerHTML="";
+if(!notes.length){
+const empty=document.createElement("p");empty.className="poem-menu-empty";
+empty.textContent=allNotes.length||poems.length?`${person} heeft nog geen aantekeningen gemaakt.`:"Aantekeningen worden geladen…";
+inboxList.appendChild(empty);
+}
+let dividerPlaced=false;
+notes.forEach((n,i)=>{
+const fresh=i<newCount;
+if(!fresh&&newCount&&!dividerPlaced){const d=document.createElement("div");d.className="inbox-divider";d.textContent="Eerder gezien";inboxList.appendChild(d);dividerPlaced=true}
+const item=document.createElement("button");item.type="button";item.className="inbox-item"+(fresh?" new":"");
+const top=document.createElement("span");top.className="inbox-item-top";
+const poemTitle=document.createElement("span");poemTitle.className="inbox-item-poem";poemTitle.textContent=n.poemTitle;
+top.appendChild(poemTitle);
+if(fresh){const label=document.createElement("span");label.className="inbox-new-label";label.textContent="Nieuw";top.appendChild(label)}
+const passage=document.createElement("span");passage.className="inbox-item-passage";passage.textContent="“"+normalizePassage(n.passage)+"”";
+const text=document.createElement("span");text.className="inbox-item-text";text.textContent=n.text;
+item.append(top,passage,text);
+if(n.date){const date=document.createElement("span");date.className="inbox-item-date";date.textContent=n.date;item.appendChild(date)}
+item.addEventListener("click",()=>{closeInbox();goToPassage(n)});
+inboxList.appendChild(item);
+});
+inboxList.scrollTop=0;
+inboxBackdrop.classList.add("visible");
+inboxBackdrop.setAttribute("aria-hidden","false");
+}
+function closeInbox(){inboxBackdrop.classList.remove("visible");inboxBackdrop.setAttribute("aria-hidden","true")}
+
+function goToPassage(note){
+const index=poems.findIndex(p=>String(p.title||"").trim()===note.poemTitle);
+if(index===-1)return;
+if(index!==currentIndex)show(index,true);
+const key=normalizePassage(note.passage);
+const target=Array.from(poemElement.querySelectorAll(".poem-paragraph,.poem-sentence,.poem-word")).find(el=>normalizePassage(el.textContent)===key);
+if(!target){window.scrollTo({top:0,behavior:"smooth"});return}
+requestAnimationFrame(()=>{
+target.scrollIntoView({behavior:"smooth",block:"center"});
+target.classList.remove("passage-flash");void target.offsetWidth;target.classList.add("passage-flash");
+setTimeout(()=>target.classList.remove("passage-flash"),3200);
+});
+}
+
+Object.entries(inboxButtons).forEach(([person,button])=>button.addEventListener("click",()=>openInbox(person)));
+document.getElementById("inboxClose").addEventListener("click",closeInbox);
+inboxBackdrop.addEventListener("click",event=>{if(event.target===inboxBackdrop)closeInbox()});
+
+function applyNoteHighlights(){
+poemElement.querySelectorAll(".poem-paragraph,.poem-sentence,.poem-word").forEach(element=>{
+const key=normalizePassage(element.textContent);
+element.classList.toggle("has-notes",!!(notesByPassage[key]&&notesByPassage[key].length));
+});
+}
+
+function renderPoemParagraph(paragraph,text){
+const lines=text.split("\n");
+lines.forEach((line,lineIndex)=>{
+const sentence=document.createElement("span");sentence.className="poem-sentence";
+const wordPattern=/\S+/g;let wordMatch,wordLast=0;
+while((wordMatch=wordPattern.exec(line))!==null){
+if(wordMatch.index>wordLast)sentence.appendChild(document.createTextNode(line.slice(wordLast,wordMatch.index)));
+const word=document.createElement("span");word.className="poem-word";word.textContent=wordMatch[0];sentence.appendChild(word);
+wordLast=wordMatch.index+wordMatch[0].length;
+}
+if(wordLast<line.length)sentence.appendChild(document.createTextNode(line.slice(wordLast)));
+paragraph.appendChild(sentence);
+if(lineIndex<lines.length-1)paragraph.appendChild(document.createTextNode("\n"));
+});
+}
+function show(direction,directIndex=false){
+if(!poems.length)return;
+currentIndex=directIndex?direction:(currentIndex+direction+poems.length)%poems.length;
+const item=poems[currentIndex];
+titleElement.textContent=item.title||"";
+authorElement.textContent=item.author||"";
+poemElement.innerHTML="";
+const decodedPoem=String(item.poem||"").replace(/\\n/g,"\n");
+const paragraphs=decodedPoem.trim().split(/\n\s*\n/).filter(part=>part.trim());
+paragraphs.forEach(text=>{const paragraph=document.createElement("p");paragraph.className="poem-paragraph";renderPoemParagraph(paragraph,text.trimEnd());poemElement.appendChild(paragraph)});
+counterElement.textContent=(currentIndex+1)+" / "+poems.length;
+clearMagnification();
+notesByPassage={};
+loadNotesForCurrentPoem();
+}
+
+function renderPoemMenu(){
+poemMenuList.innerHTML="";
+if(!poems.length){const empty=document.createElement("p");empty.className="poem-menu-empty";empty.textContent="Er zijn geen gedichten beschikbaar.";poemMenuList.appendChild(empty);return;}
+poems.forEach((poem,index)=>{
+const item=document.createElement("button");
+item.type="button";
+item.className="poem-menu-item"+(index===currentIndex?" current":"");
+const poemTitle=document.createElement("span");poemTitle.className="poem-menu-item-title";poemTitle.textContent=poem.title||"Zonder titel";
+const author=document.createElement("span");author.className="poem-menu-item-author";author.textContent=poem.author||"";
+item.appendChild(poemTitle);if(poem.author)item.appendChild(author);
+item.addEventListener("click",()=>{show(index,true);closePoemMenu();});
+poemMenuList.appendChild(item);
+});
+}
+function openPoemMenu(){renderPoemMenu();poemMenuBackdrop.classList.add("visible");poemMenuBackdrop.setAttribute("aria-hidden","false");}
+function closePoemMenu(){poemMenuBackdrop.classList.remove("visible");poemMenuBackdrop.setAttribute("aria-hidden","true");}
+document.getElementById("poemMenuButton").addEventListener("click",openPoemMenu);
+document.getElementById("poemMenuClose").addEventListener("click",closePoemMenu);
+poemMenuBackdrop.addEventListener("click",event=>{if(event.target===poemMenuBackdrop)closePoemMenu();});
+
+document.getElementById("previous").addEventListener("click",()=>show(-1));
+document.getElementById("next").addEventListener("click",()=>show(1));
+poemElement.addEventListener("click",event=>{
+// Open de aantekening van het kleinste gearceerde element dat is aangeklikt.
+// Daardoor is een volledige zin of passage ook klikbaar wanneer je op een
+// woord binnen die zin of passage klikt.
+const target=event.target.closest(".poem-word.has-notes, .poem-sentence.has-notes, .poem-paragraph.has-notes");
+if(!target||!poemElement.contains(target))return;
+const key=normalizePassage(target.textContent);
+if(!notesByPassage[key]||!notesByPassage[key].length)return;
+selectedPassage=target.textContent.trim();
+selectedPoemTitle=titleElement.textContent.trim();
+openNoteModal();
+});
+
+function clearMagnification(){
+document.querySelectorAll(".poem-paragraph.active").forEach(element=>element.classList.remove("active"));
+handStates.forEach(state=>{state.target=null});
+}
+
+function circleTouchesRectangle(cx,cy,radius,rect){
+const nearestX=Math.max(rect.left,Math.min(cx,rect.right));
+const nearestY=Math.max(rect.top,Math.min(cy,rect.bottom));
+const dx=cx-nearestX,dy=cy-nearestY;
+return(dx*dx+dy*dy)<=radius*radius;
+}
+
+function updateMagnification(){
+const paragraphs=Array.from(poemElement.querySelectorAll(".poem-paragraph"));
+const activeParagraphs=new Set();
+poemElement.querySelectorAll(".sentence-active,.word-active").forEach(el=>el.classList.remove("sentence-active","word-active"));
+handStates.forEach(state=>{
+state.target=null;
+if(!state.activated)return;
+const handRect=state.element.getBoundingClientRect();
+const x=handRect.left+handRect.width/2;
+const y=handRect.top+handRect.height/2;
+if(state.type==="sentence"){
+if(!state.activated)return;
+let target=null;
+let nearestVerticalDistance=Infinity;
+poemElement.querySelectorAll(".poem-sentence").forEach(sentence=>{
+  const paragraph=sentence.closest(".poem-paragraph");
+  const lineHeight=parseFloat(getComputedStyle(paragraph||poemElement).lineHeight)||30;
+  const rects=sentence.getClientRects();
+  for(const rect of rects){
+    const centerY=(rect.top+rect.bottom)/2;
+    const distance=Math.abs(y-centerY);
+    if(distance<=lineHeight*0.48&&distance<nearestVerticalDistance){
+      nearestVerticalDistance=distance;
+      target=sentence;
+    }
+  }
+});
+if(target){state.target=target;target.classList.add("sentence-active");}
+return;
+}
+if(state.type==="word"){
+const direction=state.element.id==="wordHand"?-1:1;
+const tipX=x+(direction*handRect.width*0.40);
+const tipY=y-(handRect.height*0.21);
+let target=null;
+if(document.elementsFromPoint){
+  const stack=document.elementsFromPoint(tipX,tipY);
+  for(const hit of stack){
+    if(hit===state.element||state.element.contains(hit))continue;
+    const candidate=hit.closest?hit.closest(".poem-word"):null;
+    if(candidate&&poemElement.contains(candidate)){target=candidate;break;}
+  }
+}else{
+  const oldVisibility=state.element.style.visibility;
+  state.element.style.visibility="hidden";
+  const hit=document.elementFromPoint(tipX,tipY);
+  state.element.style.visibility=oldVisibility;
+  target=hit&&hit.closest?hit.closest(".poem-word"):null;
+}
+if(!target){
+  let nearestDistance=Infinity;
+  const tolerance=Math.max(14,handRect.width*0.42);
+  poemElement.querySelectorAll(".poem-word").forEach(word=>{
+    const rects=word.getClientRects();
+    for(const rect of rects){
+      const nearestX=Math.max(rect.left,Math.min(tipX,rect.right));
+      const nearestY=Math.max(rect.top,Math.min(tipY,rect.bottom));
+      const distance=Math.hypot(tipX-nearestX,tipY-nearestY);
+      if(distance<=tolerance&&distance<nearestDistance){
+        nearestDistance=distance;
+        target=word;
+      }
+    }
+  });
+}
+if(target&&poemElement.contains(target)){
+  state.target=target;
+  target.classList.add("word-active");
+}
+return;
+}
+let target=null,nearestDistance=Infinity;
+paragraphs.forEach(paragraph=>{
+  const rect=paragraph.getBoundingClientRect();
+  if(circleTouchesRectangle(x,y,handRect.width/2,rect)){
+    const centerX=(rect.left+rect.right)/2;
+    const centerY=(rect.top+rect.bottom)/2;
+    const distance=Math.hypot(x-centerX,y-centerY);
+    if(distance<nearestDistance){nearestDistance=distance;target=paragraph;}
+  }
+});
+if(target){state.target=target;activeParagraphs.add(target);}
+});
+paragraphs.forEach(paragraph=>paragraph.classList.toggle("active",activeParagraphs.has(paragraph)));
+}
+
+function moveHand(state,x,y){
+state.x=x;state.y=y;
+const hand=state.element;
+hand.style.left=(x-hand.offsetWidth/2)+"px";
+hand.style.top=(y-hand.offsetHeight/2)+"px";
+hand.style.right="auto";
+updateMagnification();
+}
+
+function resetHandsToEdges(){
+handStates.forEach(state=>{
+  const hand=state.element;
+  hand.style.left="";
+  hand.style.right="";
+  hand.style.top="";
+  hand.classList.remove("dragging");
+  state.dragging=false;
+  state.pointerId=null;
+  state.moved=false;
+  state.x=null;
+  state.y=null;
+  state.target=null;
+  state.activated=false;
+});
+poemElement.querySelectorAll(".poem-paragraph.active,.sentence-active,.word-active").forEach(element=>{
+  element.classList.remove("active","sentence-active","word-active");
+});
+updateMagnification();
+}
+
+document.getElementById("resetHandsButton").addEventListener("click",event=>{
+  event.preventDefault();
+  event.stopPropagation();
+  resetHandsToEdges();
+});
+
+window.addEventListener("scroll",updateMagnification,{passive:true,capture:true});
+document.addEventListener("scroll",updateMagnification,{passive:true,capture:true});
+window.addEventListener("resize",updateMagnification);
+if(window.visualViewport){
+window.visualViewport.addEventListener("scroll",updateMagnification,{passive:true});
+window.visualViewport.addEventListener("resize",updateMagnification,{passive:true});
+}
+
+handStates.forEach(state=>{
+state.element.addEventListener("pointerdown",event=>{
+if(event.button!==undefined&&event.button!==0)return;
+event.preventDefault();
+state.dragging=true;
+state.pointerId=event.pointerId;
+state.startX=event.clientX;
+state.startY=event.clientY;
+state.moved=false;
+state.element.classList.add("dragging");
+moveHand(state,event.clientX,event.clientY);
+});
+});
+
+document.addEventListener("pointermove",event=>{
+const state=handStates.find(item=>item.dragging&&item.pointerId===event.pointerId);
+if(!state)return;
+event.preventDefault();
+if(Math.hypot(event.clientX-state.startX,event.clientY-state.startY)>8){
+state.moved=true;
+state.activated=true;
+}
+moveHand(state,event.clientX,event.clientY);
+},{passive:false});
+
+function finishPointer(event){
+const state=handStates.find(item=>item.dragging&&item.pointerId===event.pointerId);
+if(!state)return;
+state.dragging=false;
+state.pointerId=null;
+state.element.classList.remove("dragging");
+if(!state.moved)openNoteForHand(state);
+}
+document.addEventListener("pointerup",finishPointer);
+document.addEventListener("pointercancel",event=>{
+const state=handStates.find(item=>item.dragging&&item.pointerId===event.pointerId);
+if(!state)return;
+state.dragging=false;
+state.pointerId=null;
+state.element.classList.remove("dragging");
+});
+
+function openNoteForHand(state){
+if(!state.target||!state.target.isConnected)return;
+selectedPassage=state.target.textContent.trim();
+selectedPoemTitle=titleElement.textContent.trim();
+if(!selectedPassage||!selectedPoemTitle)return;
+if(!localStorage.getItem(ACCESS_STORAGE_KEY)){openAccessModal();return}
+openNoteModal();
+}
+
+function openAccessModal(){
+document.getElementById("accessCode").value="";
+document.getElementById("accessStatus").textContent="";
+accessBackdrop.classList.add("visible");
+setTimeout(()=>document.getElementById("accessCode").focus(),300);
+}
+
+function closeAccessModal(){accessBackdrop.classList.remove("visible")}
+document.getElementById("accessCancel").addEventListener("click",closeAccessModal);
+document.getElementById("accessForm").addEventListener("submit",event=>{
+event.preventDefault();
+const code=document.getElementById("accessCode").value.trim();
+if(!code)return;
+localStorage.setItem(ACCESS_STORAGE_KEY,code);
+closeAccessModal();
+openNoteModal();
+});
+
+function renderSavedNotes(){
+const container=document.getElementById("savedNotes");
+container.innerHTML="";
+const key=normalizePassage(selectedPassage);
+const notes=notesByPassage[key]||[];
+if(!notes.length){
+const empty=document.createElement("p");
+empty.className="saved-notes-empty";
+empty.textContent="Er zijn nog geen aantekeningen bij deze passage.";
+container.appendChild(empty);
+return;
+}
+notes.forEach(note=>{
+const item=document.createElement("div");
+const person=String(note.persoon||"").trim();
+const personClass=person.toLowerCase()==="sanne"?"sanne":person.toLowerCase()==="ramon"?"ramon":"unknown";
+item.className="saved-note "+personClass;
+const personLabel=document.createElement("span");
+personLabel.className="saved-note-person";
+personLabel.textContent=person||"Eerder opgeslagen";
+const text=document.createElement("div");
+text.textContent=note.aantekening||"";
+const date=document.createElement("span");
+date.className="saved-note-date";
+date.textContent=note.datum||"";
+item.appendChild(personLabel);
+item.appendChild(text);
+if(note.datum)item.appendChild(date);
+if(selectedPerson&&person===selectedPerson&&note.row){
+const tools=document.createElement("div");
+tools.className="saved-note-tools";
+const edit=document.createElement("button");
+edit.type="button";edit.textContent="Wijzigen";
+edit.addEventListener("click",()=>startEditingNote(note));
+const remove=document.createElement("button");
+remove.type="button";remove.textContent="Verwijderen";
+remove.addEventListener("click",()=>deleteNote(note));
+tools.append(edit,remove);
+item.appendChild(tools);
+}
+container.appendChild(item);
+});
+}
+
+function setSelectedPerson(person){
+selectedPerson=person;
+document.querySelectorAll(".person-choice").forEach(button=>{
+const selected=button.dataset.person===person;
+button.classList.toggle("selected",selected);
+button.setAttribute("aria-pressed",selected?"true":"false");
+});
+document.getElementById("noteSave").disabled=!person;
+renderSavedNotes();
+}
+
+document.querySelectorAll(".person-choice").forEach(button=>button.addEventListener("click",()=>setSelectedPerson(button.dataset.person)));
+
+function resetNoteEditor(){
+editingNoteRow=null;
+document.getElementById("noteText").value="";
+document.getElementById("noteText").placeholder="Schrijf hier een nieuwe aantekening...";
+document.getElementById("noteSave").textContent="Bewaren";
+document.getElementById("noteEditCancel").hidden=true;
+document.getElementById("noteStatus").textContent="";
+}
+
+function openNoteModal(){
+document.getElementById("notePoemTitle").textContent=selectedPoemTitle;
+document.getElementById("notePassage").textContent=selectedPassage;
+resetNoteEditor();
+setSelectedPerson("");
+renderSavedNotes();
+document.getElementById("noteSave").disabled=true;
+noteBackdrop.classList.add("visible");
+}
+
+function startEditingNote(note){
+if(!selectedPerson||note.persoon!==selectedPerson)return;
+editingNoteRow=Number(note.row);
+document.getElementById("noteText").value=note.aantekening||"";
+document.getElementById("noteText").placeholder="Pas je aantekening aan...";
+document.getElementById("noteSave").textContent="Wijziging bewaren";
+document.getElementById("noteEditCancel").hidden=false;
+document.getElementById("noteStatus").textContent="Je wijzigt je eigen aantekening.";
+document.getElementById("noteText").focus();
+}
+
+document.getElementById("noteEditCancel").addEventListener("click",resetNoteEditor);
+
+async function sendNoteAction(action,note){
+const token=localStorage.getItem(ACCESS_STORAGE_KEY);
+const formData=new URLSearchParams();
+formData.append("action",action);
+formData.append("token",token||"");
+formData.append("persoon",selectedPerson);
+formData.append("row",String(note.row));
+await fetch(NOTES_URL,{method:"POST",mode:"no-cors",body:formData});
+}
+
+async function deleteNote(note){
+if(!selectedPerson||note.persoon!==selectedPerson)return;
+if(!window.confirm("Wil je deze eigen aantekening definitief verwijderen?"))return;
+const status=document.getElementById("noteStatus");
+status.textContent="Aantekening wordt verwijderd...";
+try{
+await sendNoteAction("delete",note);
+status.textContent="Verwijderverzoek verzonden.";
+setTimeout(loadNotesForCurrentPoem,1200);
+setTimeout(refreshInbox,1500);
+}catch(error){status.textContent="Verwijderen is niet gelukt. Probeer opnieuw."}
+}
+
+function closeNoteModal(){
+noteBackdrop.classList.remove("visible");
+resetHandsToEdges();
+}
+document.getElementById("noteCancel").addEventListener("click",closeNoteModal);
+
+document.getElementById("noteForm").addEventListener("submit",async event=>{
+event.preventDefault();
+const noteText=document.getElementById("noteText").value.trim();
+const token=localStorage.getItem(ACCESS_STORAGE_KEY);
+const statusElement=document.getElementById("noteStatus");
+const saveButton=document.getElementById("noteSave");
+if(!token){closeNoteModal();openAccessModal();return}
+if(!selectedPerson){statusElement.textContent="Kies eerst Sanne of Ramon.";return}
+if(!noteText){statusElement.textContent="Schrijf eerst een aantekening.";return}
+saveButton.disabled=true;
+statusElement.textContent=editingNoteRow?"Wijziging wordt opgeslagen...":"Aantekening wordt opgeslagen...";
+const formData=new URLSearchParams();
+formData.append("action",editingNoteRow?"update":"create");
+formData.append("token",token);
+formData.append("gedicht",selectedPoemTitle);
+formData.append("passage",selectedPassage);
+formData.append("aantekening",noteText);
+formData.append("persoon",selectedPerson);
+if(editingNoteRow)formData.append("row",String(editingNoteRow));
+try{
+await fetch(NOTES_URL,{method:"POST",mode:"no-cors",body:formData});
+setTimeout(loadNotesForCurrentPoem,1200);
+setTimeout(refreshInbox,1500);
+closeNoteModal();
+}catch(error){
+console.error("Fout bij opslaan van aantekening:",error);
+statusElement.textContent="Opslaan is niet gelukt. Controleer je internetverbinding.";
+saveButton.disabled=!selectedPerson;
+}
+});
+
+accessBackdrop.addEventListener("click",event=>{if(event.target===accessBackdrop)closeAccessModal()});
+noteBackdrop.addEventListener("click",event=>{if(event.target===noteBackdrop)closeNoteModal()});
+document.addEventListener("keydown",event=>{if(event.key==="Escape"){closeAccessModal();closeNoteModal();closePoemMenu();closeInbox()}});
+loadPoems();
+setInterval(loadPoems,5*60*1000);
+</script>
+</body>
+</html>
