@@ -12,7 +12,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#ffffff">
 <title>Gedichten</title>
-<!-- Testversie 12: 15 november 2026 – app op beginscherm en werken zonder verbinding -->
+<!-- Testversie 13: 15 november 2026 – lay-out voor aan de muur -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&display=swap" rel="stylesheet">
@@ -22,10 +22,10 @@
 html{background:#fff}
 body{margin:0;background:#eee9df;color:#302c26;font-family:'Cormorant Garamond',Georgia,serif}
 .page{max-width:900px;min-height:100vh;margin:0 auto;padding:105px 65px 65px;background:linear-gradient(to bottom,#ffffff 0px,#ffffff 25px,#f7f4ed 75px,#eee9df 160px)}
-header{position:relative;text-align:center;margin-bottom:58px;padding-bottom:25px;border-bottom:1px solid #d5cdbf}
+header{position:relative;text-align:center;margin-bottom:44px}
 h1{font-size:43px;font-weight:500;line-height:1.1;margin:0 0 8px}
 .author{font-size:21px;font-style:italic;color:#887e70}
-.poem{font-size:25px;line-height:1.48;text-align:left;overflow-wrap:break-word;white-space:normal}
+.poem{position:relative;font-size:25px;line-height:1.48;text-align:left;overflow-wrap:break-word;white-space:normal}
 .poem-paragraph{white-space:pre-wrap}
 .poem-paragraph{position:relative;margin:0 0 1.15em;font-size:inherit;font-weight:400;line-height:inherit;color:#302c26;transform:scale(1);transform-origin:left center;transition:transform 420ms cubic-bezier(.22,1,.36,1),font-weight 350ms ease,color 400ms ease,text-shadow 400ms ease;will-change:transform}
 .poem-paragraph.active{transform:scale(1.09);font-weight:600;color:#211b14;text-shadow:0 0 .01px #211b14;z-index:2}
@@ -89,7 +89,36 @@ button{font-family:inherit}
 .favorite-button.pop svg{animation:heartPop 380ms ease}
 @keyframes heartPop{0%{transform:scale(1)}40%{transform:scale(1.3)}100%{transform:scale(1)}}
 .favorite-button:focus-visible{outline:2px solid #887e70;outline-offset:2px}
-body.reading-mode .favorite-button{visibility:hidden}
+body.reading-mode .favorite-button{display:none}
+body.reading-mode .ornament-diamond{display:block}
+/* Na een minuut zonder aanraking vervagen de knoppen (eerste tik maakt ze weer zichtbaar) */
+body.controls-idle .hand,body.controls-idle .hand-hint,body.controls-idle .hint-info-button,body.controls-idle .navigation,body.controls-idle .test-version,body.controls-idle .poem-menu-button,body.controls-idle .reset-hands-button,body.controls-idle .person-inbox-button,body.controls-idle .reading-mode-button{opacity:0;visibility:hidden;pointer-events:none}
+body.controls-idle .person-inbox-button .inbox-badge{visibility:hidden}
+/* Datum, ornament en overvloeien */
+.poem-date{margin:0 0 12px;color:#a3957f;font-size:14px;letter-spacing:.2em;text-transform:uppercase}
+.author{min-height:1em}
+.ornament{display:flex;align-items:center;justify-content:center;gap:10px;margin:14px auto 0;max-width:340px}
+.ornament-line{flex:1 1 auto;height:1px;background:linear-gradient(to right,rgba(201,184,156,0),#c9b89c)}
+.ornament-line.right{background:linear-gradient(to left,rgba(201,184,156,0),#c9b89c)}
+.ornament-diamond{display:none;width:7px;height:7px;margin:0 6px;background:#c9b89c;transform:rotate(45deg)}
+.ornament-diamond:has(+.favorite-button[hidden]){display:block}
+.ornament .favorite-button{margin:0;width:34px;height:34px;padding:6px;color:#c9b89c}
+.ornament .favorite-button.is-favorite{color:#c2453b}
+@keyframes poemEnter{from{opacity:0}to{opacity:1}}
+.poem-enter{animation:poemEnter 900ms ease both}
+/* Stipjes in de marge */
+.note-dot{position:absolute;left:calc(-26px - var(--dot-shift,0) * 13px);width:9px;height:9px;margin-top:-4.5px;padding:0;border:0;border-radius:50%;cursor:pointer;-webkit-tap-highlight-color:transparent;box-shadow:0 0 0 2px rgba(247,244,237,.9)}
+.note-dot::before{content:"";position:absolute;inset:-12px}
+.note-dot.sanne{background:#b88a54}
+.note-dot.ramon{background:#7895a3}
+.note-dot.unknown{background:#b8ad9d}
+/* Uitleg-knopje en scrollpijl */
+.hand-hint.collapsed{display:none}
+.hint-info-button{display:block;margin:22px auto 0;width:26px;height:26px;border:1px solid rgba(151,133,108,.45);border-radius:50%;padding:0;background:transparent;color:#a09688;font-family:Georgia,serif;font-size:15px;font-style:italic;line-height:24px;cursor:pointer}
+.hint-info-button[hidden]{display:none}
+.scroll-cue{position:fixed;left:50%;bottom:calc(58px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:10001;width:38px;height:38px;border:1px solid rgba(151,133,108,.35);border-radius:50%;padding:0;background:rgba(247,244,237,.9);color:#887e70;font-size:20px;line-height:1;cursor:pointer;animation:cueBob 2.4s ease-in-out infinite}
+.scroll-cue[hidden]{display:none}
+@keyframes cueBob{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,4px)}}
 body.reading-mode .connection-status{display:none}
 .poem-menu-filter{flex:0 0 auto;display:flex;gap:0;margin:0 0 10px;border:1px solid rgba(151,133,108,.45);border-radius:3px;overflow:hidden}
 .poem-menu-filter button{flex:1;border:0;padding:8px 10px;background:transparent;color:#776d60;font-family:inherit;font-size:17px;cursor:pointer}
@@ -138,8 +167,8 @@ body.reading-mode .connection-status{display:none}
 .reading-mode-button svg{width:21px;height:21px;display:block}
 .reading-mode-button:active{background:#e9e1d4;transform:translateY(1px)}
 .reading-mode-button:focus-visible{outline:2px solid #887e70;outline-offset:3px}
-.hand,.hand-hint,.navigation,.test-version,.poem-menu-button,.reset-hands-button,.person-inbox-button{transition:opacity 350ms ease,visibility 350ms ease}
-body.reading-mode .hand,body.reading-mode .hand-hint,body.reading-mode .navigation,body.reading-mode .test-version,body.reading-mode .poem-menu-button,body.reading-mode .reset-hands-button,body.reading-mode .person-inbox-button{opacity:0;visibility:hidden;pointer-events:none}
+.hand,.hand-hint,.hint-info-button,.navigation,.test-version,.poem-menu-button,.reset-hands-button,.person-inbox-button,.reading-mode-button{transition:opacity 600ms ease,visibility 600ms ease}
+body.reading-mode .hand,body.reading-mode .hand-hint,body.reading-mode .hint-info-button,body.reading-mode .navigation,body.reading-mode .test-version,body.reading-mode .poem-menu-button,body.reading-mode .reset-hands-button,body.reading-mode .person-inbox-button{opacity:0;visibility:hidden;pointer-events:none}
 body.reading-mode .reading-mode-button{opacity:.4;background:#e9e1d4;box-shadow:none}
 @media(max-width:600px){.reading-mode-button{right:9px;bottom:calc(97px + env(safe-area-inset-bottom));width:38px;height:38px}.reading-mode-button svg{width:20px;height:20px}}
 
@@ -196,7 +225,7 @@ body.reading-mode .reading-mode-button{opacity:.4;background:#e9e1d4;box-shadow:
 h1{font-size:36px}
 .author{font-size:20px}
 .poem{font-size:22px;line-height:1.45}
-header{margin-bottom:48px}
+header{margin-bottom:34px}
 .navigation{margin-top:55px}
 #hand1{top:76px;left:3px}
 #hand2{top:76px;right:3px}
@@ -211,19 +240,22 @@ header{margin-bottom:48px}
 .poem-paragraph.has-notes{padding-left:7px;margin-left:-9px}
 .modal{padding:23px;max-width:100%}
 }
-@media(prefers-reduced-motion:reduce){.poem-paragraph,.hand,.hand svg{transition:none!important}}
+@media(prefers-reduced-motion:reduce){.poem-paragraph,.hand,.hand svg{transition:none!important}.poem-enter,.scroll-cue{animation:none!important}}
+@media(max-width:600px){.note-dot{left:calc(-17px - var(--dot-shift,0) * 10px);width:7px;height:7px;margin-top:-3.5px}.poem-date{font-size:12px;margin-bottom:9px}.ornament{max-width:240px;margin-top:10px}}
 </style>
 </head>
 <body>
 <div class="page">
 <header>
+<div class="poem-date" id="poemDate"></div>
 <h1 id="title">Gedichten</h1>
 <div class="author" id="author"></div>
-<button type="button" class="favorite-button" id="favoriteButton" aria-pressed="false" aria-label="Markeer als favoriet" title="Markeer als favoriet" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.3s-7.4-4.5-9.1-9.2C1.8 8 3.6 4.6 7 4.4c2-.1 3.6 1 5 2.9 1.4-1.9 3-3 5-2.9 3.4.2 5.2 3.6 4.1 6.7-1.7 4.7-9.1 9.2-9.1 9.2Z"/></svg></button>
+<div class="ornament" aria-hidden="false"><span class="ornament-line"></span><span class="ornament-diamond" aria-hidden="true"></span><button type="button" class="favorite-button" id="favoriteButton" aria-pressed="false" aria-label="Markeer als favoriet" title="Markeer als favoriet" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.3s-7.4-4.5-9.1-9.2C1.8 8 3.6 4.6 7 4.4c2-.1 3.6 1 5 2.9 1.4-1.9 3-3 5-2.9 3.4.2 5.2 3.6 4.1 6.7-1.7 4.7-9.1 9.2-9.1 9.2Z"/></svg></button><span class="ornament-line right"></span></div>
 </header>
 <main>
 <div class="poem" id="poem"></div>
-<div class="hand-hint">Sleep de bovenste handjes over het gedicht om passages te vergroten. Gebruik de linker vinger voor regels en de rechter vinger voor woorden. Tik op een handje om een aantekening toe te voegen.</div>
+<button type="button" class="hint-info-button" id="hintInfoButton" aria-label="Uitleg over de handjes" aria-expanded="false" hidden>i</button>
+<div class="hand-hint" id="handHint">Sleep de bovenste handjes over het gedicht om passages te vergroten. Gebruik de linker vinger voor regels en de rechter vinger voor woorden. Tik op een handje om een aantekening toe te voegen.</div>
 </main>
 <div class="navigation">
 <button class="nav-button" id="previous">← Vorige</button>
@@ -236,7 +268,8 @@ header{margin-bottom:48px}
 <button type="button" class="hand" id="hand2" aria-label="Tweede Hamsa-hand"></button>
 <button type="button" class="hand" id="sentenceHand" aria-label="Wijzende vinger voor regels"></button>
 <button type="button" class="hand" id="wordHand" aria-label="Wijzende vinger voor woorden"></button>
-<div class="test-version" aria-label="Testversie 12">TEST v12</div>
+<div class="test-version" aria-label="Testversie 13">TEST v13</div>
+<button type="button" class="scroll-cue" id="scrollCue" aria-label="Verder lezen" hidden>↓</button>
 <div class="connection-status" id="connectionStatus" role="status" hidden></div>
 <button type="button" class="reading-mode-button" id="readingModeButton" aria-pressed="false" aria-label="Leesmodus" title="Leesmodus">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 6.6C10 5.1 7 4.6 3.8 5v13.2c3.2-.4 6.2.1 8.2 1.6 2-1.5 5-2 8.2-1.6V5c-3.2-.4-6.2.1-8.2 1.6Z"/><path d="M12 6.6v13.2"/></svg>
@@ -597,7 +630,7 @@ document.addEventListener("visibilitychange",()=>{if(document.visibilityState===
 /* ---------- Automatisch bijwerken ---------- */
 // Als er een nieuwe versie van de site op GitHub staat, laadt de iPad die vanzelf,
 // maar alleen als er niets open staat (dus nooit midden in het schrijven).
-const APP_VERSION="12";
+const APP_VERSION="13";
 let pendingReload=false;
 async function checkForNewVersion(){
 if(location.protocol!=="https:"&&location.hostname!=="localhost")return;
@@ -911,6 +944,7 @@ poemElement.querySelectorAll(".poem-paragraph,.poem-sentence,.poem-word").forEac
 const key=normalizePassage(element.textContent);
 element.classList.toggle("has-notes",!!(notesByPassage[key]&&notesByPassage[key].length));
 });
+positionNoteDots();
 }
 
 function renderPoemParagraph(paragraph,text){
@@ -942,7 +976,190 @@ counterElement.textContent=(currentIndex+1)+" / "+poems.length;
 clearMagnification();
 computeNotesForCurrentPoem();
 updateFavoriteButton();
+fadeInPoem();
+fitPoem();
 }
+
+/* ---------- Lay-out voor aan de muur ---------- */
+
+// 1. Gedicht passend maken: zo groot mogelijk, maar binnen een minimum en maximum.
+//    Volgorde: eerst zonder regels af te breken, dan met afbreken, en past het
+//    dan nog niet op de kleinste maat, dan mag de pagina scrollen (met pijltje).
+function poemSizeLimits(){
+return window.innerWidth<=600?{min:18,max:27}:{min:21,max:36};
+}
+// Aantal extra regels door afbreken (een regel die over drie regels loopt telt voor twee).
+function wrappedLineCount(){
+let extra=0;
+poemElement.querySelectorAll(".poem-sentence").forEach(sentence=>{
+const tops=new Set();
+for(const rect of sentence.getClientRects()){if(rect.width>0)tops.add(Math.round(rect.top))}
+extra+=Math.max(0,tops.size-1);
+});
+return extra;
+}
+// Past het gedicht op deze maat? maxWraps = hoeveel afgebroken regels er mogen zijn.
+function poemFits(size,maxWraps,available){
+poemElement.style.fontSize=size+"px";
+if(poemElement.scrollHeight>available)return false;
+return wrappedLineCount()<=maxWraps;
+}
+// Een regel is afgebroken als zijn stukjes op meer dan één hoogte staan.
+function lineIsWrapped(sentence){
+const tops=new Set();
+for(const rect of sentence.getClientRects()){if(rect.width>0)tops.add(Math.round(rect.top))}
+return tops.size>1;
+}
+function largestFittingSize(min,max,maxWraps,available){
+if(!poemFits(min,maxWraps,available))return null;
+let low=min,high=max;
+while(high-low>0.5){const mid=(low+high)/2;if(poemFits(mid,maxWraps,available))low=mid;else high=mid}
+return Math.floor(low*2)/2;
+}
+function fitPoem(){
+poemElement.querySelectorAll(".note-dot").forEach(dot=>dot.remove());
+if(!poemElement.querySelector(".poem-paragraph")){poemElement.style.fontSize="";updateScrollCue(false);return}
+const {min,max}=poemSizeLimits();
+const poemTop=poemElement.getBoundingClientRect().top+window.scrollY;
+const bottomReserve=window.innerWidth<=600?64:78;
+const available=Math.max(120,window.innerHeight-poemTop-bottomReserve);
+// Eerst: zo groot mogelijk zonder regels af te breken.
+let size=largestFittingSize(min,max,0,available);
+// Lukt dat niet: alleen de regels afbreken die op de kleinste maat ook al niet passen.
+if(size===null){
+poemElement.style.fontSize=min+"px";
+size=largestFittingSize(min,max,wrappedLineCount(),available);
+}
+const tooLong=size===null;
+poemElement.style.fontSize=(tooLong?min:size)+"px";
+updateScrollCue(tooLong);
+positionNoteDots();
+}
+let fitTimer=null;
+function scheduleFit(){cancelAnimationFrame(fitTimer);fitTimer=requestAnimationFrame(fitPoem)}
+
+const scrollCue=document.getElementById("scrollCue");
+let poemIsLong=false;
+function updateScrollCue(isLong){
+if(isLong!==undefined)poemIsLong=isLong;
+const bottom=poemElement.getBoundingClientRect().bottom;
+scrollCue.hidden=!(poemIsLong&&bottom>window.innerHeight-40);
+}
+scrollCue.addEventListener("click",()=>window.scrollBy({top:window.innerHeight*0.6,behavior:"smooth"}));
+window.addEventListener("scroll",()=>updateScrollCue(),{passive:true});
+let lastWidth=window.innerWidth,lastHeight=window.innerHeight;
+window.addEventListener("resize",()=>{
+// Alleen opnieuw passend maken bij een echte formaatwijziging (niet bij het toetsenbord).
+if(Math.abs(window.innerWidth-lastWidth)>2||Math.abs(window.innerHeight-lastHeight)>120){lastWidth=window.innerWidth;lastHeight=window.innerHeight;scheduleFit()}
+else positionNoteDots();
+});
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(scheduleFit);
+
+// 4. Datum boven de titel.
+const poemDateElement=document.getElementById("poemDate");
+function updateDateLine(){
+poemDateElement.textContent=new Date().toLocaleDateString("nl-NL",{weekday:"long",day:"numeric",month:"long"});
+}
+updateDateLine();
+setInterval(updateDateLine,60*1000);
+
+// 5. Zacht overvloeien bij een ander gedicht.
+const pageContent=[document.querySelector("header"),poemElement];
+function fadeInPoem(){
+pageContent.forEach(element=>{element.classList.remove("poem-enter");void element.offsetWidth;element.classList.add("poem-enter")});
+}
+
+// 8. Stipjes in de marge bij regels met aantekeningen, in de kleur van wie schreef.
+function personsForPassage(key){
+const persons=new Set();
+(notesByPassage[key]||[]).forEach(note=>{
+persons.add(canonicalPerson(note.persoon));
+(repliesByParent[note.id]||[]).forEach(reply=>persons.add(canonicalPerson(reply.persoon)));
+});
+return ["Sanne","Ramon"].filter(person=>persons.has(person));
+}
+function offsetWithinPoem(element){
+let top=0,node=element;
+while(node&&node!==poemElement){top+=node.offsetTop;node=node.offsetParent}
+return top;
+}
+function positionNoteDots(){
+poemElement.querySelectorAll(".note-dot").forEach(dot=>dot.remove());
+const perLine={};
+poemElement.querySelectorAll(".has-notes").forEach(element=>{
+const key=normalizePassage(element.textContent);
+const persons=personsForPassage(key);
+if(!persons.length)return;
+const lineHeight=parseFloat(getComputedStyle(poemElement).lineHeight)||30;
+const top=Math.round(offsetWithinPoem(element)+lineHeight/2);
+const lineKey=Math.round(top/8);
+persons.forEach(person=>{
+perLine[lineKey]=(perLine[lineKey]||0)+1;
+const dot=document.createElement("button");
+dot.type="button";
+dot.className="note-dot "+personClassFor(person);
+dot.style.top=top+"px";
+dot.style.setProperty("--dot-shift",(perLine[lineKey]-1)+"");
+dot.setAttribute("aria-label",`Aantekening van ${person} bij: ${key}`);
+dot.addEventListener("click",event=>{
+event.stopPropagation();
+selectedPassage=element.textContent.trim();
+selectedPoemTitle=titleElement.textContent.trim();
+selectedPoemId=currentPoem()?currentPoem().id:"";
+openNoteModal();
+});
+poemElement.appendChild(dot);
+});
+});
+}
+
+// 2. Knoppen verdwijnen na een minuut zonder aanraking; de eerste tik maakt ze weer zichtbaar.
+const IDLE_AFTER=60*1000;
+let idleTimer=null;
+let swallowClickUntil=0;
+function isIdle(){return document.body.classList.contains("controls-idle")}
+function goIdle(){
+if(isBusy()){restartIdleTimer();return}
+document.body.classList.add("controls-idle");
+}
+function restartIdleTimer(){clearTimeout(idleTimer);idleTimer=setTimeout(goIdle,IDLE_AFTER)}
+function wake(event){
+if(isIdle()){
+document.body.classList.remove("controls-idle");
+// Deze tik alleen gebruiken om wakker te maken, niet om iets aan te klikken.
+if(event&&event.type==="pointerdown"){event.preventDefault();event.stopPropagation();swallowClickUntil=Date.now()+700}
+}
+restartIdleTimer();
+}
+document.addEventListener("pointerdown",wake,true);
+document.addEventListener("click",event=>{if(Date.now()<swallowClickUntil){event.preventDefault();event.stopPropagation();swallowClickUntil=0}},true);
+document.addEventListener("keydown",()=>wake(),true);
+document.addEventListener("wheel",()=>wake(),{passive:true,capture:true});
+restartIdleTimer();
+
+// 7. Uitleg over de handjes verdwijnt na een paar keer gebruik; daarna een ⓘ-knopje.
+const HINT_USES_KEY="gedichten_handjes_gebruikt";
+const HINT_LIMIT=5;
+const handHint=document.getElementById("handHint");
+const hintInfoButton=document.getElementById("hintInfoButton");
+function hintUses(){return Number(localStorage.getItem(HINT_USES_KEY)||0)}
+function updateHint(){
+const learned=hintUses()>=HINT_LIMIT;
+handHint.classList.toggle("collapsed",learned&&!handHint.classList.contains("forced"));
+hintInfoButton.hidden=!learned;
+}
+function countHandUse(){
+const uses=hintUses();
+if(uses>=HINT_LIMIT)return;
+try{localStorage.setItem(HINT_USES_KEY,String(uses+1))}catch(e){}
+updateHint();
+}
+hintInfoButton.addEventListener("click",()=>{
+handHint.classList.toggle("forced");
+updateHint();
+hintInfoButton.setAttribute("aria-expanded",handHint.classList.contains("forced")?"true":"false");
+});
+updateHint();
 
 function renderPoemMenu(){
 poemMenuList.innerHTML="";
@@ -1145,6 +1362,7 @@ const state=handStates.find(item=>item.dragging&&item.pointerId===event.pointerI
 if(!state)return;
 event.preventDefault();
 if(Math.hypot(event.clientX-state.startX,event.clientY-state.startY)>8){
+if(!state.moved)countHandUse();
 state.moved=true;
 state.activated=true;
 }
