@@ -12,7 +12,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#ffffff">
 <title>Gedichten</title>
-<!-- Testversie 16: 15 november 2026 – handjes optillen, richtpuntje, groter op telefoon -->
+<!-- Testversie 18: 15 november 2026 – handjes: rustiger in rust, terugglijden, gelijke lijnen, meekantelen -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&display=swap" rel="stylesheet">
@@ -54,13 +54,9 @@ button{font-family:inherit}
 #hand2 .hand-icon{transform:rotate(-60deg)}
 .hand.dragging{cursor:grabbing}
 /* Optillen bij slepen: iets groter met een zachte schaduw */
-.hand .hand-icon,.hand .finger-icon{transition:filter 180ms ease}
-.hand.dragging{transform:scale(1.14)}
-.hand.dragging .hand-icon,.hand.dragging .finger-icon{filter:drop-shadow(0 6px 7px rgba(55,40,25,.28))}
-/* Richtpuntje bij de vingertop van het woordvingertje */
-.aim-dot{position:fixed;z-index:10000;left:0;top:0;width:9px;height:9px;margin:-4.5px 0 0 -4.5px;border-radius:50%;background:#26969f;box-shadow:0 0 0 2px rgba(255,253,248,.95),0 1px 3px rgba(0,0,0,.25);pointer-events:none}
-.aim-dot[hidden]{display:none}
-body.reading-mode .aim-dot,body.controls-idle .aim-dot{display:none}
+.hand .hand-icon,.hand .finger-icon{transition:filter 520ms cubic-bezier(.22,1,.36,1)}
+.hand .hand-icon,.hand .finger-icon{filter:drop-shadow(0 0 0 rgba(55,40,25,0))}
+.hand.dragging .hand-icon,.hand.dragging .finger-icon{filter:drop-shadow(0 7px 9px rgba(55,40,25,.22))}
 .hand-hint{margin-top:18px;font-size:15px;color:#a09688;text-align:center;font-style:italic}
 .test-version{position:fixed;left:14px;bottom:calc(104px + env(safe-area-inset-bottom));z-index:10001;color:#9b9183;font-family:Georgia,serif;font-size:11px;letter-spacing:.08em;opacity:.78;pointer-events:none;user-select:none}
 .reset-hands-button{position:fixed;right:14px;bottom:calc(10px + env(safe-area-inset-bottom));z-index:10002;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(151,133,108,.38);border-radius:50%;padding:0;background:rgba(247,244,237,.94);color:#766b5d;font-family:Georgia,serif;font-size:30px;font-weight:400;line-height:1;padding:0 0 2px;box-shadow:0 2px 9px rgba(55,45,32,.09);cursor:pointer;backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);-webkit-tap-highlight-color:transparent}
@@ -177,7 +173,11 @@ body.reading-mode .connection-status{display:none}
 .reading-mode-button:active{background:#e9e1d4;transform:translateY(1px)}
 .reading-mode-button:focus-visible{outline:2px solid #887e70;outline-offset:3px}
 .hand,.hand-hint,.hint-info-button,.navigation,.test-version,.poem-menu-button,.reset-hands-button,.person-inbox-button,.reading-mode-button{transition:opacity 600ms ease,visibility 600ms ease}
-.hand{transition:opacity 600ms ease,visibility 600ms ease,transform 180ms ease}
+/* In rust iets doorzichtig; bij aanraken of gebruik helemaal helder */
+.hand{opacity:.75;transition:opacity 450ms ease,visibility 600ms ease,transform 520ms cubic-bezier(.22,1,.36,1)}
+.hand.in-use{opacity:1}
+/* Tijdens slepen: opgetild en licht meekantelend met de beweging */
+.hand.dragging{transform:scale(1.1) rotate(var(--tilt,0deg));transition:opacity 450ms ease,visibility 600ms ease,transform 280ms cubic-bezier(.22,1,.36,1)}
 body.reading-mode .hand,body.reading-mode .hand-hint,body.reading-mode .hint-info-button,body.reading-mode .navigation,body.reading-mode .test-version,body.reading-mode .poem-menu-button,body.reading-mode .reset-hands-button,body.reading-mode .person-inbox-button{opacity:0;visibility:hidden;pointer-events:none}
 body.reading-mode .reading-mode-button{opacity:.4;background:#e9e1d4;box-shadow:none}
 @media(max-width:600px){.reading-mode-button{right:9px;bottom:calc(97px + env(safe-area-inset-bottom));width:38px;height:38px}.reading-mode-button svg{width:20px;height:20px}}
@@ -275,9 +275,8 @@ header{margin-bottom:34px}
 <button type="button" class="hand" id="hand1" aria-label="Eerste Hamsa-hand"></button>
 <button type="button" class="hand" id="hand2" aria-label="Tweede Hamsa-hand"></button>
 <button type="button" class="hand" id="sentenceHand" aria-label="Wijzende vinger voor regels"></button>
-<div class="aim-dot" id="aimDot" hidden></div>
 <button type="button" class="hand" id="wordHand" aria-label="Wijzende vinger voor woorden"></button>
-<div class="test-version" aria-label="Testversie 16">TEST v16</div>
+<div class="test-version" aria-label="Testversie 18">TEST v18</div>
 <button type="button" class="scroll-cue" id="scrollCue" aria-label="Verder lezen" hidden><svg viewBox="0 0 16 40" aria-hidden="true"><path d="M8 2v34M3 30l5 6 5-6"/></svg></button>
 <div class="connection-status" id="connectionStatus" role="status" hidden></div>
 <button type="button" class="reading-mode-button" id="readingModeButton" aria-pressed="false" aria-label="Leesmodus" title="Leesmodus">
@@ -447,7 +446,7 @@ svg.setAttribute("viewBox","0 0 100 100");
 svg.setAttribute("class","finger-icon");
 svg.setAttribute("aria-hidden","true");
 svg.innerHTML=`
-<g stroke="#352b2b" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round">
+<g stroke="#352b2b" stroke-width="2.7" stroke-linejoin="round" stroke-linecap="round">
   <path d="M29 91 Q23 86 24 76 L18 60 Q15 52 21 48 Q27 44 32 52 L38 63 L39 17 Q39 7 48 5 Q57 7 57 17 L57 55 L63 47 Q69 41 75 47 Q80 53 74 60 L67 82 Q64 92 53 94Z" fill="#13c9d5"/>
   <path d="M39 19 Q39 8 48 5 Q57 8 57 19 L55 33 L41 33Z" fill="#ffe12e"/>
   <path d="M42 17 Q48 9 54 17 L53 25 L43 25Z" fill="#ff4fa3" stroke-width="1.5"/>
@@ -639,7 +638,7 @@ document.addEventListener("visibilitychange",()=>{if(document.visibilityState===
 /* ---------- Automatisch bijwerken ---------- */
 // Als er een nieuwe versie van de site op GitHub staat, laadt de iPad die vanzelf,
 // maar alleen als er niets open staat (dus nooit midden in het schrijven).
-const APP_VERSION="16";
+const APP_VERSION="18";
 let pendingReload=false;
 async function checkForNewVersion(){
 if(location.protocol!=="https:"&&location.hostname!=="localhost")return;
@@ -1226,8 +1225,6 @@ function updateMagnification(){
 const paragraphs=Array.from(poemElement.querySelectorAll(".poem-paragraph"));
 const activeParagraphs=new Set();
 poemElement.querySelectorAll(".sentence-active,.word-active").forEach(el=>el.classList.remove("sentence-active","word-active"));
-const aimDot=document.getElementById("aimDot");
-aimDot.hidden=true;
 handStates.forEach(state=>{
 state.target=null;
 if(!state.activated)return;
@@ -1259,8 +1256,7 @@ const direction=state.element.id==="wordHand"?-1:1;
 // Vingertop berekend op de gewone maat, zodat optillen het richtpunt niet verschuift.
 const tipX=x+(direction*state.element.offsetWidth*0.40);
 const tipY=y-(state.element.offsetHeight*0.21);
-aimDot.style.transform=`translate(${tipX}px,${tipY}px)`;
-aimDot.hidden=false;
+
 let target=null;
 if(document.elementsFromPoint){
   const stack=document.elementsFromPoint(tipX,tipY);
@@ -1325,6 +1321,10 @@ updateMagnification();
 function resetHandsToEdges(){
 handStates.forEach(state=>{
   const hand=state.element;
+  const wasMoved=state.x!==null&&getComputedStyle(hand).visibility!=="hidden";
+  const before=wasMoved?hand.getBoundingClientRect():null;
+  hand.classList.remove("in-use");
+  clearTimeout(state.tiltTimer);hand.style.setProperty("--tilt","0deg");
   hand.style.left="";
   hand.style.right="";
   hand.style.top="";
@@ -1336,6 +1336,21 @@ handStates.forEach(state=>{
   state.y=null;
   state.target=null;
   state.activated=false;
+  // 2. Zacht in een boogje terugglijden naar de eigen plek.
+  if(before&&hand.animate&&!window.matchMedia("(prefers-reduced-motion: reduce)").matches){
+    const after=hand.getBoundingClientRect();
+    const dx=(before.left+before.width/2)-(after.left+after.width/2);
+    const dy=(before.top+before.height/2)-(after.top+after.height/2);
+    const distance=Math.hypot(dx,dy);
+    if(distance>4){
+      const lift=Math.min(90,distance*0.18);
+      hand.animate([
+        {transform:`translate(${dx}px,${dy}px)`},
+        {transform:`translate(${dx*0.45}px,${dy*0.45-lift}px)`,offset:0.5},
+        {transform:"translate(0,0)"}
+      ],{duration:Math.min(900,420+distance*0.6),easing:"cubic-bezier(.45,.05,.3,1)"});
+    }
+  }
 });
 poemElement.querySelectorAll(".poem-paragraph.active,.sentence-active,.word-active").forEach(element=>{
   element.classList.remove("active","sentence-active","word-active");
@@ -1366,7 +1381,9 @@ state.pointerId=event.pointerId;
 state.startX=event.clientX;
 state.startY=event.clientY;
 state.moved=false;
-state.element.classList.add("dragging");
+state.lastMoveX=event.clientX;state.lastMoveTime=performance.now();state.tilt=0;
+state.element.style.setProperty("--tilt","0deg");
+state.element.classList.add("dragging","in-use");
 moveHand(state,event.clientX,event.clientY);
 });
 });
@@ -1380,12 +1397,28 @@ if(!state.moved)countHandUse();
 state.moved=true;
 state.activated=true;
 }
+tiltHand(state,event.clientX);
 moveHand(state,event.clientX,event.clientY);
 },{passive:false});
+
+// 4. Licht meekantelen met de horizontale snelheid (maximaal 5 graden), en terug naar recht bij stilstand.
+function tiltHand(state,x){
+const now=performance.now();
+const dt=Math.max(8,now-(state.lastMoveTime||now));
+const velocity=(x-(state.lastMoveX??x))/dt;
+state.lastMoveX=x;state.lastMoveTime=now;
+const target=Math.max(-5,Math.min(5,velocity*7));
+state.tilt=(state.tilt||0)*0.65+target*0.35;
+state.element.style.setProperty("--tilt",state.tilt.toFixed(2)+"deg");
+clearTimeout(state.tiltTimer);
+state.tiltTimer=setTimeout(()=>{state.tilt=0;state.element.style.setProperty("--tilt","0deg")},120);
+}
 
 function finishPointer(event){
 const state=handStates.find(item=>item.dragging&&item.pointerId===event.pointerId);
 if(!state)return;
+clearTimeout(state.tiltTimer);state.tilt=0;state.element.style.setProperty("--tilt","0deg");
+if(!state.activated)state.element.classList.remove("in-use");
 state.dragging=false;
 state.pointerId=null;
 state.element.classList.remove("dragging");
@@ -1395,6 +1428,8 @@ document.addEventListener("pointerup",finishPointer);
 document.addEventListener("pointercancel",event=>{
 const state=handStates.find(item=>item.dragging&&item.pointerId===event.pointerId);
 if(!state)return;
+clearTimeout(state.tiltTimer);state.element.style.setProperty("--tilt","0deg");
+if(!state.activated)state.element.classList.remove("in-use");
 state.dragging=false;
 state.pointerId=null;
 state.element.classList.remove("dragging");
