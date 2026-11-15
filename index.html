@@ -12,7 +12,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#ffffff">
 <title>Gedichten</title>
-<!-- Testversie 13: 15 november 2026 – lay-out voor aan de muur -->
+<!-- Testversie 15: 15 november 2026 – knoppen verdwijnen na 40 seconden -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&display=swap" rel="stylesheet">
@@ -116,9 +116,10 @@ body.controls-idle .person-inbox-button .inbox-badge{visibility:hidden}
 .hand-hint.collapsed{display:none}
 .hint-info-button{display:block;margin:22px auto 0;width:26px;height:26px;border:1px solid rgba(151,133,108,.45);border-radius:50%;padding:0;background:transparent;color:#a09688;font-family:Georgia,serif;font-size:15px;font-style:italic;line-height:24px;cursor:pointer}
 .hint-info-button[hidden]{display:none}
-.scroll-cue{position:fixed;left:50%;bottom:calc(58px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:10001;width:38px;height:38px;border:1px solid rgba(151,133,108,.35);border-radius:50%;padding:0;background:rgba(247,244,237,.9);color:#887e70;font-size:20px;line-height:1;cursor:pointer;animation:cueBob 2.4s ease-in-out infinite}
+.scroll-cue{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:10001;width:30px;height:46px;padding:4px 7px;border:0;background:none;color:#a89c8a;opacity:.55;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.scroll-cue svg{display:block;width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1;stroke-linecap:round;stroke-linejoin:round}
 .scroll-cue[hidden]{display:none}
-@keyframes cueBob{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,4px)}}
+.scroll-cue:has(+.connection-status:not([hidden])){bottom:calc(46px + env(safe-area-inset-bottom))}
 body.reading-mode .connection-status{display:none}
 .poem-menu-filter{flex:0 0 auto;display:flex;gap:0;margin:0 0 10px;border:1px solid rgba(151,133,108,.45);border-radius:3px;overflow:hidden}
 .poem-menu-filter button{flex:1;border:0;padding:8px 10px;background:transparent;color:#776d60;font-family:inherit;font-size:17px;cursor:pointer}
@@ -240,7 +241,7 @@ header{margin-bottom:34px}
 .poem-paragraph.has-notes{padding-left:7px;margin-left:-9px}
 .modal{padding:23px;max-width:100%}
 }
-@media(prefers-reduced-motion:reduce){.poem-paragraph,.hand,.hand svg{transition:none!important}.poem-enter,.scroll-cue{animation:none!important}}
+@media(prefers-reduced-motion:reduce){.poem-paragraph,.hand,.hand svg{transition:none!important}.poem-enter{animation:none!important}}
 @media(max-width:600px){.note-dot{left:calc(-17px - var(--dot-shift,0) * 10px);width:7px;height:7px;margin-top:-3.5px}.poem-date{font-size:12px;margin-bottom:9px}.ornament{max-width:240px;margin-top:10px}}
 </style>
 </head>
@@ -268,8 +269,8 @@ header{margin-bottom:34px}
 <button type="button" class="hand" id="hand2" aria-label="Tweede Hamsa-hand"></button>
 <button type="button" class="hand" id="sentenceHand" aria-label="Wijzende vinger voor regels"></button>
 <button type="button" class="hand" id="wordHand" aria-label="Wijzende vinger voor woorden"></button>
-<div class="test-version" aria-label="Testversie 13">TEST v13</div>
-<button type="button" class="scroll-cue" id="scrollCue" aria-label="Verder lezen" hidden>↓</button>
+<div class="test-version" aria-label="Testversie 15">TEST v15</div>
+<button type="button" class="scroll-cue" id="scrollCue" aria-label="Verder lezen" hidden><svg viewBox="0 0 16 40" aria-hidden="true"><path d="M8 2v34M3 30l5 6 5-6"/></svg></button>
 <div class="connection-status" id="connectionStatus" role="status" hidden></div>
 <button type="button" class="reading-mode-button" id="readingModeButton" aria-pressed="false" aria-label="Leesmodus" title="Leesmodus">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 6.6C10 5.1 7 4.6 3.8 5v13.2c3.2-.4 6.2.1 8.2 1.6 2-1.5 5-2 8.2-1.6V5c-3.2-.4-6.2.1-8.2 1.6Z"/><path d="M12 6.6v13.2"/></svg>
@@ -630,7 +631,7 @@ document.addEventListener("visibilitychange",()=>{if(document.visibilityState===
 /* ---------- Automatisch bijwerken ---------- */
 // Als er een nieuwe versie van de site op GitHub staat, laadt de iPad die vanzelf,
 // maar alleen als er niets open staat (dus nooit midden in het schrijven).
-const APP_VERSION="13";
+const APP_VERSION="15";
 let pendingReload=false;
 async function checkForNewVersion(){
 if(location.protocol!=="https:"&&location.hostname!=="localhost")return;
@@ -1113,8 +1114,8 @@ poemElement.appendChild(dot);
 });
 }
 
-// 2. Knoppen verdwijnen na een minuut zonder aanraking; de eerste tik maakt ze weer zichtbaar.
-const IDLE_AFTER=60*1000;
+// 2. Knoppen verdwijnen na 40 seconden zonder aanraking (niet als er een venster openstaat); de eerste tik maakt ze weer zichtbaar.
+const IDLE_AFTER=40*1000;
 let idleTimer=null;
 let swallowClickUntil=0;
 function isIdle(){return document.body.classList.contains("controls-idle")}
