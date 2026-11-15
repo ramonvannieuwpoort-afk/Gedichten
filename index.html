@@ -7,11 +7,11 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="theme-color" content="#ffffff">
 <title>Gedichten</title>
-<!-- Testversie 9: 15 november 2026 – gedichten toevoegen -->
+<!-- Testversie 10: 15 november 2026 – gedichten alleen met toegangscode -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<meta name="robots" content="noindex,nofollow">
 <style>
 *{box-sizing:border-box}
 html{background:#fff}
@@ -76,6 +76,8 @@ button{font-family:inherit}
 .poem-add-button span{display:inline-block;width:18px;font-size:23px;line-height:1;color:#a77c48}
 .poem-add-button:active{background:#ece5d9}
 .poem-add-modal{max-width:560px}
+.access-prompt{margin:0 0 18px;color:#887e70;font-style:italic;text-align:center}
+.access-prompt-button{display:block;margin:0 auto;border:1px solid rgba(151,133,108,.45);border-radius:3px;background:#fffdf8;color:#5f5547;font-family:inherit;font-size:19px;padding:9px 16px;cursor:pointer}
 .poem-add-modal textarea{min-height:260px;font-size:19px;line-height:1.45}
 @media(max-width:600px){.poem-menu-button{left:9px;bottom:calc(7px + env(safe-area-inset-bottom));width:38px;height:38px}.poem-menu-button svg{width:20px;height:20px}.poem-menu-panel{height:80vh;max-height:calc(100vh - 30px);margin:5vh auto;padding:22px}}
 /* R- en S-knoppen met rood meldingsgetal (zoals op de iPhone) */
@@ -203,7 +205,7 @@ header{margin-bottom:48px}
 <button type="button" class="hand" id="hand2" aria-label="Tweede Hamsa-hand"></button>
 <button type="button" class="hand" id="sentenceHand" aria-label="Wijzende vinger voor regels"></button>
 <button type="button" class="hand" id="wordHand" aria-label="Wijzende vinger voor woorden"></button>
-<div class="test-version" aria-label="Testversie 9">TEST v9</div>
+<div class="test-version" aria-label="Testversie 10">TEST v10</div>
 <button type="button" class="reading-mode-button" id="readingModeButton" aria-pressed="false" aria-label="Leesmodus" title="Leesmodus">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 6.6C10 5.1 7 4.6 3.8 5v13.2c3.2-.4 6.2.1 8.2 1.6 2-1.5 5-2 8.2-1.6V5c-3.2-.4-6.2.1-8.2 1.6Z"/><path d="M12 6.6v13.2"/></svg>
 </button>
@@ -231,7 +233,7 @@ header{margin-bottom:48px}
 <div class="modal-backdrop" id="accessBackdrop">
 <div class="modal" role="dialog" aria-modal="true" aria-labelledby="accessTitle">
 <h2 id="accessTitle">Toegang</h2>
-<p class="modal-description">Voer de toegangscode in om aantekeningen te kunnen bewaren. Je hoeft dit op dit apparaat maar één keer te doen.</p>
+<p class="modal-description">Voer de toegangscode in om de gedichten en aantekeningen te zien. Je hoeft dit op dit apparaat maar één keer te doen.</p>
 <form id="accessForm">
 <input type="password" id="accessCode" placeholder="Toegangscode" autocomplete="current-password" required>
 <div class="modal-actions">
@@ -386,12 +388,12 @@ return svg;
 document.getElementById("sentenceHand").appendChild(buildFingerIcon(1));
 document.getElementById("wordHand").appendChild(buildFingerIcon(-1));
 
-const CSV_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vSyqrEB__RKjtVvARlIYLBkIdwVlXFh0PYBN615AgXk1RrlmrRzqFfV8r7DRWIuEbeRTeetKTBBWNBd/pub?gid=0&single=true&output=csv";
 const NOTES_URL="https://script.google.com/macros/s/AKfycbximcSly2Yp2TyiIzJWdNZ2gt5QcQ5Is9rf4ITK3SHQfMaWQH6NCAUGYMw3kgJvHl36kQ/exec";
 const ACCESS_STORAGE_KEY="gedichten_access_token";
 let poems=[];
 let currentIndex=0;
 let lastDailyKey="";
+let afterAccess=null;
 let notesByPassage={};
 let selectedPassage="";
 let selectedPoemTitle="";
@@ -447,14 +449,26 @@ if(index===previousIndex)index=(index+1)%poems.length;
 }
 return index;
 }
+// De gedichten komen rechtstreeks uit de spreadsheet, alleen met de toegangscode.
+function showAccessPrompt(message){
+titleElement.textContent="Gedichten";
+authorElement.textContent="";
+counterElement.textContent="";
+poemElement.innerHTML="";
+const p=document.createElement("p");p.className="access-prompt";p.textContent=message;
+const button=document.createElement("button");button.type="button";button.className="access-prompt-button";button.textContent="Toegangscode invoeren";
+button.addEventListener("click",()=>{afterAccess=loadPoems;openAccessModal()});
+poemElement.append(p,button);
+}
 async function loadPoems(){
+if(!localStorage.getItem(ACCESS_STORAGE_KEY)){
+showAccessPrompt("Voer de toegangscode in om de gedichten te lezen.");
+if(!accessBackdrop.classList.contains("visible")){afterAccess=loadPoems;openAccessModal()}
+return;
+}
 try{
-const response=await fetch(CSV_URL+"&refresh="+Date.now(),{cache:"no-store"});
-if(!response.ok)throw new Error("Kon gedichten niet laden");
-const csv=await response.text();
-const result=Papa.parse(csv,{header:true,skipEmptyLines:"greedy"});
-const csvPoems=result.data.map(row=>({title:findColumn(row,["titel","title"]),author:findColumn(row,["dichter","auteur","author"]),poem:findColumn(row,["gedicht","tekst","poem"]),addedBy:findColumn(row,["toegevoegd door"]),addedOn:findColumn(row,["toegevoegd op"])})).filter(item=>item.poem&&item.poem.trim());
-poems=mergeLocalPoems(csvPoems);
+const data=await jsonpRequest({action:"poems"});
+poems=(Array.isArray(data.poems)?data.poems:[]).map(row=>({title:String(row.titel||""),author:String(row.dichter||""),poem:String(row.gedicht||""),addedBy:String(row.toegevoegdDoor||""),addedOn:String(row.toegevoegdOp||"")})).filter(item=>item.poem.trim());
 if(poems.length>0){
 // Toon het daggedicht bij de eerste keer laden en wanneer er een nieuwe gedichtendag begint,
 // maar spring niet terug als iemand zelf naar een ander gedicht is gegaan.
@@ -467,7 +481,18 @@ titleElement.textContent="Gedichten";
 authorElement.textContent="";
 poemElement.textContent="Er zijn nog geen gedichten beschikbaar.";
 }
-}catch(error){poemElement.textContent="De gedichten konden niet worden geladen.";console.error(error)}
+}catch(error){
+console.error(error);
+if(/toegangscode/i.test(error.message)){
+localStorage.removeItem(ACCESS_STORAGE_KEY);
+lastDailyKey="";
+showAccessPrompt("Deze toegangscode klopt niet. Probeer het opnieuw.");
+afterAccess=loadPoems;openAccessModal();
+document.getElementById("accessStatus").textContent="Deze toegangscode klopt niet.";
+return;
+}
+if(!poems.length)poemElement.textContent="De gedichten konden niet worden geladen. Controleer de internetverbinding.";
+}
 }
 
 function normalizePassage(text){return String(text||"").trim().replace(/\s+/g," ")}
@@ -479,6 +504,8 @@ const callbackName="gedichtenCallback"+Date.now()+Math.floor(Math.random()*10000
 const script=document.createElement("script");
 const url=new URL(NOTES_URL);
 Object.entries(params).forEach(([key,value])=>url.searchParams.set(key,value));
+const accessToken=localStorage.getItem(ACCESS_STORAGE_KEY);
+if(accessToken&&!url.searchParams.has("token"))url.searchParams.set("token",accessToken);
 url.searchParams.set("callback",callbackName);
 let finished=false;
 const timer=setTimeout(()=>{cleanup();reject(new Error("Time-out"))},20000);
@@ -496,22 +523,8 @@ return jsonpRequest({action:"notes",gedicht:poemTitle}).then(data=>{if(!Array.is
 }
 
 /* ---------- Gedichten toevoegen ---------- */
-// Nieuw toegevoegde gedichten worden lokaal bewaard tot ze in de gepubliceerde CSV staan
-// (Google ververst die soms pas na een paar minuten).
-const LOCAL_POEMS_KEY="gedichten_nieuw_lokaal";
-function loadLocalPoems(){try{return JSON.parse(localStorage.getItem(LOCAL_POEMS_KEY)||"[]")}catch(e){return[]}}
-function saveLocalPoems(list){try{localStorage.setItem(LOCAL_POEMS_KEY,JSON.stringify(list))}catch(e){}}
-function mergeLocalPoems(csvPoems){
-const csvTitles=new Set(csvPoems.map(p=>normalizePassage(p.title).toLowerCase()));
-const twoDays=2*24*60*60*1000;
-const pending=loadLocalPoems().filter(p=>!csvTitles.has(normalizePassage(p.title).toLowerCase())&&Date.now()-p.savedAt<twoDays);
-saveLocalPoems(pending);
-return csvPoems.concat(pending.map(p=>({title:p.title,author:p.author,poem:p.poem,addedBy:p.addedBy,addedOn:p.addedOn})));
-}
-
 const poemAddBackdrop=document.getElementById("poemAddBackdrop");
 let poemAddPerson="";
-let afterAccess=null;
 function setPoemAddPerson(person){
 poemAddPerson=person;
 document.querySelectorAll("#poemAddForm .person-choice").forEach(button=>{
@@ -573,18 +586,11 @@ status.textContent="Het gedicht is niet aangekomen. Klopt de toegangscode? Probe
 saveButton.disabled=false;
 return;
 }
-const now=new Date();
-const addedOn=`${String(now.getDate()).padStart(2,"0")}-${String(now.getMonth()+1).padStart(2,"0")}-${now.getFullYear()} ${String(now.getHours()).padStart(2,"0")}:${String(now.getMinutes()).padStart(2,"0")}`;
-const local=loadLocalPoems();
-local.push({title,author,poem:text,addedBy:poemAddPerson,addedOn,savedAt:Date.now()});
-saveLocalPoems(local);
-poems=mergeLocalPoems(poems.filter(p=>!local.some(l=>l.title===p.title)));
-const index=poems.findIndex(p=>p.title===title);
 closePoemAdd();
 clearPoemAddForm();
-renderPoemMenu();
-if(index!==-1){show(index,true);window.scrollTo({top:0,behavior:"smooth"})}
-refreshInbox();
+await loadPoems();
+const index=poems.findIndex(p=>normalizePassage(p.title)===normalizePassage(title));
+if(index!==-1){show(index,true);renderPoemMenu();window.scrollTo({top:0,behavior:"smooth"})}
 }catch(error){
 console.error(error);
 status.textContent="Opslaan is niet gelukt. Controleer de internetverbinding.";
@@ -992,7 +998,7 @@ setTimeout(()=>document.getElementById("accessCode").focus(),300);
 }
 
 function closeAccessModal(){accessBackdrop.classList.remove("visible")}
-document.getElementById("accessCancel").addEventListener("click",closeAccessModal);
+document.getElementById("accessCancel").addEventListener("click",()=>{afterAccess=null;closeAccessModal()});
 document.getElementById("accessForm").addEventListener("submit",event=>{
 event.preventDefault();
 const code=document.getElementById("accessCode").value.trim();
