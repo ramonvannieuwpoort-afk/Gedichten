@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="theme-color" content="#ffffff">
 <title>Gedichten</title>
-<!-- Testversie 10: 15 november 2026 – gedichten alleen met toegangscode -->
+<!-- Testversie 11: 15 november 2026 – vaste nummers, reacties en favorieten -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&display=swap" rel="stylesheet">
@@ -76,6 +76,28 @@ button{font-family:inherit}
 .poem-add-button span{display:inline-block;width:18px;font-size:23px;line-height:1;color:#a77c48}
 .poem-add-button:active{background:#ece5d9}
 .poem-add-modal{max-width:560px}
+.favorite-button{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;margin:8px 0 -8px;padding:7px;border:0;border-radius:50%;background:none;color:#b3a795;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:color 200ms ease}
+.favorite-button[hidden]{display:none}
+.favorite-button svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linejoin:round}
+.favorite-button.is-favorite{color:#c2453b}
+.favorite-button.is-favorite svg{fill:currentColor}
+.favorite-button.pop svg{animation:heartPop 380ms ease}
+@keyframes heartPop{0%{transform:scale(1)}40%{transform:scale(1.3)}100%{transform:scale(1)}}
+.favorite-button:focus-visible{outline:2px solid #887e70;outline-offset:2px}
+body.reading-mode .favorite-button{visibility:hidden}
+.poem-menu-filter{flex:0 0 auto;display:flex;gap:0;margin:0 0 10px;border:1px solid rgba(151,133,108,.45);border-radius:3px;overflow:hidden}
+.poem-menu-filter button{flex:1;border:0;padding:8px 10px;background:transparent;color:#776d60;font-family:inherit;font-size:17px;cursor:pointer}
+.poem-menu-filter button+button{border-left:1px solid rgba(151,133,108,.45)}
+.poem-menu-filter button.active{background:#e9e1d4;color:#302c26;font-weight:600}
+.poem-menu-item-heart{color:#c2453b;font-size:.85em}
+.note-thread{margin:0 0 14px}
+.note-thread .saved-note{margin-bottom:6px}
+.note-replies{margin:0 0 4px 22px;padding-left:10px;border-left:1px dashed rgba(151,133,108,.5)}
+.saved-note.reply{font-size:17px;padding:9px 12px}
+.saved-note.pending{opacity:.6}
+.saved-note.replying-to,.saved-note.editing{box-shadow:0 0 0 2px rgba(167,124,72,.45)}
+.note-reply-button{display:inline-block;margin:0 0 0 2px;border:0;background:none;color:#8a6845;font-family:inherit;font-size:16px;font-style:italic;padding:4px 2px;cursor:pointer}
+.inbox-item-reply{display:block;margin-top:4px;color:#8a6845;font-size:15px;font-style:italic}
 .access-prompt{margin:0 0 18px;color:#887e70;font-style:italic;text-align:center}
 .access-prompt-button{display:block;margin:0 auto;border:1px solid rgba(151,133,108,.45);border-radius:3px;background:#fffdf8;color:#5f5547;font-family:inherit;font-size:19px;padding:9px 16px;cursor:pointer}
 .poem-add-modal textarea{min-height:260px;font-size:19px;line-height:1.45}
@@ -189,6 +211,7 @@ header{margin-bottom:48px}
 <header>
 <h1 id="title">Gedichten</h1>
 <div class="author" id="author"></div>
+<button type="button" class="favorite-button" id="favoriteButton" aria-pressed="false" aria-label="Markeer als favoriet" title="Markeer als favoriet" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.3s-7.4-4.5-9.1-9.2C1.8 8 3.6 4.6 7 4.4c2-.1 3.6 1 5 2.9 1.4-1.9 3-3 5-2.9 3.4.2 5.2 3.6 4.1 6.7-1.7 4.7-9.1 9.2-9.1 9.2Z"/></svg></button>
 </header>
 <main>
 <div class="poem" id="poem"></div>
@@ -205,7 +228,7 @@ header{margin-bottom:48px}
 <button type="button" class="hand" id="hand2" aria-label="Tweede Hamsa-hand"></button>
 <button type="button" class="hand" id="sentenceHand" aria-label="Wijzende vinger voor regels"></button>
 <button type="button" class="hand" id="wordHand" aria-label="Wijzende vinger voor woorden"></button>
-<div class="test-version" aria-label="Testversie 10">TEST v10</div>
+<div class="test-version" aria-label="Testversie 11">TEST v11</div>
 <button type="button" class="reading-mode-button" id="readingModeButton" aria-pressed="false" aria-label="Leesmodus" title="Leesmodus">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 6.6C10 5.1 7 4.6 3.8 5v13.2c3.2-.4 6.2.1 8.2 1.6 2-1.5 5-2 8.2-1.6V5c-3.2-.4-6.2.1-8.2 1.6Z"/><path d="M12 6.6v13.2"/></svg>
 </button>
@@ -226,6 +249,7 @@ header{margin-bottom:48px}
   <section class="poem-menu-panel" role="dialog" aria-modal="true" aria-labelledby="poemMenuTitle">
     <div class="poem-menu-heading"><h2 id="poemMenuTitle">Gedichten</h2><button type="button" class="poem-menu-close" id="poemMenuClose" aria-label="Menu sluiten">×</button></div>
     <button type="button" class="poem-add-button" id="poemAddButton"><span aria-hidden="true">+</span> Gedicht toevoegen</button>
+    <div class="poem-menu-filter" role="group" aria-label="Welke gedichten"><button type="button" data-filter="all" class="active" aria-pressed="true">Alle gedichten</button><button type="button" data-filter="fav" aria-pressed="false">♥ Favorieten</button></div>
     <div class="poem-menu-list" id="poemMenuList"><p class="poem-menu-empty">Gedichten worden geladen…</p></div>
   </section>
 </div>
@@ -398,7 +422,9 @@ let notesByPassage={};
 let selectedPassage="";
 let selectedPoemTitle="";
 let selectedPerson="";
-let editingNoteRow=null;
+let editingNoteId=null;
+let replyToId=null;
+let selectedPoemId="";
 const titleElement=document.getElementById("title");
 const authorElement=document.getElementById("author");
 const poemElement=document.getElementById("poem");
@@ -468,14 +494,15 @@ return;
 }
 try{
 const data=await jsonpRequest({action:"poems"});
-poems=(Array.isArray(data.poems)?data.poems:[]).map(row=>({title:String(row.titel||""),author:String(row.dichter||""),poem:String(row.gedicht||""),addedBy:String(row.toegevoegdDoor||""),addedOn:String(row.toegevoegdOp||"")})).filter(item=>item.poem.trim());
+poems=(Array.isArray(data.poems)?data.poems:[]).map(row=>({id:String(row.id||""),favorite:!!row.favoriet,title:String(row.titel||""),author:String(row.dichter||""),poem:String(row.gedicht||""),addedBy:String(row.toegevoegdDoor||""),addedOn:String(row.toegevoegdOp||"")})).filter(item=>item.poem.trim());
 if(poems.length>0){
 // Toon het daggedicht bij de eerste keer laden en wanneer er een nieuwe gedichtendag begint,
 // maar spring niet terug als iemand zelf naar een ander gedicht is gegaan.
 const todayKey=getLocalDateKey();
 if(lastDailyKey!==todayKey){lastDailyKey=todayKey;show(getDailyPoemIndex(),true);}
 renderPoemMenu();
-refreshInbox();
+updateFavoriteButton();
+loadAllNotes();
 }else{
 titleElement.textContent="Gedichten";
 authorElement.textContent="";
@@ -515,11 +542,6 @@ script.onerror=function(){cleanup();reject(new Error("Verbinding met Google is m
 script.src=url.toString();
 document.head.appendChild(script);
 });
-}
-
-// Haalt de aantekeningen van één gedicht op.
-function fetchNotesForPoem(poemTitle){
-return jsonpRequest({action:"notes",gedicht:poemTitle}).then(data=>{if(!Array.isArray(data.notes))throw new Error("Ongeldig antwoord");return data.notes});
 }
 
 /* ---------- Gedichten toevoegen ---------- */
@@ -598,60 +620,77 @@ saveButton.disabled=false;
 }
 });
 
-function loadNotesForCurrentPoem(){
-const poemTitle=titleElement.textContent.trim();
-if(!poemTitle)return;
-fetchNotesForPoem(poemTitle).then(notes=>{
-if(titleElement.textContent.trim()!==poemTitle)return; // intussen ander gedicht
+/* ---------- Aantekeningen (met vaste nummers) ---------- */
+// Alle aantekeningen worden in één keer opgehaald en per gedicht gefilterd op het vaste gedicht-ID.
+let notesRaw=[];
+let repliesByParent={};
+function currentPoem(){return poems[currentIndex]||null}
+function noteBelongsToPoem(note,poem){
+if(!poem)return false;
+if(note.gedichtId)return note.gedichtId===poem.id;
+return normalizePassage(note.gedicht).toLowerCase()===normalizePassage(poem.title).toLowerCase();
+}
+function computeNotesForCurrentPoem(){
+const poem=currentPoem();
 notesByPassage={};
-notes.forEach(note=>{const key=normalizePassage(note.passage);if(!notesByPassage[key])notesByPassage[key]=[];notesByPassage[key].push(note)});
+repliesByParent={};
+notesRaw.filter(note=>noteBelongsToPoem(note,poem)).forEach(note=>{
+if(note.antwoordOp){(repliesByParent[note.antwoordOp]=repliesByParent[note.antwoordOp]||[]).push(note);return}
+const key=normalizePassage(note.passage);
+(notesByPassage[key]=notesByPassage[key]||[]).push(note);
+});
 applyNoteHighlights();
 if(noteBackdrop.classList.contains("visible"))renderSavedNotes();
-}).catch(error=>console.error("Aantekeningen konden niet worden opgehaald.",error));
+}
+async function loadAllNotes(){
+if(!localStorage.getItem(ACCESS_STORAGE_KEY))return;
+try{
+const data=await jsonpRequest({action:"allnotes"});
+notesRaw=Array.isArray(data.notes)?data.notes:[];
+computeNotesForCurrentPoem();
+rebuildInbox();
+}catch(error){console.error("Aantekeningen konden niet worden opgehaald.",error)}
 }
 
-/* ---------- R/S-knoppen: nieuwe aantekeningen per persoon ---------- */
-const SEEN_STORAGE_KEY="gedichten_gezien_v1";
+/* ---------- R/S-knoppen: nieuwe aantekeningen, reacties en gedichten per persoon ---------- */
+const SEEN_STORAGE_KEY="gedichten_gezien_v2";
 const inboxBackdrop=document.getElementById("inboxBackdrop");
 const inboxList=document.getElementById("inboxList");
 const inboxButtons={Ramon:document.getElementById("ramonInboxButton"),Sanne:document.getElementById("sanneInboxButton")};
 let allNotes=[];
-let inboxRefreshing=false;
 
 function canonicalPerson(name){const p=String(name||"").trim().toLowerCase();return p==="ramon"?"Ramon":p==="sanne"?"Sanne":""}
-// Een aantekening is 'nieuw' als deze combinatie nog niet gezien is.
-// Een gewijzigde tekst telt dus opnieuw als nieuw.
-function makeNoteKey(person,poemTitle,passage,text){return [person,normalizePassage(poemTitle),normalizePassage(passage),normalizePassage(text)].join("¦")}
 function loadSeen(){try{const raw=localStorage.getItem(SEEN_STORAGE_KEY);return raw?new Set(JSON.parse(raw)):null}catch(e){return null}}
 function saveSeen(set){try{localStorage.setItem(SEEN_STORAGE_KEY,JSON.stringify(Array.from(set)))}catch(e){}}
 
-async function refreshInbox(){
-if(!poems.length||inboxRefreshing)return;
-inboxRefreshing=true;
-try{
-const titles=[...new Set(poems.map(p=>String(p.title||"").trim()).filter(Boolean))];
-let failures=0;
-const results=await Promise.all(titles.map(title=>fetchNotesForPoem(title).then(notes=>({title,notes})).catch(()=>{failures++;return{title,notes:[]}})));
-if(failures===titles.length)return; // geen verbinding: laat de oude stand staan
+function rebuildInbox(){
 const list=[];
-results.forEach(({title,notes})=>notes.forEach(note=>{
+const byId={};
+notesRaw.forEach(note=>{byId[note.id]=note});
+notesRaw.forEach((note,order)=>{
 const person=canonicalPerson(note.persoon);
-if(!person)return;
-list.push({type:"note",key:makeNoteKey(person,title,note.passage,note.aantekening),person,poemTitle:title,passage:String(note.passage||"").trim(),text:String(note.aantekening||""),date:String(note.datum||""),row:Number(note.row)||0});
-}));
-// Toegevoegde gedichten tellen ook mee bij de R/S-knoppen.
+if(!person||!note.id||note.pending)return;
+const poem=poems.find(p=>noteBelongsToPoem(note,p));
+const parent=note.antwoordOp?byId[note.antwoordOp]:null;
+list.push({
+type:note.antwoordOp?"reply":"note",
+// Een gewijzigde tekst telt opnieuw als nieuw.
+key:"n¦"+note.id+"¦"+normalizePassage(note.aantekening),
+person,poemId:poem?poem.id:"",poemTitle:poem?poem.title:note.gedicht,
+passage:String(note.passage||"").trim(),text:String(note.aantekening||""),date:String(note.datum||""),
+replyTo:parent?canonicalPerson(parent.persoon)||parent.persoon:"",order
+});
+});
 poems.forEach(p=>{
 const person=canonicalPerson(p.addedBy);
-const title=String(p.title||"").trim();
-if(!person||!title)return;
-list.push({type:"poem",key:"gedicht¦"+person+"¦"+normalizePassage(title).toLowerCase(),person,poemTitle:title,passage:"",text:"Gedicht toegevoegd"+(p.author?" · "+p.author:""),date:String(p.addedOn||""),row:1e9});
+if(!person||!p.id)return;
+list.push({type:"poem",key:"p¦"+p.id,person,poemId:p.id,poemTitle:p.title,passage:"",text:"Gedicht toegevoegd"+(p.author?" · "+p.author:""),date:String(p.addedOn||""),order:1e9});
 });
 allNotes=list;
 let seen=loadSeen();
-// Allereerste keer op dit apparaat: bestaande aantekeningen gelden als gezien.
-if(seen===null&&failures===0){seen=new Set(allNotes.map(n=>n.key));saveSeen(seen)}
+// Allereerste keer op dit apparaat: alles wat er al is geldt als gezien.
+if(seen===null){seen=new Set(allNotes.map(n=>n.key));saveSeen(seen)}
 updateInboxBadges();
-}finally{inboxRefreshing=false}
 }
 
 function updateInboxBadges(){
@@ -667,25 +706,25 @@ button.setAttribute("aria-label",`Van ${person}`+(count?`, ${count} nieuw`:""));
 
 function openInbox(person){
 const seen=loadSeen()||new Set();
-const notes=allNotes.filter(n=>n.person===person);
+const entries=allNotes.filter(n=>n.person===person);
 const isNew=n=>!seen.has(n.key);
-notes.sort((a,b)=>(isNew(b)-isNew(a))||(b.row-a.row));
-const newCount=notes.filter(isNew).length;
+entries.sort((a,b)=>(isNew(b)-isNew(a))||(b.order-a.order));
+const newCount=entries.filter(isNew).length;
 // Getal verdwijnt zodra het venster opent; de nieuwe blijven in dit venster rood gemarkeerd.
-notes.forEach(n=>seen.add(n.key));
+entries.forEach(n=>seen.add(n.key));
 saveSeen(seen);
 updateInboxBadges();
 
 document.getElementById("inboxTitle").textContent=`Van ${person}`;
 document.getElementById("inboxSubtitle").textContent=newCount?`${newCount} nieuw sinds de vorige keer`:"Niets nieuws – hieronder alles van eerder.";
 inboxList.innerHTML="";
-if(!notes.length){
+if(!entries.length){
 const empty=document.createElement("p");empty.className="poem-menu-empty";
-empty.textContent=allNotes.length||poems.length?`${person} heeft nog geen aantekeningen of gedichten toegevoegd.`:"Aantekeningen worden geladen…";
+empty.textContent=`${person} heeft nog geen aantekeningen of gedichten toegevoegd.`;
 inboxList.appendChild(empty);
 }
 let dividerPlaced=false;
-notes.forEach((n,i)=>{
+entries.forEach((n,i)=>{
 const fresh=i<newCount;
 if(!fresh&&newCount&&!dividerPlaced){const d=document.createElement("div");d.className="inbox-divider";d.textContent="Eerder gezien";inboxList.appendChild(d);dividerPlaced=true}
 const item=document.createElement("button");item.type="button";item.className="inbox-item"+(fresh?" new":"");
@@ -693,9 +732,10 @@ const top=document.createElement("span");top.className="inbox-item-top";
 const poemTitle=document.createElement("span");poemTitle.className="inbox-item-poem";poemTitle.textContent=n.poemTitle;
 top.appendChild(poemTitle);
 if(fresh){const label=document.createElement("span");label.className="inbox-new-label";label.textContent="Nieuw";top.appendChild(label)}
-const passage=document.createElement("span");passage.className="inbox-item-passage";passage.textContent="“"+normalizePassage(n.passage)+"”";
-const text=document.createElement("span");text.className="inbox-item-text";text.textContent=n.text;
-if(n.type==="poem"){item.append(top,text)}else{item.append(top,passage,text)}
+item.appendChild(top);
+if(n.type!=="poem"){const passage=document.createElement("span");passage.className="inbox-item-passage";passage.textContent="“"+normalizePassage(n.passage)+"”";item.appendChild(passage)}
+if(n.type==="reply"){const reply=document.createElement("span");reply.className="inbox-item-reply";reply.textContent="↳ reactie op "+(n.replyTo||"een aantekening");item.appendChild(reply)}
+const text=document.createElement("span");text.className="inbox-item-text";text.textContent=n.text;item.appendChild(text);
 if(n.date){const date=document.createElement("span");date.className="inbox-item-date";date.textContent=n.date;item.appendChild(date)}
 item.addEventListener("click",()=>{closeInbox();goToPassage(n)});
 inboxList.appendChild(item);
@@ -706,23 +746,65 @@ inboxBackdrop.setAttribute("aria-hidden","false");
 }
 function closeInbox(){inboxBackdrop.classList.remove("visible");inboxBackdrop.setAttribute("aria-hidden","true")}
 
-function goToPassage(note){
-const index=poems.findIndex(p=>String(p.title||"").trim()===note.poemTitle);
+// Gaat naar het gedicht en de passage, en opent bij een aantekening ook het gesprek.
+function goToPassage(entry){
+let index=entry.poemId?poems.findIndex(p=>p.id===entry.poemId):-1;
+if(index===-1)index=poems.findIndex(p=>normalizePassage(p.title)===normalizePassage(entry.poemTitle));
 if(index===-1)return;
 if(index!==currentIndex)show(index,true);
-const key=normalizePassage(note.passage);
+if(entry.type==="poem"){window.scrollTo({top:0,behavior:"smooth"});return}
+const key=normalizePassage(entry.passage);
 const target=Array.from(poemElement.querySelectorAll(".poem-paragraph,.poem-sentence,.poem-word")).find(el=>normalizePassage(el.textContent)===key);
-if(!target){window.scrollTo({top:0,behavior:"smooth"});return}
+if(target){
 requestAnimationFrame(()=>{
 target.scrollIntoView({behavior:"smooth",block:"center"});
 target.classList.remove("passage-flash");void target.offsetWidth;target.classList.add("passage-flash");
 setTimeout(()=>target.classList.remove("passage-flash"),3200);
 });
 }
+setTimeout(()=>{
+selectedPassage=target?target.textContent.trim():entry.passage;
+selectedPoemTitle=poems[currentIndex].title;
+selectedPoemId=poems[currentIndex].id;
+openNoteModal();
+},1100);
+}
 
 Object.entries(inboxButtons).forEach(([person,button])=>button.addEventListener("click",()=>openInbox(person)));
 document.getElementById("inboxClose").addEventListener("click",closeInbox);
 inboxBackdrop.addEventListener("click",event=>{if(event.target===inboxBackdrop)closeInbox()});
+
+/* ---------- Favorieten ---------- */
+const favoriteButton=document.getElementById("favoriteButton");
+let menuFilter="all";
+function updateFavoriteButton(){
+const poem=currentPoem();
+favoriteButton.hidden=!poem||!poem.id;
+const on=!!(poem&&poem.favorite);
+favoriteButton.classList.toggle("is-favorite",on);
+favoriteButton.setAttribute("aria-pressed",on?"true":"false");
+favoriteButton.setAttribute("aria-label",on?"Favoriet – tik om te verwijderen":"Markeer als favoriet");
+favoriteButton.title=on?"Favoriet":"Markeer als favoriet";
+}
+favoriteButton.addEventListener("click",async()=>{
+const poem=currentPoem();
+if(!poem||!poem.id)return;
+poem.favorite=!poem.favorite;
+updateFavoriteButton();
+favoriteButton.classList.remove("pop");void favoriteButton.offsetWidth;favoriteButton.classList.add("pop");
+try{
+const formData=new URLSearchParams();
+formData.append("action","favorite");
+formData.append("token",localStorage.getItem(ACCESS_STORAGE_KEY)||"");
+formData.append("gedichtId",poem.id);
+formData.append("waarde",poem.favorite?"ja":"");
+await fetch(NOTES_URL,{method:"POST",mode:"no-cors",body:formData});
+}catch(error){console.error(error);poem.favorite=!poem.favorite;updateFavoriteButton()}
+});
+document.querySelectorAll(".poem-menu-filter button").forEach(button=>button.addEventListener("click",()=>{
+menuFilter=button.dataset.filter;
+renderPoemMenu();
+}));
 
 function applyNoteHighlights(){
 poemElement.querySelectorAll(".poem-paragraph,.poem-sentence,.poem-word").forEach(element=>{
@@ -758,18 +840,22 @@ const paragraphs=decodedPoem.trim().split(/\n\s*\n/).filter(part=>part.trim());
 paragraphs.forEach(text=>{const paragraph=document.createElement("p");paragraph.className="poem-paragraph";renderPoemParagraph(paragraph,text.trimEnd());poemElement.appendChild(paragraph)});
 counterElement.textContent=(currentIndex+1)+" / "+poems.length;
 clearMagnification();
-notesByPassage={};
-loadNotesForCurrentPoem();
+computeNotesForCurrentPoem();
+updateFavoriteButton();
 }
 
 function renderPoemMenu(){
 poemMenuList.innerHTML="";
+document.querySelectorAll(".poem-menu-filter button").forEach(button=>{const active=button.dataset.filter===menuFilter;button.classList.toggle("active",active);button.setAttribute("aria-pressed",active?"true":"false")});
 if(!poems.length){const empty=document.createElement("p");empty.className="poem-menu-empty";empty.textContent="Er zijn geen gedichten beschikbaar.";poemMenuList.appendChild(empty);return;}
-poems.forEach((poem,index)=>{
+const visible=poems.map((poem,index)=>({poem,index})).filter(({poem})=>menuFilter!=="fav"||poem.favorite);
+if(!visible.length){const empty=document.createElement("p");empty.className="poem-menu-empty";empty.textContent="Nog geen favorieten. Tik op het hartje onder de titel van een gedicht.";poemMenuList.appendChild(empty);return;}
+visible.forEach(({poem,index})=>{
 const item=document.createElement("button");
 item.type="button";
 item.className="poem-menu-item"+(index===currentIndex?" current":"");
 const poemTitle=document.createElement("span");poemTitle.className="poem-menu-item-title";poemTitle.textContent=poem.title||"Zonder titel";
+if(poem.favorite){const heart=document.createElement("span");heart.className="poem-menu-item-heart";heart.setAttribute("aria-label","favoriet");heart.textContent=" ♥";poemTitle.appendChild(heart)}
 const author=document.createElement("span");author.className="poem-menu-item-author";author.textContent=poem.author||"";
 item.appendChild(poemTitle);if(poem.author)item.appendChild(author);
 item.addEventListener("click",()=>{show(index,true);closePoemMenu();});
@@ -794,6 +880,7 @@ const key=normalizePassage(target.textContent);
 if(!notesByPassage[key]||!notesByPassage[key].length)return;
 selectedPassage=target.textContent.trim();
 selectedPoemTitle=titleElement.textContent.trim();
+selectedPoemId=currentPoem()?currentPoem().id:"";
 openNoteModal();
 });
 
@@ -985,6 +1072,7 @@ function openNoteForHand(state){
 if(!state.target||!state.target.isConnected)return;
 selectedPassage=state.target.textContent.trim();
 selectedPoemTitle=titleElement.textContent.trim();
+selectedPoemId=currentPoem()?currentPoem().id:"";
 if(!selectedPassage||!selectedPoemTitle)return;
 if(!localStorage.getItem(ACCESS_STORAGE_KEY)){openAccessModal();return}
 openNoteModal();
@@ -1010,6 +1098,34 @@ afterAccess=null;
 next();
 });
 
+function personClassFor(person){const p=String(person||"").trim().toLowerCase();return p==="sanne"?"sanne":p==="ramon"?"ramon":"unknown"}
+
+function buildNoteElement(note,isReply){
+const item=document.createElement("div");
+const person=String(note.persoon||"").trim();
+item.className="saved-note "+personClassFor(person)+(isReply?" reply":"")+(note.pending?" pending":"")+(replyToId===note.id?" replying-to":"")+(editingNoteId===note.id?" editing":"");
+const personLabel=document.createElement("span");
+personLabel.className="saved-note-person";
+personLabel.textContent=person||"Eerder opgeslagen";
+const text=document.createElement("div");
+text.textContent=note.aantekening||"";
+item.append(personLabel,text);
+if(note.datum){const date=document.createElement("span");date.className="saved-note-date";date.textContent=note.pending?"wordt bewaard…":note.datum;item.appendChild(date)}
+if(!note.pending&&selectedPerson&&person===selectedPerson&&note.id){
+const tools=document.createElement("div");
+tools.className="saved-note-tools";
+const edit=document.createElement("button");
+edit.type="button";edit.textContent="Wijzigen";
+edit.addEventListener("click",()=>startEditingNote(note));
+const remove=document.createElement("button");
+remove.type="button";remove.textContent="Verwijderen";
+remove.addEventListener("click",()=>deleteNote(note));
+tools.append(edit,remove);
+item.appendChild(tools);
+}
+return item;
+}
+
 function renderSavedNotes(){
 const container=document.getElementById("savedNotes");
 container.innerHTML="";
@@ -1023,36 +1139,29 @@ container.appendChild(empty);
 return;
 }
 notes.forEach(note=>{
-const item=document.createElement("div");
-const person=String(note.persoon||"").trim();
-const personClass=person.toLowerCase()==="sanne"?"sanne":person.toLowerCase()==="ramon"?"ramon":"unknown";
-item.className="saved-note "+personClass;
-const personLabel=document.createElement("span");
-personLabel.className="saved-note-person";
-personLabel.textContent=person||"Eerder opgeslagen";
-const text=document.createElement("div");
-text.textContent=note.aantekening||"";
-const date=document.createElement("span");
-date.className="saved-note-date";
-date.textContent=note.datum||"";
-item.appendChild(personLabel);
-item.appendChild(text);
-if(note.datum)item.appendChild(date);
-if(selectedPerson&&person===selectedPerson&&note.row){
-const tools=document.createElement("div");
-tools.className="saved-note-tools";
-const edit=document.createElement("button");
-edit.type="button";edit.textContent="Wijzigen";
-edit.addEventListener("click",()=>startEditingNote(note));
-const remove=document.createElement("button");
-remove.type="button";remove.textContent="Verwijderen";
-remove.addEventListener("click",()=>deleteNote(note));
-tools.append(edit,remove);
-item.appendChild(tools);
+const thread=document.createElement("div");
+thread.className="note-thread";
+thread.appendChild(buildNoteElement(note,false));
+const replies=repliesByParent[note.id]||[];
+if(replies.length){
+const replyList=document.createElement("div");
+replyList.className="note-replies";
+replies.forEach(reply=>replyList.appendChild(buildNoteElement(reply,true)));
+thread.appendChild(replyList);
 }
-container.appendChild(item);
+if(!note.pending&&note.id){
+const replyButton=document.createElement("button");
+replyButton.type="button";
+replyButton.className="note-reply-button";
+replyButton.textContent=replyToId===note.id?"Je reageert hierop…":"↳ Reageren";
+replyButton.addEventListener("click",()=>startReply(note));
+thread.appendChild(replyButton);
+}
+container.appendChild(thread);
 });
 }
+
+function findNoteById(id){return notesRaw.find(note=>note.id===id)||null}
 
 function setSelectedPerson(person){
 selectedPerson=person;
@@ -1061,6 +1170,9 @@ const selected=button.dataset.person===person;
 button.classList.toggle("selected",selected);
 button.setAttribute("aria-pressed",selected?"true":"false");
 });
+// Wie een andere naam kiest, kan andermans aantekening niet wijzigen.
+if(editingNoteId){const note=findNoteById(editingNoteId);if(!note||note.persoon!==person)resetNoteEditor()}
+if(replyToId&&person)document.getElementById("noteStatus").textContent="";
 document.getElementById("noteSave").disabled=!person;
 renderSavedNotes();
 }
@@ -1068,7 +1180,8 @@ renderSavedNotes();
 document.querySelectorAll("#noteForm .person-choice").forEach(button=>button.addEventListener("click",()=>setSelectedPerson(button.dataset.person)));
 
 function resetNoteEditor(){
-editingNoteRow=null;
+editingNoteId=null;
+replyToId=null;
 document.getElementById("noteText").value="";
 document.getElementById("noteText").placeholder="Schrijf hier een nieuwe aantekening...";
 document.getElementById("noteSave").textContent="Bewaren";
@@ -1234,38 +1347,60 @@ try{setReadingMode(localStorage.getItem(READING_MODE_KEY)==="1")}catch(e){}
 
 function startEditingNote(note){
 if(!selectedPerson||note.persoon!==selectedPerson)return;
-editingNoteRow=Number(note.row);
+editingNoteId=note.id;
+replyToId=null;
 document.getElementById("noteText").value=note.aantekening||"";
 document.getElementById("noteText").placeholder="Pas je aantekening aan...";
 document.getElementById("noteSave").textContent="Wijziging bewaren";
+document.getElementById("noteEditCancel").textContent="Wijzigen annuleren";
 document.getElementById("noteEditCancel").hidden=false;
 document.getElementById("noteStatus").textContent="Je wijzigt je eigen aantekening.";
+renderSavedNotes();
 document.getElementById("noteText").focus();
 }
 
-document.getElementById("noteEditCancel").addEventListener("click",resetNoteEditor);
+function startReply(note){
+replyToId=note.id;
+editingNoteId=null;
+document.getElementById("noteText").value="";
+document.getElementById("noteText").placeholder=`Reageer op ${note.persoon||"deze aantekening"}…`;
+document.getElementById("noteSave").textContent="Reactie bewaren";
+document.getElementById("noteEditCancel").textContent="Reactie annuleren";
+document.getElementById("noteEditCancel").hidden=false;
+document.getElementById("noteStatus").textContent=selectedPerson?"":"Kies hieronder wie er reageert.";
+renderSavedNotes();
+const textarea=document.getElementById("noteText");
+textarea.scrollIntoView({behavior:"smooth",block:"center"});
+textarea.focus();
+}
 
-async function sendNoteAction(action,note){
-const token=localStorage.getItem(ACCESS_STORAGE_KEY);
+document.getElementById("noteEditCancel").addEventListener("click",()=>{resetNoteEditor();renderSavedNotes()});
+
+async function postNoteAction(fields){
 const formData=new URLSearchParams();
-formData.append("action",action);
-formData.append("token",token||"");
+formData.append("token",localStorage.getItem(ACCESS_STORAGE_KEY)||"");
 formData.append("persoon",selectedPerson);
-formData.append("row",String(note.row));
+Object.entries(fields).forEach(([key,value])=>formData.append(key,value));
 await fetch(NOTES_URL,{method:"POST",mode:"no-cors",body:formData});
 }
 
 async function deleteNote(note){
 if(!selectedPerson||note.persoon!==selectedPerson)return;
-if(!window.confirm("Wil je deze eigen aantekening definitief verwijderen?"))return;
+const replies=repliesByParent[note.id]||[];
+const question=replies.length?"Wil je deze aantekening én de reacties erop definitief verwijderen?":"Wil je deze eigen aantekening definitief verwijderen?";
+if(!window.confirm(question))return;
 const status=document.getElementById("noteStatus");
-status.textContent="Aantekening wordt verwijderd...";
+status.textContent="Aantekening wordt verwijderd…";
+const backup=notesRaw;
+notesRaw=notesRaw.filter(n=>n.id!==note.id&&n.antwoordOp!==note.id);
+if(editingNoteId===note.id||replyToId===note.id)resetNoteEditor();
+computeNotesForCurrentPoem();
 try{
-await sendNoteAction("delete",note);
-status.textContent="Verwijderverzoek verzonden.";
-setTimeout(loadNotesForCurrentPoem,1200);
-setTimeout(refreshInbox,1500);
-}catch(error){status.textContent="Verwijderen is niet gelukt. Probeer opnieuw."}
+await postNoteAction({action:"delete",id:note.id});
+status.textContent="Verwijderd.";
+await wait(1200);
+await loadAllNotes();
+}catch(error){notesRaw=backup;computeNotesForCurrentPoem();status.textContent="Verwijderen is niet gelukt. Probeer opnieuw."}
 }
 
 function closeNoteModal(){
@@ -1283,24 +1418,37 @@ const saveButton=document.getElementById("noteSave");
 if(!token){closeNoteModal();openAccessModal();return}
 if(!selectedPerson){statusElement.textContent="Kies eerst Sanne of Ramon.";return}
 if(!noteText){statusElement.textContent="Schrijf eerst een aantekening.";return}
+const editing=editingNoteId?findNoteById(editingNoteId):null;
+const replyTo=replyToId;
 saveButton.disabled=true;
-statusElement.textContent=editingNoteRow?"Wijziging wordt opgeslagen...":"Aantekening wordt opgeslagen...";
-const formData=new URLSearchParams();
-formData.append("action",editingNoteRow?"update":"create");
-formData.append("token",token);
-formData.append("gedicht",selectedPoemTitle);
-formData.append("passage",selectedPassage);
-formData.append("aantekening",noteText);
-formData.append("persoon",selectedPerson);
-if(editingNoteRow)formData.append("row",String(editingNoteRow));
+statusElement.textContent=editing?"Wijziging wordt opgeslagen…":replyTo?"Reactie wordt opgeslagen…":"Aantekening wordt opgeslagen…";
+const fields=editing
+?{action:"update",id:editing.id,aantekening:noteText}
+:{action:"create",gedichtId:selectedPoemId,gedicht:selectedPoemTitle,passage:selectedPassage,antwoordOp:replyTo||"",aantekening:noteText};
+const backup=notesRaw.map(n=>({...n}));
+const author=selectedPerson;
+// Laat het meteen zien; daarna wordt het met de spreadsheet gecontroleerd.
+if(editing){editing.aantekening=noteText}
+else{
+const parent=replyTo?findNoteById(replyTo):null;
+notesRaw.push({id:"tmp-"+Date.now(),pending:true,gedichtId:parent?parent.gedichtId:selectedPoemId,antwoordOp:replyTo||"",gedicht:selectedPoemTitle,passage:parent?parent.passage:selectedPassage,aantekening:noteText,datum:"zojuist",persoon:selectedPerson});
+}
+resetNoteEditor();
+computeNotesForCurrentPoem();
 try{
-await fetch(NOTES_URL,{method:"POST",mode:"no-cors",body:formData});
-setTimeout(loadNotesForCurrentPoem,1200);
-setTimeout(refreshInbox,1500);
-closeNoteModal();
+await postNoteAction(fields);
+statusElement.textContent="Bewaard.";
+await wait(1200);
+await loadAllNotes();
+// Controleer of het echt in de spreadsheet staat (Google geeft bij opslaan geen antwoord terug).
+const arrived=notesRaw.some(n=>!n.pending&&n.persoon===author&&normalizePassage(n.aantekening)===normalizePassage(noteText));
+statusElement.textContent=arrived?"Bewaard.":"Het is niet aangekomen. Probeer het nog eens.";
 }catch(error){
 console.error("Fout bij opslaan van aantekening:",error);
+notesRaw=backup;
+computeNotesForCurrentPoem();
 statusElement.textContent="Opslaan is niet gelukt. Controleer je internetverbinding.";
+}finally{
 saveButton.disabled=!selectedPerson;
 }
 });
