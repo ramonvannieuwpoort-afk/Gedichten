@@ -12,7 +12,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#ffffff">
 <title>Gedichten</title>
-<!-- Testversie 15: 15 november 2026 – knoppen verdwijnen na 40 seconden -->
+<!-- Testversie 16: 15 november 2026 – handjes optillen, richtpuntje, groter op telefoon -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&display=swap" rel="stylesheet">
@@ -53,6 +53,14 @@ button{font-family:inherit}
 #hand1 .hand-icon{transform:rotate(60deg)}
 #hand2 .hand-icon{transform:rotate(-60deg)}
 .hand.dragging{cursor:grabbing}
+/* Optillen bij slepen: iets groter met een zachte schaduw */
+.hand .hand-icon,.hand .finger-icon{transition:filter 180ms ease}
+.hand.dragging{transform:scale(1.14)}
+.hand.dragging .hand-icon,.hand.dragging .finger-icon{filter:drop-shadow(0 6px 7px rgba(55,40,25,.28))}
+/* Richtpuntje bij de vingertop van het woordvingertje */
+.aim-dot{position:fixed;z-index:10000;left:0;top:0;width:9px;height:9px;margin:-4.5px 0 0 -4.5px;border-radius:50%;background:#26969f;box-shadow:0 0 0 2px rgba(255,253,248,.95),0 1px 3px rgba(0,0,0,.25);pointer-events:none}
+.aim-dot[hidden]{display:none}
+body.reading-mode .aim-dot,body.controls-idle .aim-dot{display:none}
 .hand-hint{margin-top:18px;font-size:15px;color:#a09688;text-align:center;font-style:italic}
 .test-version{position:fixed;left:14px;bottom:calc(104px + env(safe-area-inset-bottom));z-index:10001;color:#9b9183;font-family:Georgia,serif;font-size:11px;letter-spacing:.08em;opacity:.78;pointer-events:none;user-select:none}
 .reset-hands-button{position:fixed;right:14px;bottom:calc(10px + env(safe-area-inset-bottom));z-index:10002;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(151,133,108,.38);border-radius:50%;padding:0;background:rgba(247,244,237,.94);color:#766b5d;font-family:Georgia,serif;font-size:30px;font-weight:400;line-height:1;padding:0 0 2px;box-shadow:0 2px 9px rgba(55,45,32,.09);cursor:pointer;backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);-webkit-tap-highlight-color:transparent}
@@ -169,6 +177,7 @@ body.reading-mode .connection-status{display:none}
 .reading-mode-button:active{background:#e9e1d4;transform:translateY(1px)}
 .reading-mode-button:focus-visible{outline:2px solid #887e70;outline-offset:3px}
 .hand,.hand-hint,.hint-info-button,.navigation,.test-version,.poem-menu-button,.reset-hands-button,.person-inbox-button,.reading-mode-button{transition:opacity 600ms ease,visibility 600ms ease}
+.hand{transition:opacity 600ms ease,visibility 600ms ease,transform 180ms ease}
 body.reading-mode .hand,body.reading-mode .hand-hint,body.reading-mode .hint-info-button,body.reading-mode .navigation,body.reading-mode .test-version,body.reading-mode .poem-menu-button,body.reading-mode .reset-hands-button,body.reading-mode .person-inbox-button{opacity:0;visibility:hidden;pointer-events:none}
 body.reading-mode .reading-mode-button{opacity:.4;background:#e9e1d4;box-shadow:none}
 @media(max-width:600px){.reading-mode-button{right:9px;bottom:calc(97px + env(safe-area-inset-bottom));width:38px;height:38px}.reading-mode-button svg{width:20px;height:20px}}
@@ -230,13 +239,11 @@ header{margin-bottom:34px}
 .navigation{margin-top:55px}
 #hand1{top:76px;left:3px}
 #hand2{top:76px;right:3px}
-#sentenceHand{top:119px;left:3px}
-#wordHand{top:119px;right:3px}
-.hand{width:34px;height:34px}
-.hand.dragging{width:38px;height:38px}
-#sentenceHand,#wordHand{width:34px;height:34px}
-#sentenceHand.dragging,#wordHand.dragging{width:38px;height:38px}
-.hand svg{width:34px;height:34px}
+#sentenceHand{top:122px;left:3px}
+#wordHand{top:122px;right:3px}
+.hand{width:40px;height:40px}
+#sentenceHand,#wordHand{width:40px;height:40px}
+.hand svg{width:40px;height:40px}
 .poem-paragraph.active{transform:scale(1.07)}
 .poem-paragraph.has-notes{padding-left:7px;margin-left:-9px}
 .modal{padding:23px;max-width:100%}
@@ -268,8 +275,9 @@ header{margin-bottom:34px}
 <button type="button" class="hand" id="hand1" aria-label="Eerste Hamsa-hand"></button>
 <button type="button" class="hand" id="hand2" aria-label="Tweede Hamsa-hand"></button>
 <button type="button" class="hand" id="sentenceHand" aria-label="Wijzende vinger voor regels"></button>
+<div class="aim-dot" id="aimDot" hidden></div>
 <button type="button" class="hand" id="wordHand" aria-label="Wijzende vinger voor woorden"></button>
-<div class="test-version" aria-label="Testversie 15">TEST v15</div>
+<div class="test-version" aria-label="Testversie 16">TEST v16</div>
 <button type="button" class="scroll-cue" id="scrollCue" aria-label="Verder lezen" hidden><svg viewBox="0 0 16 40" aria-hidden="true"><path d="M8 2v34M3 30l5 6 5-6"/></svg></button>
 <div class="connection-status" id="connectionStatus" role="status" hidden></div>
 <button type="button" class="reading-mode-button" id="readingModeButton" aria-pressed="false" aria-label="Leesmodus" title="Leesmodus">
@@ -631,7 +639,7 @@ document.addEventListener("visibilitychange",()=>{if(document.visibilityState===
 /* ---------- Automatisch bijwerken ---------- */
 // Als er een nieuwe versie van de site op GitHub staat, laadt de iPad die vanzelf,
 // maar alleen als er niets open staat (dus nooit midden in het schrijven).
-const APP_VERSION="15";
+const APP_VERSION="16";
 let pendingReload=false;
 async function checkForNewVersion(){
 if(location.protocol!=="https:"&&location.hostname!=="localhost")return;
@@ -1218,6 +1226,8 @@ function updateMagnification(){
 const paragraphs=Array.from(poemElement.querySelectorAll(".poem-paragraph"));
 const activeParagraphs=new Set();
 poemElement.querySelectorAll(".sentence-active,.word-active").forEach(el=>el.classList.remove("sentence-active","word-active"));
+const aimDot=document.getElementById("aimDot");
+aimDot.hidden=true;
 handStates.forEach(state=>{
 state.target=null;
 if(!state.activated)return;
@@ -1246,8 +1256,11 @@ return;
 }
 if(state.type==="word"){
 const direction=state.element.id==="wordHand"?-1:1;
-const tipX=x+(direction*handRect.width*0.40);
-const tipY=y-(handRect.height*0.21);
+// Vingertop berekend op de gewone maat, zodat optillen het richtpunt niet verschuift.
+const tipX=x+(direction*state.element.offsetWidth*0.40);
+const tipY=y-(state.element.offsetHeight*0.21);
+aimDot.style.transform=`translate(${tipX}px,${tipY}px)`;
+aimDot.hidden=false;
 let target=null;
 if(document.elementsFromPoint){
   const stack=document.elementsFromPoint(tipX,tipY);
