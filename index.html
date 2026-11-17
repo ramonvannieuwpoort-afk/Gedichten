@@ -12,7 +12,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#ffffff">
 <title>Gedichten</title>
-<!-- Testversie 25: 17 november 2026 – instellingen en symmetrische knoppen -->
+<!-- Testversie 26: 17 november 2026 – tien echt verschillende lettertypen -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&display=swap" rel="stylesheet">
@@ -20,7 +20,8 @@
 <style>
 *{box-sizing:border-box}
 html{background:#fff}
-body{margin:0;background:#eee9df;color:#302c26;font-family:var(--site-font,'Cormorant Garamond',Georgia,serif)}
+body{margin:0;background:#eee9df;color:#302c26;font-family:'Cormorant Garamond',Georgia,serif}
+.poem,header h1,header .author{font-family:var(--poem-font,'Cormorant Garamond',Georgia,serif)}
 .page{max-width:900px;min-height:100vh;margin:0 auto;padding:105px 65px 65px;background:linear-gradient(to bottom,#ffffff 0px,#ffffff 25px,#f7f4ed 75px,#eee9df 160px)}
 header{position:relative;text-align:center;margin-bottom:44px}
 h1{font-size:43px;font-weight:500;line-height:1.1;margin:0 0 8px}
@@ -85,10 +86,11 @@ button{font-family:inherit}
 .settings-slider::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;margin-top:-11px;border:1px solid rgba(151,133,108,.6);border-radius:50%;background:#fffdf8;box-shadow:0 2px 6px rgba(55,45,32,.15)}
 .settings-slider::-moz-range-track{height:2px;background:#c9b89c}
 .settings-slider::-moz-range-thumb{width:22px;height:22px;border:1px solid rgba(151,133,108,.6);border-radius:50%;background:#fffdf8}
-.font-options{display:grid;gap:6px}
+.font-options{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+@media(max-width:600px){.font-options{grid-template-columns:1fr}}
 .font-option{display:flex;flex-direction:column;align-items:flex-start;width:100%;border:1px solid rgba(151,133,108,.35);border-radius:3px;padding:8px 12px;background:transparent;color:#302c26;text-align:left;cursor:pointer}
 .font-option.active{border-color:#a77c48;background:#fffdf8;box-shadow:inset 0 0 0 1px #a77c48}
-.font-sample{font-size:20px;line-height:1.25}
+.font-sample{font-size:21px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 .font-name{margin-top:2px;color:#998d7d;font-family:Georgia,serif;font-size:12px;letter-spacing:.06em}
 .settings-select{width:100%;border:1px solid rgba(151,133,108,.45);border-radius:3px;padding:8px 10px;background:#fffdf8;color:#302c26;font-family:inherit;font-size:17px}
 .settings-tools{display:flex;gap:10px;flex-wrap:wrap}
@@ -321,7 +323,7 @@ header{margin-bottom:34px}
 <button type="button" class="hand" id="hand2" aria-label="Tweede Hamsa-hand"></button>
 <button type="button" class="hand" id="sentenceHand" aria-label="Wijzende vinger voor regels"></button>
 <button type="button" class="hand" id="wordHand" aria-label="Wijzende vinger voor woorden"></button>
-<div class="test-version" aria-label="Testversie 25">TEST v25</div>
+<div class="test-version" aria-label="Testversie 26">TEST v26</div>
 <button type="button" class="scroll-cue" id="scrollCue" aria-label="Verder lezen" hidden><svg viewBox="0 0 16 40" aria-hidden="true"><path d="M8 2v34M3 30l5 6 5-6"/></svg></button>
 <div class="connection-status" id="connectionStatus" role="status" hidden></div>
 <button type="button" class="reading-mode-button" id="readingModeButton" aria-pressed="false" aria-label="Leesmodus" title="Leesmodus">
@@ -544,10 +546,16 @@ const handStates=hands.map((hand,index)=>({element:hand,type:index===2?"sentence
 const SETTINGS_KEY="gedichten_instellingen_v1";
 const SETTINGS_DEFAULTS={textScale:1,font:"cormorant",lineHeight:"normaal",align:"links",rotation:"dag",switchHour:5,order:"willekeurig",returnAfter:0,idleAfter:40,owner:""};
 const FONTS={
-cormorant:{label:"Cormorant Garamond",family:"'Cormorant Garamond',Georgia,serif",css:null},
-ebgaramond:{label:"EB Garamond",family:"'EB Garamond',Georgia,serif",css:"https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap"},
-baskerville:{label:"Libre Baskerville",family:"'Libre Baskerville',Georgia,serif",css:"https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap"},
-lora:{label:"Lora",family:"'Lora',Georgia,serif",css:"https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap"}
+cormorant:{label:"Cormorant Garamond",style:"Klassiek en sierlijk",family:"'Cormorant Garamond',Georgia,serif",css:null},
+playfair:{label:"Playfair Display",style:"Elegant, veel contrast",family:"'Playfair Display',Georgia,serif",css:"https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap"},
+fell:{label:"IM Fell English",style:"Oude drukpers",family:"'IM Fell English',Georgia,serif",css:"https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&display=swap"},
+zilla:{label:"Zilla Slab",style:"Stevig, met blokschreven",family:"'Zilla Slab',Georgia,serif",css:"https://fonts.googleapis.com/css2?family=Zilla+Slab:ital,wght@0,400;0,500;0,600;1,400&display=swap"},
+courier:{label:"Courier Prime",style:"Schrijfmachine",family:"'Courier Prime','Courier New',monospace",css:"https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap"},
+inter:{label:"Inter",style:"Modern en strak",family:"'Inter',system-ui,sans-serif",css:"https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"},
+josefin:{label:"Josefin Sans",style:"Geometrisch, jaren '20",family:"'Josefin Sans',system-ui,sans-serif",css:"https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap"},
+quicksand:{label:"Quicksand",style:"Rond en zacht",family:"'Quicksand',system-ui,sans-serif",css:"https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600&display=swap"},
+caveat:{label:"Caveat",style:"Handgeschreven",family:"'Caveat',cursive",css:"https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600&display=swap"},
+dancing:{label:"Dancing Script",style:"Schoonschrift",family:"'Dancing Script',cursive",css:"https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600&display=swap"}
 };
 const LINE_HEIGHTS={compact:1.3,normaal:null,ruim:1.72};
 function loadSettings(){
@@ -567,7 +575,7 @@ document.head.appendChild(link);
 function applyLookSettings(){
 const font=FONTS[settings.font]||FONTS.cormorant;
 ensureFont(settings.font);
-document.body.style.setProperty("--site-font",font.family);
+document.body.style.setProperty("--poem-font",font.family);
 const lh=LINE_HEIGHTS[settings.lineHeight];
 if(lh)document.body.style.setProperty("--poem-lh",String(lh));else document.body.style.removeProperty("--poem-lh");
 document.body.classList.toggle("align-center",settings.align==="midden");
@@ -780,7 +788,7 @@ document.addEventListener("visibilitychange",()=>{if(document.visibilityState===
 /* ---------- Automatisch bijwerken ---------- */
 // Als er een nieuwe versie van de site op GitHub staat, laadt de iPad die vanzelf,
 // maar alleen als er niets open staat (dus nooit midden in het schrijven).
-const APP_VERSION="25";
+const APP_VERSION="26";
 let pendingReload=false;
 async function checkForNewVersion(){
 if(location.protocol!=="https:"&&location.hostname!=="localhost")return;
@@ -2332,8 +2340,8 @@ const button=document.createElement("button");button.type="button";
 button.className="font-option"+(settings.font===key?" active":"");
 button.setAttribute("aria-pressed",settings.font===key?"true":"false");
 button.style.fontFamily=font.family;
-const sample=document.createElement("span");sample.className="font-sample";sample.textContent="Herfst, de bladeren vallen";
-const name=document.createElement("span");name.className="font-name";name.textContent=font.label;
+const sample=document.createElement("span");sample.className="font-sample";sample.textContent="De bladeren vallen";
+const name=document.createElement("span");name.className="font-name";name.textContent=font.style+" · "+font.label;
 button.append(sample,name);
 button.addEventListener("click",()=>{settings.font=key;saveSettings();applyLookSettings();renderSettings()});
 fonts.appendChild(button);
