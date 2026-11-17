@@ -12,7 +12,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#ffffff">
 <title>Gedichten</title>
-<!-- Testversie 22: 17 november 2026 – rustige overgang naar leesmodus -->
+<!-- Testversie 25: 17 november 2026 – instellingen en symmetrische knoppen -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&display=swap" rel="stylesheet">
@@ -20,12 +20,12 @@
 <style>
 *{box-sizing:border-box}
 html{background:#fff}
-body{margin:0;background:#eee9df;color:#302c26;font-family:'Cormorant Garamond',Georgia,serif}
+body{margin:0;background:#eee9df;color:#302c26;font-family:var(--site-font,'Cormorant Garamond',Georgia,serif)}
 .page{max-width:900px;min-height:100vh;margin:0 auto;padding:105px 65px 65px;background:linear-gradient(to bottom,#ffffff 0px,#ffffff 25px,#f7f4ed 75px,#eee9df 160px)}
 header{position:relative;text-align:center;margin-bottom:44px}
 h1{font-size:43px;font-weight:500;line-height:1.1;margin:0 0 8px}
 .author{font-size:21px;font-style:italic;color:#887e70}
-.poem{position:relative;font-size:25px;line-height:1.48;text-align:left;overflow-wrap:break-word;white-space:normal}
+.poem{position:relative;font-size:25px;line-height:var(--poem-lh,1.48);text-align:left;overflow-wrap:break-word;white-space:normal}
 .poem-paragraph{white-space:pre-wrap}
 .poem-paragraph{position:relative;margin:0 0 1.15em;font-size:inherit;font-weight:400;line-height:inherit;color:#302c26;transform:scale(1);transform-origin:left center;transition:transform 420ms cubic-bezier(.22,1,.36,1),font-weight 350ms ease,color 400ms ease,text-shadow 400ms ease;will-change:transform}
 .poem-paragraph.active{transform:scale(1.09);font-weight:600;color:#211b14;text-shadow:0 0 .01px #211b14;z-index:2}
@@ -56,7 +56,7 @@ button{font-family:inherit}
 /* Optillen bij slepen: iets groter met een zachte schaduw */
 .hand{will-change:transform;filter:drop-shadow(var(--sx,.5px) var(--sy,1.25px) var(--sb,1.5px) rgba(55,40,25,var(--sa,.16)))}
 .hand-hint{margin-top:18px;font-size:15px;color:#a09688;text-align:center;font-style:italic}
-.test-version{position:fixed;left:14px;bottom:calc(104px + env(safe-area-inset-bottom));z-index:10001;color:#9b9183;font-family:Georgia,serif;font-size:11px;letter-spacing:.08em;opacity:.78;pointer-events:none;user-select:none}
+.test-version{position:fixed;left:14px;bottom:calc(154px + env(safe-area-inset-bottom));z-index:10001;color:#9b9183;font-family:Georgia,serif;font-size:11px;letter-spacing:.08em;opacity:.78;pointer-events:none;user-select:none}
 .reset-hands-button{position:fixed;right:14px;bottom:calc(10px + env(safe-area-inset-bottom));z-index:10002;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(151,133,108,.38);border-radius:50%;padding:0;background:rgba(247,244,237,.94);color:#766b5d;font-family:Georgia,serif;font-size:30px;font-weight:400;line-height:1;padding:0 0 2px;box-shadow:0 2px 9px rgba(55,45,32,.09);cursor:pointer;-webkit-tap-highlight-color:transparent}
 .reset-hands-button:active{background:#e9e1d4;transform:translateY(1px)}
 .reset-hands-button:focus-visible{outline:2px solid #887e70;outline-offset:3px}
@@ -64,6 +64,39 @@ button{font-family:inherit}
 .poem-menu-button:active{background:#e9e1d4;transform:translateY(1px)}
 .poem-menu-button:focus-visible{outline:2px solid #887e70;outline-offset:3px}
 .poem-menu-button svg{width:21px;height:21px;display:block}
+.settings-button{position:fixed;left:14px;bottom:calc(58px + env(safe-area-inset-bottom));z-index:10002;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(151,133,108,.38);border-radius:50%;padding:0;background:rgba(247,244,237,.94);color:#766b5d;box-shadow:0 2px 9px rgba(55,45,32,.09);cursor:pointer;-webkit-tap-highlight-color:transparent}
+.settings-button:active{background:#e9e1d4;transform:translateY(1px)}
+.settings-button:focus-visible{outline:2px solid #887e70;outline-offset:3px}
+.settings-button svg{width:21px;height:21px;display:block}
+@media(max-width:600px){.settings-button{left:9px;bottom:calc(52px + env(safe-area-inset-bottom));width:38px;height:38px}.settings-button svg{width:20px;height:20px}}
+/* Instellingenvenster */
+.settings-section h3{margin:20px 0 10px;color:#a3957f;font-size:13px;font-weight:500;letter-spacing:.18em;text-transform:uppercase}
+.settings-section:first-child h3{margin-top:2px}
+.setting{margin:0 0 16px}
+.setting-label{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin:0 0 7px;color:#302c26;font-size:18px}
+.setting-value{color:#8a6845;font-size:16px}
+.setting-hint{margin-top:6px;color:#998d7d;font-size:14px;font-style:italic;line-height:1.3}
+.segmented{display:flex;border:1px solid rgba(151,133,108,.45);border-radius:3px;overflow:hidden}
+.segmented button{flex:1;min-height:38px;border:0;padding:7px 6px;background:transparent;color:#776d60;font-family:inherit;font-size:15px;line-height:1.15;cursor:pointer}
+.segmented button+button{border-left:1px solid rgba(151,133,108,.45)}
+.segmented button.active{background:#e9e1d4;color:#302c26;font-weight:600}
+.settings-slider{width:100%;margin:6px 0 0;-webkit-appearance:none;appearance:none;height:28px;background:transparent}
+.settings-slider::-webkit-slider-runnable-track{height:2px;background:#c9b89c;border-radius:1px}
+.settings-slider::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;margin-top:-11px;border:1px solid rgba(151,133,108,.6);border-radius:50%;background:#fffdf8;box-shadow:0 2px 6px rgba(55,45,32,.15)}
+.settings-slider::-moz-range-track{height:2px;background:#c9b89c}
+.settings-slider::-moz-range-thumb{width:22px;height:22px;border:1px solid rgba(151,133,108,.6);border-radius:50%;background:#fffdf8}
+.font-options{display:grid;gap:6px}
+.font-option{display:flex;flex-direction:column;align-items:flex-start;width:100%;border:1px solid rgba(151,133,108,.35);border-radius:3px;padding:8px 12px;background:transparent;color:#302c26;text-align:left;cursor:pointer}
+.font-option.active{border-color:#a77c48;background:#fffdf8;box-shadow:inset 0 0 0 1px #a77c48}
+.font-sample{font-size:20px;line-height:1.25}
+.font-name{margin-top:2px;color:#998d7d;font-family:Georgia,serif;font-size:12px;letter-spacing:.06em}
+.settings-select{width:100%;border:1px solid rgba(151,133,108,.45);border-radius:3px;padding:8px 10px;background:#fffdf8;color:#302c26;font-family:inherit;font-size:17px}
+.settings-tools{display:flex;gap:10px;flex-wrap:wrap}
+.settings-action{flex:1;min-height:40px;border:1px solid rgba(151,133,108,.45);border-radius:3px;padding:8px 12px;background:#fffdf8;color:#5f5547;font-family:inherit;font-size:16px;cursor:pointer}
+.settings-action:disabled{opacity:.6;cursor:wait}
+/* Gecentreerde gedichten */
+body.align-center .poem{text-align:center}
+body.align-center .poem-paragraph{transform-origin:center center}
 
 /* iPad-vriendelijk menu: geen flexbox op de vaste achtergrondlaag */
 .poem-menu-backdrop{display:none;position:fixed;top:0;right:0;bottom:0;left:0;z-index:21000;background:rgba(35,30,24,.42);padding:1px 20px;overflow-y:auto;-webkit-overflow-scrolling:touch}
@@ -94,7 +127,7 @@ button{font-family:inherit}
 body.reading-mode .ornament .favorite-button{opacity:0;visibility:hidden;pointer-events:none;transition:opacity 500ms cubic-bezier(.4,0,.2,1),visibility 0s linear 500ms,color 200ms ease}
 body.reading-mode .ornament-diamond{opacity:1}
 /* Na een minuut zonder aanraking vervagen de knoppen (eerste tik maakt ze weer zichtbaar) */
-body.controls-idle .hand,body.controls-idle .hand-hint,body.controls-idle .hint-info-button,body.controls-idle .navigation,body.controls-idle .test-version,body.controls-idle .poem-menu-button,body.controls-idle .reset-hands-button,body.controls-idle .person-inbox-button,body.controls-idle .reading-mode-button{opacity:0;visibility:hidden;pointer-events:none;transition:opacity 500ms cubic-bezier(.4,0,.2,1),visibility 0s linear 500ms}
+body.controls-idle .hand,body.controls-idle .hand-hint,body.controls-idle .hint-info-button,body.controls-idle .navigation,body.controls-idle .test-version,body.controls-idle .poem-menu-button,body.controls-idle .settings-button,body.controls-idle .reset-hands-button,body.controls-idle .person-inbox-button,body.controls-idle .reading-mode-button{opacity:0;visibility:hidden;pointer-events:none;transition:opacity 500ms cubic-bezier(.4,0,.2,1),visibility 0s linear 500ms}
 body.controls-idle .person-inbox-button .inbox-badge{visibility:hidden}
 /* Datum, ornament en overvloeien */
 .poem-date{margin:0 0 12px;color:#a3957f;font-size:14px;letter-spacing:.2em;text-transform:uppercase}
@@ -150,7 +183,7 @@ body.reading-mode .connection-status{display:none}
 .poem-add-modal textarea{min-height:260px;font-size:19px;line-height:1.45}
 @media(max-width:600px){.poem-menu-button{left:9px;bottom:calc(7px + env(safe-area-inset-bottom));width:38px;height:38px}.poem-menu-button svg{width:20px;height:20px}.poem-menu-panel{height:80vh;max-height:calc(100vh - 30px);margin:5vh auto;padding:22px}}
 /* R- en S-knoppen met rood meldingsgetal (zoals op de iPhone) */
-.person-inbox-button{position:fixed;bottom:calc(58px + env(safe-area-inset-bottom));z-index:10002;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(151,133,108,.38);border-radius:50%;padding:0 0 2px;background:rgba(247,244,237,.94);font-family:Georgia,serif;font-size:20px;font-weight:400;line-height:1;box-shadow:0 2px 9px rgba(55,45,32,.09);cursor:pointer;-webkit-tap-highlight-color:transparent}
+.person-inbox-button{position:fixed;bottom:calc(106px + env(safe-area-inset-bottom));z-index:10002;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(151,133,108,.38);border-radius:50%;padding:0 0 2px;background:rgba(247,244,237,.94);font-family:Georgia,serif;font-size:20px;font-weight:400;line-height:1;box-shadow:0 2px 9px rgba(55,45,32,.09);cursor:pointer;-webkit-tap-highlight-color:transparent}
 .person-inbox-button:active{background:#e9e1d4;transform:translateY(1px)}
 .person-inbox-button:focus-visible{outline:2px solid #887e70;outline-offset:3px}
 #ramonInboxButton{left:14px;color:#607b88}
@@ -170,20 +203,28 @@ body.reading-mode .connection-status{display:none}
 .inbox-divider{margin:16px 0 4px;color:#a09688;font-size:14px;font-style:italic;text-align:center}
 @keyframes passageFlash{0%,30%{background:rgba(255,190,70,.55);box-shadow:0 0 0 5px rgba(255,190,70,.55)}100%{background:rgba(255,190,70,0);box-shadow:0 0 0 5px rgba(255,190,70,0)}}
 .passage-flash{animation:passageFlash 3s ease-out;border-radius:3px}
-@media(max-width:600px){.person-inbox-button{bottom:calc(52px + env(safe-area-inset-bottom));width:38px;height:38px;font-size:19px}#ramonInboxButton{left:9px}#sanneInboxButton{right:9px}}
+@media(max-width:600px){.person-inbox-button{bottom:calc(97px + env(safe-area-inset-bottom));width:38px;height:38px;font-size:19px}#ramonInboxButton{left:9px}#sanneInboxButton{right:9px}}
 
 /* Leesmodus */
-.reading-mode-button{position:fixed;right:14px;bottom:calc(106px + env(safe-area-inset-bottom));z-index:10002;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(151,133,108,.38);border-radius:50%;padding:0;background:rgba(247,244,237,.94);color:#766b5d;box-shadow:0 2px 9px rgba(55,45,32,.09);cursor:pointer;-webkit-tap-highlight-color:transparent}
+.reading-mode-button{position:fixed;right:14px;bottom:calc(58px + env(safe-area-inset-bottom));z-index:10002;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(151,133,108,.38);border-radius:50%;padding:0;background:rgba(247,244,237,.94);color:#766b5d;box-shadow:0 2px 9px rgba(55,45,32,.09);cursor:pointer;-webkit-tap-highlight-color:transparent}
 .reading-mode-button svg{width:21px;height:21px;display:block}
 .reading-mode-button:active{background:#e9e1d4;transform:translateY(1px)}
 .reading-mode-button:focus-visible{outline:2px solid #887e70;outline-offset:3px}
-.hand,.hand-hint,.hint-info-button,.navigation,.test-version,.poem-menu-button,.reset-hands-button,.person-inbox-button,.reading-mode-button{transition:opacity 500ms cubic-bezier(.4,0,.2,1),visibility 0s;will-change:opacity}
+.hand,.hand-hint,.hint-info-button,.navigation,.test-version,.poem-menu-button,.settings-button,.reset-hands-button,.person-inbox-button,.reading-mode-button{transition:opacity 500ms cubic-bezier(.4,0,.2,1),visibility 0s;will-change:opacity}
 /* In rust iets doorzichtig; bij aanraken of gebruik helemaal helder */
 .hand{opacity:.75;transition:opacity 500ms cubic-bezier(.4,0,.2,1),visibility 0s}
 .hand.in-use{opacity:1}
-body.reading-mode .hand,body.reading-mode .hand-hint,body.reading-mode .hint-info-button,body.reading-mode .navigation,body.reading-mode .test-version,body.reading-mode .poem-menu-button,body.reading-mode .reset-hands-button,body.reading-mode .person-inbox-button{opacity:0;visibility:hidden;pointer-events:none;transition:opacity 500ms cubic-bezier(.4,0,.2,1),visibility 0s linear 500ms}
+/* Neergelegd: vast aan het papier, scrollt vanzelf mee met de tekst */
+.hand.on-paper{position:absolute}
+/* Deukje in het papier onder een neergelegd handje */
+.paper-dent{position:absolute;z-index:1;pointer-events:none;border-radius:50%;background:radial-gradient(closest-side,rgba(120,88,50,.15),rgba(120,88,50,.09) 52%,rgba(120,88,50,.03) 78%,rgba(120,88,50,0));mix-blend-mode:multiply;opacity:0;transform:scale(.82);transition:opacity 800ms ease,transform 1000ms cubic-bezier(.22,1,.36,1)}
+.paper-dent.visible{opacity:1;transform:scale(1)}
+body.reading-mode .paper-dent,body.controls-idle .paper-dent{opacity:0;transition:opacity 500ms cubic-bezier(.4,0,.2,1)}
+/* Eén ijle rimpeling bij het neerkomen */
+.landing-ripple{position:absolute;z-index:9998;pointer-events:none;border:1px solid rgba(176,142,96,.5);border-radius:50%}
+body.reading-mode .hand,body.reading-mode .hand-hint,body.reading-mode .hint-info-button,body.reading-mode .navigation,body.reading-mode .test-version,body.reading-mode .poem-menu-button,body.reading-mode .settings-button,body.reading-mode .reset-hands-button,body.reading-mode .person-inbox-button{opacity:0;visibility:hidden;pointer-events:none;transition:opacity 500ms cubic-bezier(.4,0,.2,1),visibility 0s linear 500ms}
 body.reading-mode .reading-mode-button{opacity:.4;background:#e9e1d4;box-shadow:none;transition:opacity 500ms cubic-bezier(.4,0,.2,1),background-color 500ms ease,box-shadow 500ms ease}
-@media(max-width:600px){.reading-mode-button{right:9px;bottom:calc(97px + env(safe-area-inset-bottom));width:38px;height:38px}.reading-mode-button svg{width:20px;height:20px}}
+@media(max-width:600px){.reading-mode-button{right:9px;bottom:calc(52px + env(safe-area-inset-bottom));width:38px;height:38px}.reading-mode-button svg{width:20px;height:20px}}
 
 /* Woordenboek in het aantekeningenvenster */
 .dictionary-tools{margin:-4px 0 18px}
@@ -198,7 +239,7 @@ body.reading-mode .reading-mode-button{opacity:.4;background:#e9e1d4;box-shadow:
 .dictionary-message{color:#776d60;font-style:italic}
 .dictionary-source{margin-top:12px;padding-top:8px;border-top:1px solid #ebe4d8;font-size:15px;color:#998d7d}
 .dictionary-source a{color:#8a6845}
-@media(max-width:600px){.test-version{left:9px;bottom:calc(97px + env(safe-area-inset-bottom));font-size:10px}.reset-hands-button{right:9px;bottom:calc(7px + env(safe-area-inset-bottom));width:38px;height:38px;font-size:29px}}
+@media(max-width:600px){.test-version{left:9px;bottom:calc(142px + env(safe-area-inset-bottom));font-size:10px}.reset-hands-button{right:9px;bottom:calc(7px + env(safe-area-inset-bottom));width:38px;height:38px;font-size:29px}}
 .modal-backdrop{display:none;position:fixed;top:0;right:0;bottom:0;left:0;width:100%;height:100%;z-index:20000;background:rgba(35,30,24,.42);align-items:center;justify-content:center;padding:20px;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .modal-backdrop.visible{display:-webkit-box;display:-webkit-flex;display:flex}
 .modal{width:100%;max-width:460px;background:#f7f4ed;border:1px solid #d5cdbf;border-radius:4px;padding:30px;box-shadow:0 12px 40px rgba(35,30,24,.2);position:relative;margin:auto;flex-shrink:0}
@@ -238,7 +279,7 @@ body.reading-mode .reading-mode-button{opacity:.4;background:#e9e1d4;box-shadow:
 .page{padding:75px 27px 50px;background:linear-gradient(to bottom,#ffffff 0px,#ffffff 20px,#f7f4ed 60px,#eee9df 135px)}
 h1{font-size:36px}
 .author{font-size:20px}
-.poem{font-size:22px;line-height:1.45}
+.poem{font-size:22px;line-height:var(--poem-lh,1.45)}
 header{margin-bottom:34px}
 .navigation{margin-top:55px}
 #hand1{top:76px;left:3px}
@@ -280,7 +321,7 @@ header{margin-bottom:34px}
 <button type="button" class="hand" id="hand2" aria-label="Tweede Hamsa-hand"></button>
 <button type="button" class="hand" id="sentenceHand" aria-label="Wijzende vinger voor regels"></button>
 <button type="button" class="hand" id="wordHand" aria-label="Wijzende vinger voor woorden"></button>
-<div class="test-version" aria-label="Testversie 22">TEST v22</div>
+<div class="test-version" aria-label="Testversie 25">TEST v25</div>
 <button type="button" class="scroll-cue" id="scrollCue" aria-label="Verder lezen" hidden><svg viewBox="0 0 16 40" aria-hidden="true"><path d="M8 2v34M3 30l5 6 5-6"/></svg></button>
 <div class="connection-status" id="connectionStatus" role="status" hidden></div>
 <button type="button" class="reading-mode-button" id="readingModeButton" aria-pressed="false" aria-label="Leesmodus" title="Leesmodus">
@@ -299,6 +340,15 @@ header{margin-bottom:34px}
 <button type="button" class="poem-menu-button" id="poemMenuButton" aria-label="Open gedichtenmenu" title="Gedichten">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M4 6.5h16M4 12h16M4 17.5h16"/></svg>
 </button>
+<button type="button" class="settings-button" id="settingsButton" aria-label="Instellingen" title="Instellingen">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3.1"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg>
+</button>
+<div class="poem-menu-backdrop" id="settingsBackdrop" aria-hidden="true">
+  <section class="poem-menu-panel" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+    <div class="poem-menu-heading"><h2 id="settingsTitle">Instellingen</h2><button type="button" class="poem-menu-close" id="settingsClose" aria-label="Instellingen sluiten">×</button></div>
+    <div class="poem-menu-list" id="settingsList"></div>
+  </section>
+</div>
 <div class="poem-menu-backdrop" id="poemMenuBackdrop" aria-hidden="true">
   <section class="poem-menu-panel" role="dialog" aria-modal="true" aria-labelledby="poemMenuTitle">
     <div class="poem-menu-heading"><h2 id="poemMenuTitle">Gedichten</h2><button type="button" class="poem-menu-close" id="poemMenuClose" aria-label="Menu sluiten">×</button></div>
@@ -490,45 +540,133 @@ const poemMenuBackdrop=document.getElementById("poemMenuBackdrop");
 const poemMenuList=document.getElementById("poemMenuList");
 const handStates=hands.map((hand,index)=>({element:hand,type:index===2?"sentence":index===3?"word":"passage",dragging:false,pointerId:null,startX:0,startY:0,moved:false,activated:false,x:null,y:null,target:null}));
 
+/* ---------- Instellingen (per apparaat) ---------- */
+const SETTINGS_KEY="gedichten_instellingen_v1";
+const SETTINGS_DEFAULTS={textScale:1,font:"cormorant",lineHeight:"normaal",align:"links",rotation:"dag",switchHour:5,order:"willekeurig",returnAfter:0,idleAfter:40,owner:""};
+const FONTS={
+cormorant:{label:"Cormorant Garamond",family:"'Cormorant Garamond',Georgia,serif",css:null},
+ebgaramond:{label:"EB Garamond",family:"'EB Garamond',Georgia,serif",css:"https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap"},
+baskerville:{label:"Libre Baskerville",family:"'Libre Baskerville',Georgia,serif",css:"https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap"},
+lora:{label:"Lora",family:"'Lora',Georgia,serif",css:"https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap"}
+};
+const LINE_HEIGHTS={compact:1.3,normaal:null,ruim:1.72};
+function loadSettings(){
+try{return Object.assign({},SETTINGS_DEFAULTS,JSON.parse(localStorage.getItem(SETTINGS_KEY)||"{}"))}
+catch(e){return Object.assign({},SETTINGS_DEFAULTS)}
+}
+const settings=loadSettings();
+function saveSettings(){try{localStorage.setItem(SETTINGS_KEY,JSON.stringify(settings))}catch(e){}}
+function ensureFont(key){
+const font=FONTS[key];
+if(!font||!font.css||document.querySelector(`link[data-font="${key}"]`))return;
+const link=document.createElement("link");
+link.rel="stylesheet";link.href=font.css;link.dataset.font=key;
+document.head.appendChild(link);
+}
+// Lettertype, regelafstand en uitlijning toepassen.
+function applyLookSettings(){
+const font=FONTS[settings.font]||FONTS.cormorant;
+ensureFont(settings.font);
+document.body.style.setProperty("--site-font",font.family);
+const lh=LINE_HEIGHTS[settings.lineHeight];
+if(lh)document.body.style.setProperty("--poem-lh",String(lh));else document.body.style.removeProperty("--poem-lh");
+document.body.classList.toggle("align-center",settings.align==="midden");
+if(document.fonts&&document.fonts.load){document.fonts.load(`20px ${font.family}`).then(()=>scheduleFit()).catch(()=>scheduleFit())}
+else scheduleFit();
+}
+
+/* ---------- Welk gedicht wanneer ---------- */
+const LAST_POEM_KEY="gedichten_laatste_gedicht";
+const PERIOD_MS={dag:864e5,dagdeel:216e5,uur:36e5};
+// Nummer van de huidige periode (dag, dagdeel of uur), gerekend vanaf het wisseltijdstip.
+// Op alle apparaten in dezelfde tijdzone hetzelfde, dus overal hetzelfde gedicht.
+function periodIndex(date=new Date()){
+const local=date.getTime()-date.getTimezoneOffset()*60000;
+const mode=PERIOD_MS[settings.rotation]?settings.rotation:"dag";
+const shift=mode==="uur"?0:settings.switchHour*36e5;
+return Math.floor((local-shift)/PERIOD_MS[mode]);
+}
+function currentPeriodKey(){
+if(settings.rotation==="handmatig")return "handmatig";
+return [settings.rotation,settings.switchHour,settings.order,periodIndex()].join("|");
+}
+function hashString(text){let h=2166136261;for(let i=0;i<text.length;i++){h^=text.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0}
+function seededShuffle(list,seed){
+let a=seed>>>0;
+const random=()=>{a=(a+0x6D2B79F5)>>>0;let t=a;t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return((t^(t>>>14))>>>0)/4294967296};
+const out=list.slice();
+for(let i=out.length-1;i>0;i--){const j=Math.floor(random()*(i+1));[out[i],out[j]]=[out[j],out[i]]}
+return out;
+}
+function poemPool(){
+const all=poems.map((poem,index)=>index);
+if(settings.order==="favorieten"){const fav=all.filter(i=>poems[i].favorite);if(fav.length)return fav}
+return all;
+}
+function dailyIndexForPeriod(p){
+const pool=poemPool();
+const n=pool.length;
+if(!n)return 0;
+const mod=x=>((x%n)+n)%n;
+if(settings.order==="volgorde")return pool[mod(p)];
+if(settings.order==="zonderherhaling"){
+// Alle gedichten komen één keer langs (in een vaste, gehusselde volgorde) voordat er één terugkomt.
+const stable=pool.slice().sort((a,b)=>String(poems[a].id||poems[a].title).localeCompare(String(poems[b].id||poems[b].title)));
+const cycle=Math.floor(p/n),pos=mod(p);
+const roundOrder=c=>{
+const order=seededShuffle(stable,hashString("ronde"+c));
+// Ook op de grens tussen twee rondes niet twee keer hetzelfde.
+if(n>1){const previous=seededShuffle(stable,hashString("ronde"+(c-1)));if(order[0]===previous[n-1])[order[0],order[1]]=[order[1],order[0]]}
+return order;
+};
+return roundOrder(cycle)[pos];
+}
+// Willekeurig (ook bij favorieten), maar nooit twee keer achter elkaar hetzelfde.
+// De keuzes worden in vaste blokken doorgerekend, zodat alle apparaten hetzelfde kiezen.
+const pick=q=>pool[hashString("periode"+q)%n];
+const BLOCK=64;
+const chain=(until,depth)=>{
+const start=Math.floor(until/BLOCK)*BLOCK;
+let previous=depth>0?chain(start-1,depth-1):pick(start-1);
+let current=previous;
+for(let q=start;q<=until;q++){
+current=pick(q);
+if(n>1&&current===previous)current=pool[(pool.indexOf(current)+1)%n];
+previous=current;
+}
+return current;
+};
+return chain(p,1);
+}
+function getDailyPoemIndex(){
+if(!poems.length)return 0;
+if(settings.rotation==="handmatig"){
+// Alleen zelf bladeren: begin bij het gedicht dat het laatst open stond.
+const last=localStorage.getItem(LAST_POEM_KEY);
+const index=last?poems.findIndex(p=>(p.id||p.title)===last):-1;
+return index!==-1?index:0;
+}
+return dailyIndexForPeriod(periodIndex());
+}
+let lastInteraction=Date.now();
+// Elke halve minuut: is er een nieuwe periode, of moet het daggedicht terugkomen?
+setInterval(()=>{
+if(!poems.length||isBusy())return;
+const key=currentPeriodKey();
+if(key!==lastDailyKey){lastDailyKey=key;resetHandsToEdges();show(getDailyPoemIndex(),true);return}
+if(settings.returnAfter>0&&settings.rotation!=="handmatig"&&Date.now()-lastInteraction>settings.returnAfter*60000){
+const daily=getDailyPoemIndex();
+if(daily!==currentIndex){resetHandsToEdges();show(daily,true)}
+}
+},30000);
+
+
 function findColumn(row,possibleNames){
 const keys=Object.keys(row);
 const match=keys.find(key=>possibleNames.includes(key.trim().toLowerCase()));
 return match?row[match]:"";
 }
 
-function getLocalDateKey(date=new Date()){
-// De gedichtendag loopt van 05:00 tot 04:59.
-const poemDate=new Date(date);
-if(poemDate.getHours()<5)poemDate.setDate(poemDate.getDate()-1);
-const year=poemDate.getFullYear();
-const month=String(poemDate.getMonth()+1).padStart(2,"0");
-const day=String(poemDate.getDate()).padStart(2,"0");
-return `${year}-${month}-${day}`;
-}
-function getDailyPoemIndex(date=new Date()){
-if(!poems.length)return 0;
-const dateKey=getLocalDateKey(date);
-
-// Op 14 november 2026 is Pessoa het daggedicht, tot 05:00 op 15 november.
-if(dateKey==="2026-11-14"){
-const pessoaIndex=poems.findIndex(item=>/pessoa/i.test(String(item.author||"")));
-if(pessoaIndex!==-1)return pessoaIndex;
-}
-let hash=0;
-for(let i=0;i<dateKey.length;i++)hash=(hash*31+dateKey.charCodeAt(i))>>>0;
-let index=hash%poems.length;
-if(poems.length>1){
-const previousDate=new Date(date);
-previousDate.setHours(5,0,0,0);
-previousDate.setDate(previousDate.getDate()-1);
-const previousKey=getLocalDateKey(previousDate);
-let previousHash=0;
-for(let i=0;i<previousKey.length;i++)previousHash=(previousHash*31+previousKey.charCodeAt(i))>>>0;
-const previousIndex=previousHash%poems.length;
-if(index===previousIndex)index=(index+1)%poems.length;
-}
-return index;
-}
 // De gedichten komen rechtstreeks uit de spreadsheet, alleen met de toegangscode.
 function showAccessPrompt(message){
 titleElement.textContent="Gedichten";
@@ -585,7 +723,7 @@ return;
 }
 // Toon het daggedicht bij de eerste keer laden en wanneer er een nieuwe gedichtendag begint,
 // maar spring niet terug als iemand zelf naar een ander gedicht is gegaan.
-const todayKey=getLocalDateKey();
+const todayKey=currentPeriodKey();
 if(lastDailyKey!==todayKey||!previous){
 lastDailyKey=todayKey;
 show(getDailyPoemIndex(),true);
@@ -642,7 +780,7 @@ document.addEventListener("visibilitychange",()=>{if(document.visibilityState===
 /* ---------- Automatisch bijwerken ---------- */
 // Als er een nieuwe versie van de site op GitHub staat, laadt de iPad die vanzelf,
 // maar alleen als er niets open staat (dus nooit midden in het schrijven).
-const APP_VERSION="22";
+const APP_VERSION="25";
 let pendingReload=false;
 async function checkForNewVersion(){
 if(location.protocol!=="https:"&&location.hostname!=="localhost")return;
@@ -706,6 +844,7 @@ closePoemMenu();
 if(!localStorage.getItem(ACCESS_STORAGE_KEY)){afterAccess=openPoemAdd;openAccessModal();return}
 document.getElementById("poemAddStatus").textContent="";
 document.getElementById("poemAddSave").disabled=false;
+if(settings.owner)setPoemAddPerson(settings.owner);
 poemAddBackdrop.classList.add("visible");
 setTimeout(()=>document.getElementById("poemAddTitle").focus(),300);
 }
@@ -845,7 +984,8 @@ updateInboxBadges();
 function updateInboxBadges(){
 const seen=loadSeen()||new Set();
 Object.entries(inboxButtons).forEach(([person,button])=>{
-const count=allNotes.filter(n=>n.person===person&&!seen.has(n.key)).length;
+// Op een eigen apparaat telt alleen wat de ander doet.
+const count=settings.owner===person?0:allNotes.filter(n=>n.person===person&&!seen.has(n.key)).length;
 const badge=button.querySelector(".inbox-badge");
 badge.textContent=count>99?"99+":String(count);
 badge.hidden=count===0;
@@ -990,6 +1130,7 @@ const decodedPoem=String(item.poem||"").replace(/\\n/g,"\n");
 const paragraphs=decodedPoem.trim().split(/\n\s*\n/).filter(part=>part.trim());
 paragraphs.forEach(text=>{const paragraph=document.createElement("p");paragraph.className="poem-paragraph";renderPoemParagraph(paragraph,text.trimEnd());poemElement.appendChild(paragraph)});
 counterElement.textContent=(currentIndex+1)+" / "+poems.length;
+try{localStorage.setItem(LAST_POEM_KEY,item.id||item.title)}catch(e){}
 clearMagnification();
 computeNotesForCurrentPoem();
 updateFavoriteButton();
@@ -1003,7 +1144,8 @@ fitPoem();
 //    Volgorde: eerst zonder regels af te breken, dan met afbreken, en past het
 //    dan nog niet op de kleinste maat, dan mag de pagina scrollen (met pijltje).
 function poemSizeLimits(){
-return window.innerWidth<=600?{min:18,max:27}:{min:21,max:36};
+const base=window.innerWidth<=600?{min:18,max:27}:{min:21,max:36};
+return{min:base.min*settings.textScale,max:base.max*settings.textScale};
 }
 // Aantal extra regels door afbreken (een regel die over drie regels loopt telt voor twee).
 function wrappedLineCount(){
@@ -1131,7 +1273,6 @@ poemElement.appendChild(dot);
 }
 
 // 2. Knoppen verdwijnen na 40 seconden zonder aanraking (niet als er een venster openstaat); de eerste tik maakt ze weer zichtbaar.
-const IDLE_AFTER=40*1000;
 let idleTimer=null;
 let swallowClickUntil=0;
 function isIdle(){return document.body.classList.contains("controls-idle")}
@@ -1139,8 +1280,9 @@ function goIdle(){
 if(isBusy()){restartIdleTimer();return}
 document.body.classList.add("controls-idle");
 }
-function restartIdleTimer(){clearTimeout(idleTimer);idleTimer=setTimeout(goIdle,IDLE_AFTER)}
+function restartIdleTimer(){clearTimeout(idleTimer);if(settings.idleAfter>0)idleTimer=setTimeout(goIdle,settings.idleAfter*1000)}
 function wake(event){
+lastInteraction=Date.now();
 if(isIdle()){
 document.body.classList.remove("controls-idle");
 // Deze tik alleen gebruiken om wakker te maken, niet om iets aan te klikken.
@@ -1335,32 +1477,86 @@ liftK:240,liftZeta:0.5,     // optillen en landen (iets verend)
 swingK:160,swingZeta:0.42,  // slingeren (rustig gedempt)
 homeK:70,homeZeta:0.95,     // terugglijden naar de hoek
 maxSwing:7,                 // maximale scheefstand in graden
-maxThrow:1800               // maximale gooisnelheid (px/s)
+maxThrow:1800,              // maximale gooisnelheid (px/s)
+restPress:-0.2              // neergelegd zakt het 2% in het papier
 };
 const reduceMotion=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 handStates.forEach(state=>Object.assign(state,{mode:"home",vx:0,vy:0,L:0,Lv:0,th:0,thv:0,grabDX:0,grabDY:0,samples:[],homeX:null,homeY:null,docX:null,docY:null,shadowKey:""}));
 
 function measureHome(state){
 const el=state.element;
-const saved=el.style.transform;
+const onPaper=el.classList.contains("on-paper");
+const saved={transform:el.style.transform,left:el.style.left,top:el.style.top,right:el.style.right};
+if(onPaper){el.classList.remove("on-paper");el.style.left="";el.style.top="";el.style.right=""}
 el.style.transform="none";
 const r=el.getBoundingClientRect();
-el.style.transform=saved;
+if(onPaper){el.classList.add("on-paper");el.style.left=saved.left;el.style.top=saved.top;el.style.right=saved.right}
+el.style.transform=saved.transform;
 state.homeX=r.left+r.width/2;
 state.homeY=r.top+r.height/2;
 }
 function ensureHome(state){if(state.homeX==null)measureHome(state)}
 function setCenter(state,x,y){state.x=x;state.y=y;state.docX=x+window.scrollX;state.docY=y+window.scrollY}
+// Vasthechten aan het papier: de iPad scrollt het handje dan zelf mee, zonder rekenwerk.
+function attachToPaper(state){
+const el=state.element;
+if(el.classList.contains("on-paper")||state.docX==null)return;
+el.classList.add("on-paper");
+el.style.left=(state.docX-el.offsetWidth/2).toFixed(2)+"px";
+el.style.top=(state.docY-el.offsetHeight/2).toFixed(2)+"px";
+el.style.right="auto";
+}
+// Losmaken (bij oppakken of terugsturen): weer gewoon op het scherm, op dezelfde plek.
+function detachFromPaper(state){
+const el=state.element;
+if(!el.classList.contains("on-paper"))return;
+state.x=state.docX-window.scrollX;
+state.y=state.docY-window.scrollY;
+el.classList.remove("on-paper");
+el.style.left="";el.style.top="";el.style.right="";
+}
 function goHome(state){
+detachFromPaper(state);
+hideDent(state);
 state.mode="home";state.activated=false;state.target=null;
 state.x=null;state.y=null;state.docX=null;state.docY=null;state.vx=0;state.vy=0;
 state.element.classList.remove("in-use");
 }
+// Deukje en rimpeling: laten zien dat een handje echt ligt.
+function showDent(state){
+if(state.docX==null)return;
+const el=state.element;
+if(!state.dent){state.dent=document.createElement("div");state.dent.className="paper-dent";document.body.appendChild(state.dent)}
+const size=el.offsetWidth*1.9;
+Object.assign(state.dent.style,{width:size+"px",height:size+"px",left:(state.docX-size/2)+"px",top:(state.docY-size/2)+"px"});
+void state.dent.offsetWidth;
+state.dent.classList.add("visible");
+}
+function hideDent(state){if(state.dent)state.dent.classList.remove("visible")}
+function landingRipple(state){
+if(reduceMotion||state.docX==null||!document.body.animate)return;
+const size=state.element.offsetWidth;
+const ring=document.createElement("div");
+ring.className="landing-ripple";
+Object.assign(ring.style,{width:size+"px",height:size+"px",left:(state.docX-size/2)+"px",top:(state.docY-size/2)+"px"});
+document.body.appendChild(ring);
+ring.animate([{transform:"scale(.6)",opacity:.55},{transform:"scale(2.3)",opacity:0}],{duration:950,easing:"cubic-bezier(.2,.7,.3,1)"}).onfinish=()=>ring.remove();
+}
+function onLand(state,withRipple){
+showDent(state);
+if(withRipple)landingRipple(state);
+}
 const q=v=>Math.round(v*4)/4;
 function renderHand(state){
 const el=state.element;
-if(state.mode==="home"&&state.x==null&&Math.abs(state.L)<0.001&&Math.abs(state.th)<0.01){el.style.transform=""}
+if(state.mode==="placed"){
+attachToPaper(state);
+const neutral=Math.abs(state.L)<0.001&&Math.abs(state.th)<0.01;
+el.style.transform=neutral?"":`scale(${(1+0.1*state.L).toFixed(4)}) rotate(${state.th.toFixed(3)}deg)`;
+}
+else if(state.mode==="home"&&state.x==null&&Math.abs(state.L)<0.001&&Math.abs(state.th)<0.01){detachFromPaper(state);el.style.transform=""}
 else{
+detachFromPaper(state);
 ensureHome(state);
 const dx=(state.x??state.homeX)-state.homeX;
 const dy=(state.y??state.homeY)-state.homeY;
@@ -1368,7 +1564,8 @@ el.style.transform=`translate3d(${dx.toFixed(2)}px,${dy.toFixed(2)}px,0) scale($
 }
 // 6. Schaduw als hoogte: licht van linksboven; opgetild verder weg en zachter.
 const h=Math.max(0,state.L);
-const sy=q(1.2+7*h),sb=q(1.6+9*h),sx=q(sy*0.45),sa=(0.16+0.08*h).toFixed(3);
+const press=Math.max(0,-state.L)/0.2;
+const sy=q(Math.max(0.5,1.2+7*h-0.55*press)),sb=q(Math.max(0.75,1.6+9*h-0.7*press)),sx=q(sy*0.45),sa=(0.16+0.08*h+0.1*press).toFixed(3);
 const key=sx+"|"+sy+"|"+sb+"|"+sa;
 if(key!==state.shadowKey){
 state.shadowKey=key;
@@ -1395,6 +1592,8 @@ return{vx:(b.x-a.x)/dt,vy:(b.y-a.y)/dt};
 // Terug naar de hoek in een boogje (voor de ⟲-knop en na het sluiten van een venster).
 const easeInOutCubic=t=>t<0.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
 function startArc(state){
+detachFromPaper(state);
+hideDent(state);
 measureHome(state);
 const fromX=state.x??state.homeX,fromY=state.y??state.homeY;
 const d=Math.hypot(state.homeX-fromX,state.homeY-fromY);
@@ -1419,7 +1618,7 @@ let busy=false,moved=false;
 handStates.forEach(state=>{
 const el=state.element;
 // 4. Optillen en landen met een piepklein veertje.
-const liftTarget=state.mode==="held"?1:0;
+const liftTarget=state.mode==="held"?1:state.mode==="placed"?PHYS.restPress:0;
 if(reduceMotion){state.L=liftTarget;state.Lv=0}
 else{[state.L,state.Lv]=spring(state.L,state.Lv,liftTarget,PHYS.liftK,PHYS.liftZeta,dt);if(state.L<-0.3){state.L=-0.3;state.Lv=0}}
 // 5. Slingeren rond het punt waar je het vasthoudt.
@@ -1451,7 +1650,7 @@ const dist=Math.hypot(state.homeX-x,state.homeY-y);
 if(dist<PHYS.attract*0.6)state.mode="returning";
 else if(Math.hypot(state.vx,state.vy)<PHYS.stopSpeed){
 if(dist<PHYS.attract)state.mode="returning";
-else{state.mode="placed";state.vx=0;state.vy=0}
+else{state.mode="placed";state.vx=0;state.vy=0;onLand(state,true)}
 }
 }else if(state.mode==="returning"){
 let x,y;
@@ -1470,7 +1669,7 @@ if(t>=1)goHome(state);
 moved=true;
 }
 const settling=Math.abs(state.L-liftTarget)>0.002||Math.abs(state.Lv)>0.02||Math.abs(state.th-swingTarget)>0.02||Math.abs(state.thv)>0.05;
-if(!settling&&state.mode!=="held"){state.L=0;state.Lv=0;state.th=0;state.thv=0}
+if(!settling&&state.mode!=="held"){state.L=liftTarget;state.Lv=0;state.th=0;state.thv=0}
 renderHand(state);
 if(settling||["held","sliding","returning","arc"].includes(state.mode))busy=true;
 });
@@ -1502,20 +1701,15 @@ resetHandsToEdges();
 
 // Een neergelegd handje blijft op de tekst liggen en scrollt mee; handjes in hun hoek blijven staan.
 function followScroll(){
-handStates.forEach(state=>{
-if(state.mode!=="placed"||state.docY==null)return;
-state.x=state.docX-window.scrollX;
-state.y=state.docY-window.scrollY;
-renderHand(state);
-});
-updateMagnification();
+// Neergelegde handjes scrollen vanzelf mee (ze zitten aan het papier); alleen handjes
+// die nog bewegen of vastgehouden worden, kunnen tijdens het scrollen iets anders aanwijzen.
+if(handStates.some(state=>state.activated&&state.mode!=="placed"))updateMagnification();
 }
 window.addEventListener("scroll",followScroll,{passive:true});
 window.addEventListener("resize",()=>{
 handStates.forEach(state=>{
 measureHome(state);
-if(state.mode==="placed"&&state.docX!=null){state.x=state.docX-window.scrollX;state.y=state.docY-window.scrollY}
-renderHand(state);
+if(state.mode!=="placed")renderHand(state);
 });
 updateMagnification();
 });
@@ -1529,6 +1723,8 @@ handStates.forEach(state=>{
 state.element.addEventListener("pointerdown",event=>{
 if(event.button!==undefined&&event.button!==0)return;
 event.preventDefault();
+detachFromPaper(state);
+hideDent(state);
 ensureHome(state);
 const el=state.element;
 const cx=state.x??state.homeX,cy=state.y??state.homeY;
@@ -1565,7 +1761,7 @@ state.dragging=false;state.pointerId=null;
 state.element.classList.remove("dragging");
 if(!state.moved){
 // Een tik: terug op zijn plek (hoek of tekst) en eventueel de aantekening openen.
-if(state.activated){state.mode="placed";state.vx=0;state.vy=0}
+if(state.activated){state.mode="placed";state.vx=0;state.vy=0;onLand(state,false)}
 else{state.mode="returning";state.vx=0;state.vy=0;measureHome(state)}
 startHandLoop();
 if(allowTap)openNoteForHand(state);
@@ -1582,7 +1778,7 @@ const cos=s>0&&dist>0?(state.vx*toX+state.vy*toY)/(s*dist):0;
 if(s>PHYS.throwSpeed&&cos>PHYS.throwCos)state.mode="returning";
 else if(s>PHYS.slideStart)state.mode="sliding";
 else if(dist<PHYS.attract)state.mode="returning";
-else{state.mode="placed";state.vx=0;state.vy=0}
+else{state.mode="placed";state.vx=0;state.vy=0;onLand(state,true)}
 startHandLoop();
 }
 document.addEventListener("pointerup",event=>{
@@ -1808,7 +2004,7 @@ function openNoteModal(){
 document.getElementById("notePoemTitle").textContent=selectedPoemTitle;
 document.getElementById("notePassage").textContent=selectedPassage;
 resetNoteEditor();
-setSelectedPerson("");
+setSelectedPerson(settings.owner||"");
 renderSavedNotes();
 document.getElementById("noteSave").disabled=true;
 prepareDictionary();
@@ -1952,7 +2148,7 @@ const READING_MODE_KEY="gedichten_leesmodus";
 const readingModeButton=document.getElementById("readingModeButton");
 function setReadingMode(on){
 document.body.classList.toggle("reading-mode",on);
-if(!on)requestAnimationFrame(followScroll);
+if(!on)requestAnimationFrame(updateMagnification);
 readingModeButton.setAttribute("aria-pressed",on?"true":"false");
 readingModeButton.title=on?"Leesmodus uitzetten":"Leesmodus";
 readingModeButton.setAttribute("aria-label",on?"Leesmodus uitzetten":"Leesmodus");
@@ -2076,7 +2272,122 @@ saveButton.disabled=!selectedPerson;
 
 accessBackdrop.addEventListener("click",event=>{if(event.target===accessBackdrop)closeAccessModal()});
 noteBackdrop.addEventListener("click",event=>{if(event.target===noteBackdrop)closeNoteModal()});
-document.addEventListener("keydown",event=>{if(event.key==="Escape"){closeAccessModal();closeNoteModal();closePoemMenu();closeInbox()}});
+document.addEventListener("keydown",event=>{if(event.key==="Escape"){closeAccessModal();closeNoteModal();closePoemMenu();closeInbox();closeSettings()}});
+/* ---------- Instellingenvenster ---------- */
+const settingsBackdrop=document.getElementById("settingsBackdrop");
+const settingsList=document.getElementById("settingsList");
+function settingsSection(title){
+const section=document.createElement("div");section.className="settings-section";
+const h=document.createElement("h3");h.textContent=title;section.appendChild(h);
+settingsList.appendChild(section);
+return section;
+}
+function settingsRow(section,label,hint){
+const row=document.createElement("div");row.className="setting";
+const top=document.createElement("div");top.className="setting-label";
+const name=document.createElement("span");name.textContent=label;top.appendChild(name);
+row.appendChild(top);
+section.appendChild(row);
+if(hint){const p=document.createElement("div");p.className="setting-hint";p.textContent=hint;row.hint=p}
+return row;
+}
+function finishRow(row){if(row.hint)row.appendChild(row.hint)}
+function segmented(row,options,current,onChange){
+const group=document.createElement("div");group.className="segmented";group.setAttribute("role","group");
+options.forEach(([value,label])=>{
+const button=document.createElement("button");button.type="button";button.textContent=label;
+const active=String(value)===String(current);
+button.classList.toggle("active",active);button.setAttribute("aria-pressed",active?"true":"false");
+button.addEventListener("click",()=>{onChange(value);renderSettings()});
+group.appendChild(button);
+});
+row.appendChild(group);
+finishRow(row);
+}
+function changeRotation(){
+saveSettings();
+lastDailyKey=currentPeriodKey();
+const daily=getDailyPoemIndex();
+if(daily!==currentIndex){resetHandsToEdges();show(daily,true)}
+}
+function renderSettings(){
+const scroll=settingsList.scrollTop;
+settingsList.innerHTML="";
+
+// Lezen
+const lezen=settingsSection("Lezen");
+const sizeRow=settingsRow(lezen,"Tekstgrootte","Het gedicht past zich nog steeds aan het scherm aan; dit schuift die maat kleiner of groter.");
+const value=document.createElement("span");value.className="setting-value";value.textContent=Math.round(settings.textScale*100)+"%";
+sizeRow.firstChild.appendChild(value);
+const slider=document.createElement("input");slider.type="range";slider.min="80";slider.max="130";slider.step="5";slider.value=String(Math.round(settings.textScale*100));
+slider.className="settings-slider";slider.setAttribute("aria-label","Tekstgrootte");
+slider.addEventListener("input",()=>{settings.textScale=Number(slider.value)/100;value.textContent=slider.value+"%";saveSettings();scheduleFit()});
+sizeRow.appendChild(slider);finishRow(sizeRow);
+
+const fontRow=settingsRow(lezen,"Lettertype");
+const fonts=document.createElement("div");fonts.className="font-options";
+Object.entries(FONTS).forEach(([key,font])=>{
+ensureFont(key);
+const button=document.createElement("button");button.type="button";
+button.className="font-option"+(settings.font===key?" active":"");
+button.setAttribute("aria-pressed",settings.font===key?"true":"false");
+button.style.fontFamily=font.family;
+const sample=document.createElement("span");sample.className="font-sample";sample.textContent="Herfst, de bladeren vallen";
+const name=document.createElement("span");name.className="font-name";name.textContent=font.label;
+button.append(sample,name);
+button.addEventListener("click",()=>{settings.font=key;saveSettings();applyLookSettings();renderSettings()});
+fonts.appendChild(button);
+});
+fontRow.appendChild(fonts);finishRow(fontRow);
+
+segmented(settingsRow(lezen,"Regelafstand"),[["compact","Compact"],["normaal","Normaal"],["ruim","Ruim"]],settings.lineHeight,v=>{settings.lineHeight=v;saveSettings();applyLookSettings()});
+segmented(settingsRow(lezen,"Uitlijning"),[["links","Links"],["midden","Gecentreerd"]],settings.align,v=>{settings.align=v;saveSettings();applyLookSettings()});
+
+// Gedichten
+const ged=settingsSection("Gedichten");
+segmented(settingsRow(ged,"Een ander gedicht","Elk dagdeel = vier keer per dag, om de zes uur vanaf de wisseltijd."),[["dag","Elke dag"],["dagdeel","Dagdeel"],["uur","Elk uur"],["handmatig","Zelf"]],settings.rotation,v=>{settings.rotation=v;changeRotation()});
+if(settings.rotation==="dag"||settings.rotation==="dagdeel"){
+const hourRow=settingsRow(ged,"Wisseltijd");
+const select=document.createElement("select");select.className="settings-select";select.setAttribute("aria-label","Wisseltijd");
+for(let h=0;h<24;h++){const o=document.createElement("option");o.value=String(h);o.textContent=String(h).padStart(2,"0")+":00";if(h===settings.switchHour)o.selected=true;select.appendChild(o)}
+select.addEventListener("change",()=>{settings.switchHour=Number(select.value);changeRotation()});
+hourRow.appendChild(select);finishRow(hourRow);
+}
+if(settings.rotation!=="handmatig"){
+segmented(settingsRow(ged,"Volgorde","Zonder herhaling: alle gedichten komen een keer langs voordat er een terugkomt."),[["willekeurig","Willekeurig"],["zonderherhaling","Zonder herhaling"],["volgorde","Op volgorde"],["favorieten","♥ Favorieten"]],settings.order,v=>{settings.order=v;changeRotation()});
+segmented(settingsRow(ged,"Terug naar het daggedicht","Als iemand naar een ander gedicht is gegaan en er even niemand iets aanraakt."),[[0,"Nooit"],[5,"5 min"],[15,"15 min"],[30,"30 min"]],settings.returnAfter,v=>{settings.returnAfter=Number(v);saveSettings()});
+}
+
+// Scherm
+const scherm=settingsSection("Scherm");
+segmented(settingsRow(scherm,"Knoppen vervagen na"),[[20,"20 sec"],[40,"40 sec"],[60,"1 min"],[0,"Nooit"]],settings.idleAfter,v=>{settings.idleAfter=Number(v);saveSettings();restartIdleTimer()});
+
+// Dit apparaat
+const apparaat=settingsSection("Dit apparaat");
+segmented(settingsRow(apparaat,"Van wie is dit apparaat?","Bij een eigen apparaat staat je naam alvast aan en telt het rode getal alleen wat de ander doet."),[["Ramon","Ramon"],["Sanne","Sanne"],["","Gedeeld"]],settings.owner,v=>{settings.owner=v;saveSettings();updateInboxBadges()});
+const toolsRow=settingsRow(apparaat,"Onderhoud");
+const tools=document.createElement("div");tools.className="settings-tools";
+const code=document.createElement("button");code.type="button";code.className="settings-action";code.textContent="Toegangscode wijzigen";
+code.addEventListener("click",()=>{closeSettings();afterAccess=loadPoems;openAccessModal()});
+const update=document.createElement("button");update.type="button";update.className="settings-action";update.textContent="Nu bijwerken";
+update.addEventListener("click",async()=>{
+update.textContent="Bezig…";update.disabled=true;
+try{const reg=navigator.serviceWorker&&await navigator.serviceWorker.getRegistration();if(reg)await reg.update()}catch(e){}
+location.reload();
+});
+tools.append(code,update);
+toolsRow.appendChild(tools);
+const version=document.createElement("div");version.className="setting-hint";version.textContent="Testversie "+APP_VERSION;
+toolsRow.appendChild(version);
+settingsList.scrollTop=scroll;
+}
+function openSettings(){renderSettings();settingsBackdrop.classList.add("visible");settingsBackdrop.setAttribute("aria-hidden","false")}
+function closeSettings(){settingsBackdrop.classList.remove("visible");settingsBackdrop.setAttribute("aria-hidden","true")}
+document.getElementById("settingsButton").addEventListener("click",openSettings);
+document.getElementById("settingsClose").addEventListener("click",closeSettings);
+settingsBackdrop.addEventListener("click",event=>{if(event.target===settingsBackdrop)closeSettings()});
+applyLookSettings();
+
 startFromCache();
 loadPoems();
 setInterval(loadPoems,5*60*1000);
