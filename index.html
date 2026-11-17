@@ -12,7 +12,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#ffffff">
 <title>Gedichten</title>
-<!-- Testversie 19: 17 november 2026 – eigen reactievak, open ruitje -->
+<!-- Testversie 21: 17 november 2026 – handjes voelen als echte voorwerpjes -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&display=swap" rel="stylesheet">
@@ -54,9 +54,7 @@ button{font-family:inherit}
 #hand2 .hand-icon{transform:rotate(-60deg)}
 .hand.dragging{cursor:grabbing}
 /* Optillen bij slepen: iets groter met een zachte schaduw */
-.hand .hand-icon,.hand .finger-icon{transition:filter 520ms cubic-bezier(.22,1,.36,1)}
-.hand .hand-icon,.hand .finger-icon{filter:drop-shadow(0 0 0 rgba(55,40,25,0))}
-.hand.dragging .hand-icon,.hand.dragging .finger-icon{filter:drop-shadow(0 7px 9px rgba(55,40,25,.22))}
+.hand{will-change:transform;filter:drop-shadow(var(--sx,.5px) var(--sy,1.25px) var(--sb,1.5px) rgba(55,40,25,var(--sa,.16)))}
 .hand-hint{margin-top:18px;font-size:15px;color:#a09688;text-align:center;font-style:italic}
 .test-version{position:fixed;left:14px;bottom:calc(104px + env(safe-area-inset-bottom));z-index:10001;color:#9b9183;font-family:Georgia,serif;font-size:11px;letter-spacing:.08em;opacity:.78;pointer-events:none;user-select:none}
 .reset-hands-button{position:fixed;right:14px;bottom:calc(10px + env(safe-area-inset-bottom));z-index:10002;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(151,133,108,.38);border-radius:50%;padding:0;background:rgba(247,244,237,.94);color:#766b5d;font-family:Georgia,serif;font-size:30px;font-weight:400;line-height:1;padding:0 0 2px;box-shadow:0 2px 9px rgba(55,45,32,.09);cursor:pointer;backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);-webkit-tap-highlight-color:transparent}
@@ -181,10 +179,8 @@ body.reading-mode .connection-status{display:none}
 .reading-mode-button:focus-visible{outline:2px solid #887e70;outline-offset:3px}
 .hand,.hand-hint,.hint-info-button,.navigation,.test-version,.poem-menu-button,.reset-hands-button,.person-inbox-button,.reading-mode-button{transition:opacity 600ms ease,visibility 600ms ease}
 /* In rust iets doorzichtig; bij aanraken of gebruik helemaal helder */
-.hand{opacity:.75;transition:opacity 450ms ease,visibility 600ms ease,transform 520ms cubic-bezier(.22,1,.36,1)}
+.hand{opacity:.75;transition:opacity 450ms ease,visibility 600ms ease}
 .hand.in-use{opacity:1}
-/* Tijdens slepen: opgetild en licht meekantelend met de beweging */
-.hand.dragging{transform:scale(1.1) rotate(var(--tilt,0deg));transition:opacity 450ms ease,visibility 600ms ease,transform 280ms cubic-bezier(.22,1,.36,1)}
 body.reading-mode .hand,body.reading-mode .hand-hint,body.reading-mode .hint-info-button,body.reading-mode .navigation,body.reading-mode .test-version,body.reading-mode .poem-menu-button,body.reading-mode .reset-hands-button,body.reading-mode .person-inbox-button{opacity:0;visibility:hidden;pointer-events:none}
 body.reading-mode .reading-mode-button{opacity:.4;background:#e9e1d4;box-shadow:none}
 @media(max-width:600px){.reading-mode-button{right:9px;bottom:calc(97px + env(safe-area-inset-bottom));width:38px;height:38px}.reading-mode-button svg{width:20px;height:20px}}
@@ -271,7 +267,7 @@ header{margin-bottom:34px}
 <main>
 <div class="poem" id="poem"></div>
 <button type="button" class="hint-info-button" id="hintInfoButton" aria-label="Uitleg over de handjes" aria-expanded="false" hidden>i</button>
-<div class="hand-hint" id="handHint">Sleep de bovenste handjes over het gedicht om passages te vergroten. Gebruik de linker vinger voor regels en de rechter vinger voor woorden. Tik op een handje om een aantekening toe te voegen.</div>
+<div class="hand-hint" id="handHint">Sleep de bovenste handjes over het gedicht om passages te vergroten. Gebruik de linker vinger voor regels en de rechter vinger voor woorden. Tik op een handje om een aantekening toe te voegen. Geef een handje een zetje richting zijn hoek om het terug te sturen.</div>
 </main>
 <div class="navigation">
 <button class="nav-button" id="previous">← Vorige</button>
@@ -284,7 +280,7 @@ header{margin-bottom:34px}
 <button type="button" class="hand" id="hand2" aria-label="Tweede Hamsa-hand"></button>
 <button type="button" class="hand" id="sentenceHand" aria-label="Wijzende vinger voor regels"></button>
 <button type="button" class="hand" id="wordHand" aria-label="Wijzende vinger voor woorden"></button>
-<div class="test-version" aria-label="Testversie 19">TEST v19</div>
+<div class="test-version" aria-label="Testversie 21">TEST v21</div>
 <button type="button" class="scroll-cue" id="scrollCue" aria-label="Verder lezen" hidden><svg viewBox="0 0 16 40" aria-hidden="true"><path d="M8 2v34M3 30l5 6 5-6"/></svg></button>
 <div class="connection-status" id="connectionStatus" role="status" hidden></div>
 <button type="button" class="reading-mode-button" id="readingModeButton" aria-pressed="false" aria-label="Leesmodus" title="Leesmodus">
@@ -646,7 +642,7 @@ document.addEventListener("visibilitychange",()=>{if(document.visibilityState===
 /* ---------- Automatisch bijwerken ---------- */
 // Als er een nieuwe versie van de site op GitHub staat, laadt de iPad die vanzelf,
 // maar alleen als er niets open staat (dus nooit midden in het schrijven).
-const APP_VERSION="19";
+const APP_VERSION="21";
 let pendingReload=false;
 async function checkForNewVersion(){
 if(location.protocol!=="https:"&&location.hostname!=="localhost")return;
@@ -658,7 +654,7 @@ if(match&&match[1]!==APP_VERSION){pendingReload=true;reloadWhenIdle()}
 }catch(e){}
 }
 function isBusy(){
-return !!document.querySelector(".modal-backdrop.visible,.poem-menu-backdrop.visible")||handStates.some(state=>state.dragging);
+return !!document.querySelector(".modal-backdrop.visible,.poem-menu-backdrop.visible")||handStates.some(state=>state.dragging||["sliding","returning","arc"].includes(state.mode));
 }
 function reloadWhenIdle(){
 if(!pendingReload)return;
@@ -1235,6 +1231,8 @@ return(dx*dx+dy*dy)<=radius*radius;
 }
 
 function updateMagnification(){
+// In de leesmodus blijft vast staan wat er uitgelicht was.
+if(document.body.classList.contains("reading-mode"))return;
 const paragraphs=Array.from(poemElement.querySelectorAll(".poem-paragraph"));
 const activeParagraphs=new Set();
 poemElement.querySelectorAll(".sentence-active,.word-active").forEach(el=>el.classList.remove("sentence-active","word-active"));
@@ -1322,82 +1320,229 @@ if(target){state.target=target;activeParagraphs.add(target);}
 paragraphs.forEach(paragraph=>paragraph.classList.toggle("active",activeParagraphs.has(paragraph)));
 }
 
-function moveHand(state,x,y){
-state.x=x;state.y=y;
-const hand=state.element;
-hand.style.left=(x-hand.offsetWidth/2)+"px";
-hand.style.top=(y-hand.offsetHeight/2)+"px";
-hand.style.right="auto";
-updateMagnification();
+/* ---------- Handjes als echte voorwerpjes ---------- */
+// Elk handje heeft een plek, een snelheid, een "optil-veer" en een slinger.
+// Bewegen gebeurt met transform (via de grafische kaart), zodat het overal vloeiend loopt.
+const PHYS={
+friction:4.2,        // hoe snel een losgelaten handje afremt
+slideStart:40,       // vanaf deze loslaatsnelheid (px/s) glijdt het door
+stopSpeed:18,        // hieronder ligt het stil
+attract:80,          // binnen deze afstand "valt" het in zijn hoek
+throwSpeed:500,      // zo hard gooien richting de hoek = terug naar de hoek
+throwCos:0.55,       // en ongeveer in de goede richting
+bounce:0.42,         // hoeveel snelheid er overblijft na botsen tegen de rand
+liftK:240,liftZeta:0.5,     // optillen en landen (iets verend)
+swingK:160,swingZeta:0.42,  // slingeren (rustig gedempt)
+homeK:70,homeZeta:0.95,     // terugglijden naar de hoek
+maxSwing:7,                 // maximale scheefstand in graden
+maxThrow:1800               // maximale gooisnelheid (px/s)
+};
+const reduceMotion=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+handStates.forEach(state=>Object.assign(state,{mode:"home",vx:0,vy:0,L:0,Lv:0,th:0,thv:0,grabDX:0,grabDY:0,samples:[],homeX:null,homeY:null,docX:null,docY:null,shadowKey:""}));
+
+function measureHome(state){
+const el=state.element;
+const saved=el.style.transform;
+el.style.transform="none";
+const r=el.getBoundingClientRect();
+el.style.transform=saved;
+state.homeX=r.left+r.width/2;
+state.homeY=r.top+r.height/2;
+}
+function ensureHome(state){if(state.homeX==null)measureHome(state)}
+function setCenter(state,x,y){state.x=x;state.y=y;state.docX=x+window.scrollX;state.docY=y+window.scrollY}
+function goHome(state){
+state.mode="home";state.activated=false;state.target=null;
+state.x=null;state.y=null;state.docX=null;state.docY=null;state.vx=0;state.vy=0;
+state.element.classList.remove("in-use");
+}
+const q=v=>Math.round(v*4)/4;
+function renderHand(state){
+const el=state.element;
+if(state.mode==="home"&&state.x==null&&Math.abs(state.L)<0.001&&Math.abs(state.th)<0.01){el.style.transform=""}
+else{
+ensureHome(state);
+const dx=(state.x??state.homeX)-state.homeX;
+const dy=(state.y??state.homeY)-state.homeY;
+el.style.transform=`translate3d(${dx.toFixed(2)}px,${dy.toFixed(2)}px,0) scale(${(1+0.1*state.L).toFixed(4)}) rotate(${state.th.toFixed(3)}deg)`;
+}
+// 6. Schaduw als hoogte: licht van linksboven; opgetild verder weg en zachter.
+const h=Math.max(0,state.L);
+const sy=q(1.2+7*h),sb=q(1.6+9*h),sx=q(sy*0.45),sa=(0.16+0.08*h).toFixed(3);
+const key=sx+"|"+sy+"|"+sb+"|"+sa;
+if(key!==state.shadowKey){
+state.shadowKey=key;
+el.style.setProperty("--sx",sx+"px");el.style.setProperty("--sy",sy+"px");
+el.style.setProperty("--sb",sb+"px");el.style.setProperty("--sa",sa);
+}
+}
+function spring(value,velocity,target,k,zeta,dt){
+const a=k*(target-value)-2*zeta*Math.sqrt(k)*velocity;
+velocity+=a*dt;
+return[value+velocity*dt,velocity];
+}
+function sampleVelocity(state,windowMs,maxAgeMs){
+const now=performance.now();
+const s=state.samples.filter(p=>now-p.t<=windowMs);
+if(s.length<2)return{vx:0,vy:0};
+const a=s[0],b=s[s.length-1];
+if(maxAgeMs&&now-b.t>maxAgeMs)return{vx:0,vy:0};
+const dt=(b.t-a.t)/1000;
+if(dt<0.008)return{vx:0,vy:0};
+return{vx:(b.x-a.x)/dt,vy:(b.y-a.y)/dt};
+}
+
+// Terug naar de hoek in een boogje (voor de ⟲-knop en na het sluiten van een venster).
+const easeInOutCubic=t=>t<0.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
+function startArc(state){
+measureHome(state);
+const fromX=state.x??state.homeX,fromY=state.y??state.homeY;
+const d=Math.hypot(state.homeX-fromX,state.homeY-fromY);
+if(d<4){goHome(state);return}
+const lift=Math.min(90,d*0.18);
+const midX=fromX+(state.homeX-fromX)*0.45,midY=fromY+(state.homeY-fromY)*0.45-lift;
+state.arc={fromX,fromY,cX:2*midX-(fromX+state.homeX)/2,cY:2*midY-(fromY+state.homeY)/2,start:performance.now(),dur:Math.min(900,420+d*0.6)};
+state.mode="arc";state.vx=0;state.vy=0;
+}
+
+let handLoopRunning=false,handLoopLast=0;
+function startHandLoop(){
+if(handLoopRunning)return;
+handLoopRunning=true;
+handLoopLast=performance.now();
+requestAnimationFrame(handTick);
+}
+function handTick(now){
+const dt=Math.min(0.032,Math.max(0.001,(now-handLoopLast)/1000));
+handLoopLast=now;
+let busy=false,moved=false;
+handStates.forEach(state=>{
+const el=state.element;
+// 4. Optillen en landen met een piepklein veertje.
+const liftTarget=state.mode==="held"?1:0;
+if(reduceMotion){state.L=liftTarget;state.Lv=0}
+else{[state.L,state.Lv]=spring(state.L,state.Lv,liftTarget,PHYS.liftK,PHYS.liftZeta,dt);if(state.L<-0.3){state.L=-0.3;state.Lv=0}}
+// 5. Slingeren rond het punt waar je het vasthoudt.
+let swingTarget=0;
+if(state.mode==="held"){
+const v=sampleVelocity(state,70,0);
+const half=el.offsetHeight/2||30;
+let lever=Math.max(-1,Math.min(1,-state.grabDY/half));
+if(Math.abs(lever)<0.35)lever=lever<0?-0.35:0.35;
+swingTarget=Math.max(-PHYS.maxSwing,Math.min(PHYS.maxSwing,v.vx*0.006))*lever;
+}
+if(reduceMotion){state.th=0;state.thv=0}
+else[state.th,state.thv]=spring(state.th,state.thv,swingTarget,PHYS.swingK,PHYS.swingZeta,dt);
+// 2. Doorglijden met wrijving, 7. zacht botsen tegen de randen.
+if(state.mode==="sliding"){
+let x=state.x+state.vx*dt,y=state.y+state.vy*dt;
+const f=Math.exp(-PHYS.friction*dt);
+state.vx*=f;state.vy*=f;
+const r=(el.offsetWidth/2)*0.8;
+if(x<r){x=r;state.vx=Math.abs(state.vx)*PHYS.bounce}
+if(x>window.innerWidth-r){x=window.innerWidth-r;state.vx=-Math.abs(state.vx)*PHYS.bounce}
+if(y<r){y=r;state.vy=Math.abs(state.vy)*PHYS.bounce}
+if(y>window.innerHeight-r){y=window.innerHeight-r;state.vy=-Math.abs(state.vy)*PHYS.bounce}
+setCenter(state,x,y);
+moved=true;
+ensureHome(state);
+const dist=Math.hypot(state.homeX-x,state.homeY-y);
+// 3. Komt het in de buurt van zijn hoek, dan valt het erin.
+if(dist<PHYS.attract*0.6)state.mode="returning";
+else if(Math.hypot(state.vx,state.vy)<PHYS.stopSpeed){
+if(dist<PHYS.attract)state.mode="returning";
+else{state.mode="placed";state.vx=0;state.vy=0}
+}
+}else if(state.mode==="returning"){
+let x,y;
+[x,state.vx]=spring(state.x,state.vx,state.homeX,PHYS.homeK,PHYS.homeZeta,dt);
+[y,state.vy]=spring(state.y,state.vy,state.homeY,PHYS.homeK,PHYS.homeZeta,dt);
+setCenter(state,x,y);
+moved=true;
+if(Math.hypot(state.homeX-x,state.homeY-y)<0.6&&Math.hypot(state.vx,state.vy)<12)goHome(state);
+}else if(state.mode==="arc"){
+const a=state.arc;
+const t=Math.min(1,(now-a.start)/a.dur);
+const e=easeInOutCubic(t);
+setCenter(state,(1-e)*(1-e)*a.fromX+2*(1-e)*e*a.cX+e*e*state.homeX,(1-e)*(1-e)*a.fromY+2*(1-e)*e*a.cY+e*e*state.homeY);
+if(t>=1)goHome(state);
+}else if(state.mode==="held"){
+moved=true;
+}
+const settling=Math.abs(state.L-liftTarget)>0.002||Math.abs(state.Lv)>0.02||Math.abs(state.th-swingTarget)>0.02||Math.abs(state.thv)>0.05;
+if(!settling&&state.mode!=="held"){state.L=0;state.Lv=0;state.th=0;state.thv=0}
+renderHand(state);
+if(settling||["held","sliding","returning","arc"].includes(state.mode))busy=true;
+});
+if(moved)updateMagnification();
+if(busy)requestAnimationFrame(handTick);else handLoopRunning=false;
 }
 
 function resetHandsToEdges(){
 handStates.forEach(state=>{
-  const hand=state.element;
-  const wasMoved=state.x!==null&&getComputedStyle(hand).visibility!=="hidden";
-  const before=wasMoved?hand.getBoundingClientRect():null;
-  hand.classList.remove("in-use");
-  clearTimeout(state.tiltTimer);hand.style.setProperty("--tilt","0deg");
-  hand.style.left="";
-  hand.style.right="";
-  hand.style.top="";
-  hand.classList.remove("dragging");
-  state.dragging=false;
-  state.pointerId=null;
-  state.moved=false;
-  state.x=null;
-  state.y=null;
-  state.target=null;
-  state.activated=false;
-  // 2. Zacht in een boogje terugglijden naar de eigen plek.
-  if(before&&hand.animate&&!window.matchMedia("(prefers-reduced-motion: reduce)").matches){
-    const after=hand.getBoundingClientRect();
-    const dx=(before.left+before.width/2)-(after.left+after.width/2);
-    const dy=(before.top+before.height/2)-(after.top+after.height/2);
-    const distance=Math.hypot(dx,dy);
-    if(distance>4){
-      const lift=Math.min(90,distance*0.18);
-      hand.animate([
-        {transform:`translate(${dx}px,${dy}px)`},
-        {transform:`translate(${dx*0.45}px,${dy*0.45-lift}px)`,offset:0.5},
-        {transform:"translate(0,0)"}
-      ],{duration:Math.min(900,420+distance*0.6),easing:"cubic-bezier(.45,.05,.3,1)"});
-    }
-  }
+const hidden=getComputedStyle(state.element).visibility==="hidden";
+state.dragging=false;state.pointerId=null;state.moved=false;state.target=null;state.activated=false;
+state.element.classList.remove("dragging","in-use");
+if(state.mode==="home"&&state.x==null)return;
+if(hidden||reduceMotion){goHome(state);state.L=0;state.Lv=0;state.th=0;state.thv=0;renderHand(state);return}
+startArc(state);
 });
 poemElement.querySelectorAll(".poem-paragraph.active,.sentence-active,.word-active").forEach(element=>{
-  element.classList.remove("active","sentence-active","word-active");
+element.classList.remove("active","sentence-active","word-active");
 });
 updateMagnification();
+startHandLoop();
 }
 
 document.getElementById("resetHandsButton").addEventListener("click",event=>{
-  event.preventDefault();
-  event.stopPropagation();
-  resetHandsToEdges();
+event.preventDefault();
+event.stopPropagation();
+resetHandsToEdges();
 });
 
-window.addEventListener("scroll",updateMagnification,{passive:true,capture:true});
-document.addEventListener("scroll",updateMagnification,{passive:true,capture:true});
-window.addEventListener("resize",updateMagnification);
+// Een neergelegd handje blijft op de tekst liggen en scrollt mee; handjes in hun hoek blijven staan.
+function followScroll(){
+handStates.forEach(state=>{
+if(state.mode!=="placed"||state.docY==null)return;
+state.x=state.docX-window.scrollX;
+state.y=state.docY-window.scrollY;
+renderHand(state);
+});
+updateMagnification();
+}
+window.addEventListener("scroll",followScroll,{passive:true});
+window.addEventListener("resize",()=>{
+handStates.forEach(state=>{
+measureHome(state);
+if(state.mode==="placed"&&state.docX!=null){state.x=state.docX-window.scrollX;state.y=state.docY-window.scrollY}
+renderHand(state);
+});
+updateMagnification();
+});
 if(window.visualViewport){
 window.visualViewport.addEventListener("scroll",updateMagnification,{passive:true});
 window.visualViewport.addEventListener("resize",updateMagnification,{passive:true});
 }
 
+// 1. Oppakken waar je vinger zit (geen sprongetje).
 handStates.forEach(state=>{
 state.element.addEventListener("pointerdown",event=>{
 if(event.button!==undefined&&event.button!==0)return;
 event.preventDefault();
-state.dragging=true;
-state.pointerId=event.pointerId;
-state.startX=event.clientX;
-state.startY=event.clientY;
-state.moved=false;
-state.lastMoveX=event.clientX;state.lastMoveTime=performance.now();state.tilt=0;
-state.element.style.setProperty("--tilt","0deg");
-state.element.classList.add("dragging","in-use");
-moveHand(state,event.clientX,event.clientY);
+ensureHome(state);
+const el=state.element;
+const cx=state.x??state.homeX,cy=state.y??state.homeY;
+state.grabDX=event.clientX-cx;
+state.grabDY=event.clientY-cy;
+el.style.transformOrigin=`${(el.offsetWidth/2+state.grabDX).toFixed(1)}px ${(el.offsetHeight/2+state.grabDY).toFixed(1)}px`;
+setCenter(state,cx,cy);
+state.mode="held";state.vx=0;state.vy=0;
+state.dragging=true;state.pointerId=event.pointerId;
+state.startX=event.clientX;state.startY=event.clientY;state.moved=false;
+state.samples=[{x:event.clientX,y:event.clientY,t:performance.now()}];
+el.classList.add("dragging","in-use");
+if(el.setPointerCapture){try{el.setPointerCapture(event.pointerId)}catch(e){}}
+startHandLoop();
 });
 });
 
@@ -1405,47 +1550,48 @@ document.addEventListener("pointermove",event=>{
 const state=handStates.find(item=>item.dragging&&item.pointerId===event.pointerId);
 if(!state)return;
 event.preventDefault();
-if(Math.hypot(event.clientX-state.startX,event.clientY-state.startY)>8){
-if(!state.moved)countHandUse();
-state.moved=true;
-state.activated=true;
+if(!state.moved&&Math.hypot(event.clientX-state.startX,event.clientY-state.startY)>8){
+state.moved=true;state.activated=true;countHandUse();
 }
-tiltHand(state,event.clientX);
-moveHand(state,event.clientX,event.clientY);
+const now=performance.now();
+state.samples.push({x:event.clientX,y:event.clientY,t:now});
+while(state.samples.length>2&&now-state.samples[0].t>140)state.samples.shift();
+setCenter(state,event.clientX-state.grabDX,event.clientY-state.grabDY);
+startHandLoop();
 },{passive:false});
 
-// 4. Licht meekantelen met de horizontale snelheid (maximaal 5 graden), en terug naar recht bij stilstand.
-function tiltHand(state,x){
-const now=performance.now();
-const dt=Math.max(8,now-(state.lastMoveTime||now));
-const velocity=(x-(state.lastMoveX??x))/dt;
-state.lastMoveX=x;state.lastMoveTime=now;
-const target=Math.max(-5,Math.min(5,velocity*7));
-state.tilt=(state.tilt||0)*0.65+target*0.35;
-state.element.style.setProperty("--tilt",state.tilt.toFixed(2)+"deg");
-clearTimeout(state.tiltTimer);
-state.tiltTimer=setTimeout(()=>{state.tilt=0;state.element.style.setProperty("--tilt","0deg")},120);
-}
-
-function finishPointer(event){
-const state=handStates.find(item=>item.dragging&&item.pointerId===event.pointerId);
-if(!state)return;
-clearTimeout(state.tiltTimer);state.tilt=0;state.element.style.setProperty("--tilt","0deg");
-if(!state.activated)state.element.classList.remove("in-use");
-state.dragging=false;
-state.pointerId=null;
+function releaseHand(state,allowTap){
+state.dragging=false;state.pointerId=null;
 state.element.classList.remove("dragging");
-if(!state.moved)openNoteForHand(state);
+if(!state.moved){
+// Een tik: terug op zijn plek (hoek of tekst) en eventueel de aantekening openen.
+if(state.activated){state.mode="placed";state.vx=0;state.vy=0}
+else{state.mode="returning";state.vx=0;state.vy=0;measureHome(state)}
+startHandLoop();
+if(allowTap)openNoteForHand(state);
+return;
 }
-document.addEventListener("pointerup",finishPointer);
+let v=sampleVelocity(state,90,60);
+const speed=Math.hypot(v.vx,v.vy);
+if(speed>PHYS.maxThrow){v={vx:v.vx*PHYS.maxThrow/speed,vy:v.vy*PHYS.maxThrow/speed}}
+state.vx=v.vx;state.vy=v.vy;
+measureHome(state);
+const toX=state.homeX-state.x,toY=state.homeY-state.y,dist=Math.hypot(toX,toY);
+const s=Math.hypot(state.vx,state.vy);
+const cos=s>0&&dist>0?(state.vx*toX+state.vy*toY)/(s*dist):0;
+if(s>PHYS.throwSpeed&&cos>PHYS.throwCos)state.mode="returning";
+else if(s>PHYS.slideStart)state.mode="sliding";
+else if(dist<PHYS.attract)state.mode="returning";
+else{state.mode="placed";state.vx=0;state.vy=0}
+startHandLoop();
+}
+document.addEventListener("pointerup",event=>{
+const state=handStates.find(item=>item.dragging&&item.pointerId===event.pointerId);
+if(state)releaseHand(state,true);
+});
 document.addEventListener("pointercancel",event=>{
 const state=handStates.find(item=>item.dragging&&item.pointerId===event.pointerId);
-if(!state)return;
-clearTimeout(state.tiltTimer);state.element.style.setProperty("--tilt","0deg");
-if(!state.activated)state.element.classList.remove("in-use");
-state.dragging=false;
-state.pointerId=null;
-state.element.classList.remove("dragging");
+if(state)releaseHand(state,false);
 });
 
 function openNoteForHand(state){
@@ -1806,6 +1952,7 @@ const READING_MODE_KEY="gedichten_leesmodus";
 const readingModeButton=document.getElementById("readingModeButton");
 function setReadingMode(on){
 document.body.classList.toggle("reading-mode",on);
+if(!on)requestAnimationFrame(followScroll);
 readingModeButton.setAttribute("aria-pressed",on?"true":"false");
 readingModeButton.title=on?"Leesmodus uitzetten":"Leesmodus";
 readingModeButton.setAttribute("aria-label",on?"Leesmodus uitzetten":"Leesmodus");
