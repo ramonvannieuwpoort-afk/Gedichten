@@ -12,7 +12,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#ffffff">
 <title>Gedichten</title>
-<!-- Testversie 18: 15 november 2026 – handjes: rustiger in rust, terugglijden, gelijke lijnen, meekantelen -->
+<!-- Testversie 19: 17 november 2026 – eigen reactievak, open ruitje -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&display=swap" rel="stylesheet">
@@ -104,7 +104,8 @@ body.controls-idle .person-inbox-button .inbox-badge{visibility:hidden}
 .ornament{display:flex;align-items:center;justify-content:center;gap:10px;margin:14px auto 0;max-width:340px}
 .ornament-line{flex:1 1 auto;height:1px;background:linear-gradient(to right,rgba(201,184,156,0),#c9b89c)}
 .ornament-line.right{background:linear-gradient(to left,rgba(201,184,156,0),#c9b89c)}
-.ornament-diamond{display:none;width:7px;height:7px;margin:0 6px;background:#c9b89c;transform:rotate(45deg)}
+.ornament-diamond{display:none;width:7px;height:7px;margin:0 6px;background:transparent;border:1px solid #c9b89c;transform:rotate(45deg);transition:background-color 300ms ease,border-color 300ms ease}
+.ornament.is-favorite .ornament-diamond{background:#c2453b;border-color:#c2453b}
 .ornament-diamond:has(+.favorite-button[hidden]){display:block}
 .ornament .favorite-button{margin:0;width:34px;height:34px;padding:6px;color:#c9b89c}
 .ornament .favorite-button.is-favorite{color:#c2453b}
@@ -137,6 +138,12 @@ body.reading-mode .connection-status{display:none}
 .saved-note.pending{opacity:.6}
 .saved-note.replying-to,.saved-note.editing{box-shadow:0 0 0 2px rgba(167,124,72,.45)}
 .note-reply-button{display:inline-block;margin:0 0 0 2px;border:0;background:none;color:#8a6845;font-family:inherit;font-size:16px;font-style:italic;padding:4px 2px;cursor:pointer}
+.reply-composer{margin:4px 0 6px 22px;padding:12px 13px 10px;border:1px solid rgba(167,124,72,.5);border-radius:3px;background:#fffdf8;box-shadow:0 2px 10px rgba(55,45,32,.06)}
+.reply-composer-label{margin:0 0 9px;color:#8a6845;font-size:16px;font-style:italic}
+.reply-composer .person-choices{gap:8px;margin:0 0 10px}
+.reply-composer .person-choice{min-height:38px;padding:6px 10px;font-size:16px}
+.modal .reply-composer textarea{min-height:96px;margin:0 0 6px;font-size:17px}
+.reply-composer .modal-actions{margin-top:0}
 .inbox-item-reply{display:block;margin-top:4px;color:#8a6845;font-size:15px;font-style:italic}
 .connection-status{position:fixed;left:50%;bottom:calc(14px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:10001;padding:5px 12px;border-radius:12px;background:rgba(247,244,237,.92);border:1px solid rgba(151,133,108,.3);color:#8a7f70;font-size:14px;font-style:italic;white-space:nowrap;pointer-events:none}
 .connection-status[hidden]{display:none}
@@ -221,6 +228,7 @@ body.reading-mode .reading-mode-button{opacity:.4;background:#e9e1d4;box-shadow:
 .person-choice.selected{opacity:1;border-color:currentColor;box-shadow:inset 0 0 0 1px currentColor;transform:translateY(-1px)}
 .person-choice:focus-visible,.saved-note-tools button:focus-visible{outline:2px solid #887e70;outline-offset:3px}
 .modal textarea{min-height:150px;resize:vertical;line-height:1.4}
+.modal input:focus,.modal textarea:focus{outline:2px solid #bda27b;outline-offset:0;border-color:#bda27b}
 .modal-actions{display:flex;justify-content:flex-end;gap:18px;align-items:center;margin-top:8px}
 .modal-button{border:0;background:none;color:#887e70;font-size:18px;padding:8px 4px;cursor:pointer}
 .modal-button.primary{color:#302c26;border-bottom:1px solid #a77c48;font-weight:600}
@@ -276,7 +284,7 @@ header{margin-bottom:34px}
 <button type="button" class="hand" id="hand2" aria-label="Tweede Hamsa-hand"></button>
 <button type="button" class="hand" id="sentenceHand" aria-label="Wijzende vinger voor regels"></button>
 <button type="button" class="hand" id="wordHand" aria-label="Wijzende vinger voor woorden"></button>
-<div class="test-version" aria-label="Testversie 18">TEST v18</div>
+<div class="test-version" aria-label="Testversie 19">TEST v19</div>
 <button type="button" class="scroll-cue" id="scrollCue" aria-label="Verder lezen" hidden><svg viewBox="0 0 16 40" aria-hidden="true"><path d="M8 2v34M3 30l5 6 5-6"/></svg></button>
 <div class="connection-status" id="connectionStatus" role="status" hidden></div>
 <button type="button" class="reading-mode-button" id="readingModeButton" aria-pressed="false" aria-label="Leesmodus" title="Leesmodus">
@@ -638,7 +646,7 @@ document.addEventListener("visibilitychange",()=>{if(document.visibilityState===
 /* ---------- Automatisch bijwerken ---------- */
 // Als er een nieuwe versie van de site op GitHub staat, laadt de iPad die vanzelf,
 // maar alleen als er niets open staat (dus nooit midden in het schrijven).
-const APP_VERSION="18";
+const APP_VERSION="19";
 let pendingReload=false;
 async function checkForNewVersion(){
 if(location.protocol!=="https:"&&location.hostname!=="localhost")return;
@@ -780,7 +788,11 @@ const key=normalizePassage(note.passage);
 (notesByPassage[key]=notesByPassage[key]||[]).push(note);
 });
 applyNoteHighlights();
-if(noteBackdrop.classList.contains("visible"))renderSavedNotes();
+if(noteBackdrop.classList.contains("visible")){
+// Niet opnieuw opbouwen terwijl iemand een reactie typt (anders verdwijnt het toetsenbord).
+if(document.activeElement&&document.activeElement.id==="replyText")pendingNotesRender=true;
+else renderSavedNotes();
+}
 }
 async function loadAllNotes(){
 if(!localStorage.getItem(ACCESS_STORAGE_KEY))return;
@@ -923,6 +935,7 @@ const poem=currentPoem();
 favoriteButton.hidden=!poem||!poem.id;
 const on=!!(poem&&poem.favorite);
 favoriteButton.classList.toggle("is-favorite",on);
+favoriteButton.closest(".ornament").classList.toggle("is-favorite",on);
 favoriteButton.setAttribute("aria-pressed",on?"true":"false");
 favoriteButton.setAttribute("aria-label",on?"Favoriet – tik om te verwijderen":"Markeer als favoriet");
 favoriteButton.title=on?"Favoriet":"Markeer als favoriet";
@@ -1494,7 +1507,9 @@ return item;
 }
 
 function renderSavedNotes(){
+pendingNotesRender=false;
 const container=document.getElementById("savedNotes");
+const replyHadFocus=!!(document.activeElement&&document.activeElement.id==="replyText");
 container.innerHTML="";
 const key=normalizePassage(selectedPassage);
 const notes=notesByPassage[key]||[];
@@ -1517,15 +1532,100 @@ replies.forEach(reply=>replyList.appendChild(buildNoteElement(reply,true)));
 thread.appendChild(replyList);
 }
 if(!note.pending&&note.id){
+if(replyToId===note.id){
+thread.appendChild(buildReplyComposer(note));
+}else{
 const replyButton=document.createElement("button");
 replyButton.type="button";
 replyButton.className="note-reply-button";
-replyButton.textContent=replyToId===note.id?"Je reageert hierop…":"↳ Reageren";
+replyButton.textContent="↳ Reageren";
 replyButton.addEventListener("click",()=>startReply(note));
 thread.appendChild(replyButton);
 }
+}
 container.appendChild(thread);
 });
+if(replyHadFocus){const replyText=document.getElementById("replyText");if(replyText)replyText.focus()}
+}
+
+/* ---------- Reageren: een eigen vak direct onder de aantekening ---------- */
+let replyDraft="";
+let pendingNotesRender=false;
+function otherPerson(person){const p=canonicalPerson(person);return p==="Sanne"?"Ramon":p==="Ramon"?"Sanne":""}
+function buildReplyComposer(note){
+const box=document.createElement("div");
+box.className="reply-composer";
+const label=document.createElement("div");
+label.className="reply-composer-label";
+label.textContent=`Reactie op ${note.persoon||"deze aantekening"}`;
+const choices=document.createElement("div");
+choices.className="person-choices";
+choices.setAttribute("role","group");
+choices.setAttribute("aria-label","Kies wie er reageert");
+["Sanne","Ramon"].forEach(person=>{
+const button=document.createElement("button");
+button.type="button";
+button.className="person-choice "+person.toLowerCase()+(selectedPerson===person?" selected":"");
+button.setAttribute("aria-pressed",selectedPerson===person?"true":"false");
+button.textContent=person;
+button.addEventListener("click",()=>setSelectedPerson(person));
+choices.appendChild(button);
+});
+const textarea=document.createElement("textarea");
+textarea.id="replyText";
+textarea.maxLength=3000;
+textarea.placeholder="Schrijf je reactie…";
+textarea.value=replyDraft;
+textarea.addEventListener("input",()=>{replyDraft=textarea.value});
+const actions=document.createElement("div");
+actions.className="modal-actions";
+const cancel=document.createElement("button");
+cancel.type="button";cancel.className="modal-button";cancel.textContent="Annuleren";
+cancel.addEventListener("click",cancelReply);
+const save=document.createElement("button");
+save.type="button";save.className="modal-button primary";save.textContent="Reactie bewaren";
+save.addEventListener("click",saveReply);
+actions.append(cancel,save);
+box.append(label,choices,textarea,actions);
+return box;
+}
+function cancelReply(){
+replyToId=null;
+replyDraft="";
+document.getElementById("noteForm").hidden=false;
+document.getElementById("noteStatus").textContent="";
+renderSavedNotes();
+}
+async function saveReply(){
+const status=document.getElementById("noteStatus");
+const text=replyDraft.trim();
+const textarea=document.getElementById("replyText");
+if(!selectedPerson){status.textContent="Kies eerst wie er reageert.";return}
+if(!text){status.textContent="Schrijf eerst je reactie.";if(textarea)textarea.focus();return}
+if(!localStorage.getItem(ACCESS_STORAGE_KEY)){closeNoteModal();openAccessModal();return}
+const parent=findNoteById(replyToId);
+if(!parent){status.textContent="Deze aantekening bestaat niet meer.";cancelReply();return}
+const author=selectedPerson;
+const backup=notesRaw.map(n=>({...n}));
+// Laat de reactie meteen zien; daarna wordt het met de spreadsheet gecontroleerd.
+notesRaw.push({id:"tmp-"+Date.now(),pending:true,gedichtId:parent.gedichtId||selectedPoemId,antwoordOp:parent.id,gedicht:selectedPoemTitle,passage:parent.passage,aantekening:text,datum:"zojuist",persoon:author});
+replyToId=null;
+replyDraft="";
+document.getElementById("noteForm").hidden=false;
+computeNotesForCurrentPoem();
+status.textContent="Reactie wordt opgeslagen…";
+try{
+await postNoteAction({action:"create",gedichtId:parent.gedichtId||selectedPoemId,gedicht:selectedPoemTitle,passage:parent.passage,antwoordOp:parent.id,aantekening:text});
+await wait(1200);
+await loadAllNotes();
+const arrived=notesRaw.some(n=>!n.pending&&n.antwoordOp===parent.id&&n.persoon===author&&normalizePassage(n.aantekening)===normalizePassage(text));
+status.textContent=arrived?"Reactie bewaard.":"De reactie is niet aangekomen. Probeer het nog eens.";
+}catch(error){
+console.error("Fout bij opslaan van reactie:",error);
+notesRaw=backup;
+computeNotesForCurrentPoem();
+status.textContent="Opslaan is niet gelukt. Controleer je internetverbinding.";
+}
 }
 
 function findNoteById(id){return notesRaw.find(note=>note.id===id)||null}
@@ -1549,6 +1649,8 @@ document.querySelectorAll("#noteForm .person-choice").forEach(button=>button.add
 function resetNoteEditor(){
 editingNoteId=null;
 replyToId=null;
+replyDraft="";
+document.getElementById("noteForm").hidden=false;
 document.getElementById("noteText").value="";
 document.getElementById("noteText").placeholder="Schrijf hier een nieuwe aantekening...";
 document.getElementById("noteSave").textContent="Bewaren";
@@ -1729,16 +1831,21 @@ document.getElementById("noteText").focus();
 function startReply(note){
 replyToId=note.id;
 editingNoteId=null;
+replyDraft="";
 document.getElementById("noteText").value="";
-document.getElementById("noteText").placeholder=`Reageer op ${note.persoon||"deze aantekening"}…`;
-document.getElementById("noteSave").textContent="Reactie bewaren";
-document.getElementById("noteEditCancel").textContent="Reactie annuleren";
-document.getElementById("noteEditCancel").hidden=false;
-document.getElementById("noteStatus").textContent=selectedPerson?"":"Kies hieronder wie er reageert.";
+document.getElementById("noteSave").textContent="Bewaren";
+document.getElementById("noteEditCancel").hidden=true;
+document.getElementById("noteStatus").textContent="";
+// Meestal reageer je op de ander: die naam staat alvast aan (je kunt hem wijzigen).
+if(!selectedPerson&&otherPerson(note.persoon))setSelectedPerson(otherPerson(note.persoon));
+// Het gewone vak voor een nieuwe aantekening verdwijnt even, zodat er maar één tekstvak is.
+document.getElementById("noteForm").hidden=true;
 renderSavedNotes();
-const textarea=document.getElementById("noteText");
-textarea.scrollIntoView({behavior:"smooth",block:"center"});
+const textarea=document.getElementById("replyText");
+if(textarea){
 textarea.focus();
+textarea.scrollIntoView({behavior:"smooth",block:"center"});
+}
 }
 
 document.getElementById("noteEditCancel").addEventListener("click",()=>{resetNoteEditor();renderSavedNotes()});
