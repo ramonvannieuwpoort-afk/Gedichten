@@ -4,7 +4,7 @@
 // Gedichten en aantekeningen bewaart de site zelf; die gaan hier niet doorheen.
 // Lettertypes van Google worden ook bewaard, zodat de tekst meteen en offline goed staat.
 
-const CACHE = 'gedichten-v3';
+const CACHE = 'gedichten-v4';
 const FONT_CACHE = 'gedichten-lettertypes-v1';
 const ASSETS = ['./', './index.html', './manifest.webmanifest', './apple-touch-icon.png', './icon-192.png', './icon-512.png',
   './briefje.html', './manifest-briefje.webmanifest', './briefje-icon.png', './briefje-192.png', './briefje-512.png'];
@@ -59,8 +59,10 @@ self.addEventListener('fetch', event => {
   if (isPage) {
     // Eerst internet, anders de bewaarde versie (de gedichten of het briefje-scherm).
     const key = url.pathname.endsWith('briefje.html') ? './briefje.html' : './index.html';
+    // 'no-cache': altijd bij GitHub navragen of er een nieuwere versie is, niet de
+    // browsergeheugen-kopie van tot 10 minuten oud gebruiken.
     event.respondWith(
-      fetch(request)
+      fetch(new Request(request.url, { cache: 'no-cache', credentials: 'same-origin' }))
         .then(response => {
           if (response.ok) {
             const copy = response.clone();
