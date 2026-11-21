@@ -15,7 +15,7 @@
 <!-- Testversie 32: 21 november 2026 – sneller en soepeler (één ophaalbeurt, lettertypes, schaduw, hartslag) -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Caveat:wght@400;500;600&display=swap" rel="stylesheet" crossorigin="anonymous" media="print" onload="this.media=\'all\'"><noscript><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Caveat:wght@400;500;600&display=swap" rel="stylesheet"></noscript>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Caveat:wght@400;500;600&display=swap" rel="stylesheet" crossorigin="anonymous" media="print" onload="this.media='all'"><noscript><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Caveat:wght@400;500;600&display=swap" rel="stylesheet"></noscript>
 <meta name="robots" content="noindex,nofollow">
 <style>
 *{box-sizing:border-box}
@@ -2615,12 +2615,10 @@ return rects;
 }
 function overlaps(a,b){return a.l<b.r&&a.r>b.l&&a.t<b.b&&a.b>b.t}
 function findFreeSpot(cx,cy,w,h,obstacles){
-const W=window.innerWidth,maxY=Math.max(wallHeight(),document.documentElement.scrollHeight);
-const fits=(x,y)=>{
-const r={l:x-w/2,t:y-h/2,r:x+w/2,b:y+h/2};
-if(r.l<6||r.r>W-6||r.t<6||r.b>maxY-6)return false;
-return !obstacles.some(o=>overlaps(r,o));
-};
+// v32: alleen zoeken binnen het scherm zelf, niet onderaan een lange pagina.
+const W=window.innerWidth,maxY=wallHeight();
+const inside=(x,y)=>x-w/2>=6&&x+w/2<=W-6&&y-h/2>=6&&y+h/2<=maxY-6;
+const fits=(x,y)=>inside(x,y)&&!obstacles.some(o=>overlaps({l:x-w/2,t:y-h/2,r:x+w/2,b:y+h/2},o));
 if(fits(cx,cy))return[cx,cy];
 for(let radius=14;radius<=900;radius+=14){
 const steps=Math.max(12,Math.round(radius/7));
@@ -2630,7 +2628,19 @@ const x=cx+Math.cos(a)*radius,y=cy+Math.sin(a)*radius;
 if(fits(x,y))return[x,y];
 }
 }
-return[cx,cy];
+// Nergens helemaal vrij: dan de plek op het scherm die het minst bedekt (en het dichtst bij de gewenste plek ligt).
+let best=null,bestScore=Infinity;
+for(let y=h/2+6;y<=maxY-h/2-6;y+=16){
+for(let x=w/2+6;x<=W-w/2-6;x+=16){
+const r={l:x-w/2,t:y-h/2,r:x+w/2,b:y+h/2};
+let cover=0;
+obstacles.forEach(o=>{const ow=Math.min(r.r,o.r)-Math.max(r.l,o.l),oh=Math.min(r.b,o.b)-Math.max(r.t,o.t);if(ow>0&&oh>0)cover+=ow*oh});
+const score=cover+Math.hypot(x-cx,y-cy)*2;
+if(score<bestScore){bestScore=score;best=[x,y]}
+}
+}
+if(best)return best;
+return[Math.max(w/2+6,Math.min(W-w/2-6,cx)),Math.max(h/2+6,Math.min(maxY-h/2-6,cy))];
 }
 function briefjeSize(b){
 const base=BRIEFJE_SIZES[b.grootte]||BRIEFJE_SIZES.M;
