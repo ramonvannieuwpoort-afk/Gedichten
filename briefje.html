@@ -13,7 +13,7 @@
 <link rel="icon" type="image/png" sizes="192x192" href="briefje-192.png">
 <link rel="manifest" href="manifest-briefje.webmanifest">
 <title>Briefje</title>
-<!-- Briefje-scherm bij Gedichten, testversie 28 -->
+<!-- Briefje-scherm bij Gedichten, testversie 30 -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Caveat:wght@400;500;600&display=swap" rel="stylesheet">
@@ -38,9 +38,9 @@ body{min-height:100vh}
 .notitie-plek{display:flex;justify-content:center;align-items:center;min-height:300px;margin:6px 0 18px}
 .notitie{position:relative;background:var(--kleur,#f8e7a1);color:var(--inkt,#3b2f1c);transform:rotate(-1.5deg);box-shadow:0 1px 1px rgba(80,60,20,.12),0 10px 22px rgba(80,60,20,.18);transition:width 250ms ease,height 250ms ease,background-color 250ms ease}
 .notitie .plakband{position:absolute;left:50%;top:-11px;width:40%;height:22px;transform:translateX(-50%) rotate(-3deg);background:rgba(255,255,255,.55);pointer-events:none}
-.notitie textarea{position:absolute;inset:0;width:100%;height:100%;padding:calc(var(--f)*.9) calc(var(--f)*.6) calc(var(--f)*1.2);border:0;background:transparent;resize:none;color:inherit;font-family:Caveat,cursive;font-size:var(--f);line-height:1.08;outline:none}
+.notitie textarea{position:absolute;top:0;left:0;width:100%;height:100%;padding:calc(var(--f)*.9) calc(var(--f)*.6) calc(var(--f)*1.2);border:0;background:transparent;resize:none;color:inherit;font-family:Caveat,cursive;font-size:var(--f);line-height:1.08;outline:none}
 .notitie textarea::placeholder{color:currentColor;opacity:.45}
-.notitie canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:crosshair}
+.notitie canvas{position:absolute;top:0;left:0;width:100%;height:100%;touch-action:none;cursor:crosshair}
 .notitie .afzender{position:absolute;left:calc(var(--f)*.6);bottom:calc(var(--f)*.35);font-size:max(12px,calc(var(--f)*.5));opacity:.7;pointer-events:none}
 .teken-gereedschap{display:flex;align-items:center;gap:12px;margin:-6px 0 16px;justify-content:center}
 .pen{width:34px;height:34px;border-radius:50%;border:2px solid transparent;padding:0;cursor:pointer}
@@ -56,7 +56,7 @@ body{min-height:100vh}
 .schakelaar[aria-pressed="true"] .knop::after{left:21px}
 .muur-kader{position:relative;margin:4px auto 8px;border:6px solid #2f2a24;border-radius:14px;overflow:hidden;background:#eee9df;box-shadow:0 8px 22px rgba(40,30,15,.18)}
 .muur-kader iframe{position:absolute;left:0;top:0;width:820px;height:1180px;border:0;transform-origin:0 0;pointer-events:none}
-.muur-sleep{position:absolute;inset:0;touch-action:none;cursor:grab}
+.muur-sleep{position:absolute;top:0;right:0;bottom:0;left:0;touch-action:none;cursor:grab}
 .muur-uitleg{margin:0 0 16px;text-align:center;color:#7d7263;font-size:15px;font-style:italic}
 .tijd{display:block;width:100%;margin-top:8px;border:1px solid rgba(151,133,108,.45);border-radius:3px;padding:9px 10px;background:#fffdf8;color:#302c26;font-family:inherit;font-size:17px}
 .hoofdknop{display:block;width:100%;min-height:52px;margin-top:6px;border:0;border-radius:3px;background:#302c26;color:#f7f4ed;font-family:inherit;font-size:20px;font-weight:500;cursor:pointer}
@@ -271,6 +271,7 @@ window.addEventListener("resize",()=>tekenNotitie());
 function toon(stap){["stapCode","stapSchrijven","stapPlek","stapKlaar"].forEach(id=>$(id).hidden=id!==stap);window.scrollTo(0,0)}
 $("annuleren").addEventListener("click",()=>{
 if(inMuur){window.parent.postMessage({type:"briefje-dicht"},"*");return}
+if(document.referrer&&/index\.html|\/$/.test(new URL(document.referrer).pathname)){location.href="index.html";return}
 if(heeftInhoud()&&!confirm("Dit briefje weggooien?"))return;
 leegmaken();
 });

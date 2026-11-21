@@ -12,7 +12,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#ffffff">
 <title>Gedichten</title>
-<!-- Testversie 29: 21 november 2026 – briefjesknoppen in de kolommen, bestendiger openen -->
+<!-- Testversie 30: 21 november 2026 – briefje-scherm ook op oudere iPads -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Caveat:wght@400;500;600&display=swap" rel="stylesheet">
@@ -126,7 +126,7 @@ body.reading-mode #briefjesLayer{opacity:0;visibility:hidden;transition:opacity 
 .briefje-acties .settings-action{flex:0 1 auto}
 .briefje-acties [hidden]{display:none}
 .prikbord-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px 16px;padding:14px 6px 6px}
-.prikbord-briefje{position:relative;width:100%;height:auto;aspect-ratio:200/176;cursor:default;touch-action:auto}
+.prikbord-briefje{position:relative;width:100%;height:150px;cursor:default;touch-action:auto}
 .prikbord-info{margin-top:10px;color:#887e70;font-size:14px;font-style:italic;line-height:1.3}
 .prikbord-acties{display:flex;gap:12px;margin-top:4px}
 .prikbord-acties button{border:0;border-bottom:1px solid currentColor;padding:2px 0;background:none;color:#8a6845;font-family:inherit;font-size:15px;cursor:pointer}
@@ -140,8 +140,8 @@ body.reading-mode #briefjesLayer{opacity:0;visibility:hidden;transition:opacity 
 .melding{position:fixed;left:50%;bottom:calc(64px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:40000;max-width:min(90vw,520px);padding:10px 16px;border-radius:12px;background:#302c26;color:#f7f4ed;font-size:16px;line-height:1.3;box-shadow:0 6px 20px rgba(35,30,24,.25)}
 .composer-probleem{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(86vw,400px);padding:22px;border-radius:6px;background:#f7f4ed;color:#302c26;font-size:18px;line-height:1.35;text-align:center;box-shadow:0 12px 40px rgba(35,30,24,.25)}
 .composer-probleem .settings-tools{margin-top:16px}
-.composer-overlay{position:fixed;inset:0;z-index:30000;display:flex;align-items:center;justify-content:center;background:rgba(35,30,24,.42)}
-.composer-overlay iframe{width:min(100%,480px);height:min(100%,940px);border:0;border-radius:14px;background:#f7f4ed;box-shadow:0 12px 40px rgba(35,30,24,.25)}
+.composer-overlay{position:fixed;top:0;right:0;bottom:0;left:0;width:100%;height:100%;z-index:30000;display:flex;align-items:center;justify-content:center;background:rgba(35,30,24,.42)}
+.composer-overlay iframe{width:100%;max-width:480px;height:100%;max-height:940px;border:0;border-radius:14px;background:#f7f4ed;box-shadow:0 12px 40px rgba(35,30,24,.25)}
 @media(max-width:600px){.composer-overlay iframe{width:100%;height:100%;border-radius:0}}
 .inbox-row{position:relative}
 .inbox-mark{position:absolute;right:6px;bottom:8px;border:0;padding:6px 4px;background:none;color:#8a6845;font-family:inherit;font-size:13px;font-style:italic;text-decoration:underline;cursor:pointer}
@@ -200,7 +200,7 @@ body.controls-idle .person-inbox-button .inbox-badge{visibility:hidden}
 .poem-enter{animation:poemEnter 900ms ease both}
 /* Stipjes in de marge */
 .note-dot{position:absolute;left:calc(-26px - var(--dot-shift,0) * 13px);width:9px;height:9px;margin-top:-4.5px;padding:0;border:0;border-radius:50%;cursor:pointer;-webkit-tap-highlight-color:transparent;box-shadow:0 0 0 2px rgba(247,244,237,.9)}
-.note-dot::before{content:"";position:absolute;inset:-12px}
+.note-dot::before{content:"";position:absolute;top:-12px;right:-12px;bottom:-12px;left:-12px}
 .note-dot.sanne{background:#b88a54}
 .note-dot.ramon{background:#7895a3}
 .note-dot.unknown{background:#b8ad9d}
@@ -377,7 +377,7 @@ header{margin-bottom:34px}
 <button type="button" class="hand" id="hand2" aria-label="Tweede Hamsa-hand"></button>
 <button type="button" class="hand" id="sentenceHand" aria-label="Wijzende vinger voor regels"></button>
 <button type="button" class="hand" id="wordHand" aria-label="Wijzende vinger voor woorden"></button>
-<div class="test-version" aria-label="Testversie 29">TEST v29</div>
+<div class="test-version" aria-label="Testversie 30">TEST v30</div>
 <button type="button" class="scroll-cue" id="scrollCue" aria-label="Verder lezen" hidden><svg viewBox="0 0 16 40" aria-hidden="true"><path d="M8 2v34M3 30l5 6 5-6"/></svg></button>
 <div class="connection-status" id="connectionStatus" role="status" hidden></div>
 <button type="button" class="reading-mode-button" id="readingModeButton" aria-pressed="false" aria-label="Leesmodus" title="Leesmodus">
@@ -891,7 +891,7 @@ document.addEventListener("visibilitychange",()=>{if(document.visibilityState===
 /* ---------- Automatisch bijwerken ---------- */
 // Als er een nieuwe versie van de site op GitHub staat, laadt de iPad die vanzelf,
 // maar alleen als er niets open staat (dus nooit midden in het schrijven).
-const APP_VERSION="29";
+const APP_VERSION="30";
 let pendingReload=false;
 async function checkForNewVersion(){
 if(location.protocol!=="https:"&&location.hostname!=="localhost")return;
@@ -2799,6 +2799,7 @@ card.append(mini,info,actions);
 grid.appendChild(card);
 });
 prikbordList.appendChild(grid);
+requestAnimationFrame(()=>grid.querySelectorAll(".prikbord-briefje").forEach(el=>{el.style.height=Math.round(el.offsetWidth*0.88)+"px"}));
 }
 function openPrikbord(){closePoemMenu();renderPrikbord();prikbordBackdrop.classList.add("visible");prikbordBackdrop.setAttribute("aria-hidden","false")}
 function closePrikbord(){prikbordBackdrop.classList.remove("visible");prikbordBackdrop.setAttribute("aria-hidden","true")}
@@ -2848,7 +2849,7 @@ setTimeout(()=>openBriefje(target),700);
 /* Schrijven: het briefje-scherm opent als laag over de muur */
 let composerOverlay=null;
 function openComposer(params={}){
-if(composerOverlay)return;
+if(composerOverlay)closeComposer();
 const query=new URLSearchParams(Object.assign({inMuur:"1"},params));
 const poem=currentPoem();
 if(poem&&poem.id)query.set("gedicht",poem.id);
@@ -2859,6 +2860,13 @@ frame.src="briefje.html?"+query.toString();
 frame.title="Briefje schrijven";
 composerOverlay.appendChild(frame);
 document.body.appendChild(composerOverlay);
+// Controle: staat het venster echt zichtbaar op het scherm? Zo niet, open dan als gewone pagina.
+setTimeout(()=>{
+if(!composerOverlay)return;
+const r=composerOverlay.getBoundingClientRect(),f=frame.getBoundingClientRect();
+const visible=r.width>200&&r.height>200&&f.height>200&&r.top<window.innerHeight&&r.bottom>0;
+if(!visible){closeComposer();location.href="briefje.html"+(params.antwoordOp?"?antwoordOp="+encodeURIComponent(params.antwoordOp):"")}
+},600);
 frame.addEventListener("load",()=>{
 let title="";
 try{title=frame.contentDocument?frame.contentDocument.title:""}catch(e){title="Briefje"}
