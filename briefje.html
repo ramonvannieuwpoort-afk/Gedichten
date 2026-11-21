@@ -13,10 +13,11 @@
 <link rel="icon" type="image/png" sizes="192x192" href="briefje-192.png">
 <link rel="manifest" href="manifest-briefje.webmanifest">
 <title>Briefje</title>
-<!-- Briefje-scherm bij Gedichten, testversie 30 -->
+<!-- Briefje-scherm bij Gedichten, testversie 36: standaard "Overal" -->
+<meta name="briefje-versie" content="36">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Caveat:wght@400;500;600&display=swap" rel="stylesheet" crossorigin="anonymous" media="print" onload="this.media=\'all\'"><noscript><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Caveat:wght@400;500;600&display=swap" rel="stylesheet"></noscript>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Caveat:wght@400;500;600&display=swap" rel="stylesheet" crossorigin="anonymous" media="print" onload="this.media='all'"><noscript><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Caveat:wght@400;500;600&display=swap" rel="stylesheet"></noscript>
 <style>
 *{box-sizing:border-box}
 html,body{margin:0;background:#f7f4ed;color:#302c26;font-family:'Cormorant Garamond',Georgia,serif;-webkit-text-size-adjust:100%}
@@ -154,7 +155,7 @@ const ander=p=>p==="Sanne"?"Ramon":p==="Ramon"?"Sanne":"Ons";
 const state={
 van:eigenaar()||localStorage.getItem("briefje_van")||"",
 voor:"Ons",kleur:"geel",grootte:antwoordOp?"S":"M",modus:"typen",envelop:false,
-pen:0,streken:[],x:0.82,y:0.4,plaatsing:"naast",blijft:"altijd",verschijnt:"nu",
+pen:0,streken:[],x:0.82,y:0.4,plaatsing:"overal",blijft:"altijd",verschijnt:"nu",
 draai:Math.round((Math.random()*8-4)*10)/10
 };
 state.voor=ander(state.van);
@@ -173,7 +174,7 @@ function vernieuwKeuzes(){
 segmented($("vanKeuze"),[["Ramon","Ramon"],["Sanne","Sanne"]],()=>state.van,v=>{state.van=v;localStorage.setItem("briefje_van",v);if(!antwoordOp)state.voor=ander(v);vernieuwKeuzes();tekenNotitie()});
 segmented($("modusKeuze"),[["typen","Typen"],["schrijven","Met je vinger schrijven"]],()=>state.modus,v=>{state.modus=v;tekenNotitie()});
 segmented($("grootteKeuze"),[["S","Klein"],["M","Middel"],["L","Groot"]],()=>state.grootte,v=>{state.grootte=v;tekenNotitie()});
-segmented($("plaatsingKeuze"),[["naast","Naast het gedicht"],["overal","Overal"]],()=>state.plaatsing,v=>{state.plaatsing=v;stuurConcept(false)});
+segmented($("plaatsingKeuze"),[["overal","Overal"],["naast","Naast het gedicht"]],()=>state.plaatsing,v=>{state.plaatsing=v;stuurConcept(false)});
 segmented($("voorKeuze"),[[ander(state.van)==="Ons"?"Sanne":ander(state.van),ander(state.van)==="Ons"?"Sanne":ander(state.van)],["Ons","Ons allebei"]],()=>state.voor,v=>{state.voor=v;stuurConcept(false)});
 segmented($("blijftKeuze"),[["gelezen","Tot gelezen"],["vandaag","Vandaag"],["altijd","Tot ik hem weghaal"]],()=>state.blijft,v=>{state.blijft=v});
 segmented($("verschijntKeuze"),[["nu","Nu"],["morgen","Morgen 07:00"],["kies","Kies tijd"]],()=>state.verschijnt,v=>{state.verschijnt=v;$("tijdKeuze").hidden=v!=="kies"});
