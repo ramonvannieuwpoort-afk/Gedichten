@@ -12,10 +12,10 @@
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#ffffff">
 <title>Gedichten</title>
-<!-- Testversie 31: 21 november 2026 – één parapluknop voor alle knoppen -->
+<!-- Testversie 32: 21 november 2026 – sneller en soepeler (één ophaalbeurt, lettertypes, schaduw, hartslag) -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Caveat:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Caveat:wght@400;500;600&display=swap" rel="stylesheet" crossorigin="anonymous" media="print" onload="this.media=\'all\'"><noscript><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Caveat:wght@400;500;600&display=swap" rel="stylesheet"></noscript>
 <meta name="robots" content="noindex,nofollow">
 <style>
 *{box-sizing:border-box}
@@ -55,7 +55,10 @@ button{font-family:inherit}
 #hand2 .hand-icon{transform:rotate(-60deg)}
 .hand.dragging{cursor:grabbing}
 /* Optillen bij slepen: iets groter met een zachte schaduw */
-.hand{will-change:transform;filter:drop-shadow(var(--sx,.5px) var(--sy,1.25px) var(--sb,1.5px) rgba(55,40,25,var(--sa,.16)))}
+.hand{will-change:transform}
+/* v32: schaduw is een vooraf vervaagde kopie die alleen schuift en vervaagt (veel lichter dan een filter dat elk beeldje opnieuw wordt berekend) */
+.hand-schaduw{position:absolute;top:0;left:0;right:0;bottom:0;z-index:-1;pointer-events:none;display:flex;align-items:center;justify-content:center;filter:brightness(0) blur(2.2px);opacity:.14;transform:translate3d(.5px,1.25px,0);will-change:transform,opacity}
+.hand-schaduw svg{pointer-events:none}
 .hand-hint{margin-top:18px;font-size:15px;color:#a09688;text-align:center;font-style:italic}
 .test-version{position:fixed;left:14px;bottom:calc(202px + env(safe-area-inset-bottom));z-index:10001;color:#9b9183;font-family:Georgia,serif;font-size:11px;letter-spacing:.08em;opacity:.78;pointer-events:none;user-select:none}
 .reset-hands-button{position:fixed;right:14px;bottom:calc(58px + env(safe-area-inset-bottom));z-index:10002;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(151,133,108,.38);border-radius:50%;padding:0;background:rgba(247,244,237,.94);color:#766b5d;font-family:Georgia,serif;font-size:30px;font-weight:400;line-height:1;padding:0 0 2px;box-shadow:0 2px 9px rgba(55,45,32,.09);cursor:pointer;-webkit-tap-highlight-color:transparent}
@@ -399,7 +402,7 @@ body.embed .paraplu,body.embed .paraplu-scherm{display:none!important}
 <button type="button" class="hand" id="hand2" aria-label="Tweede Hamsa-hand"></button>
 <button type="button" class="hand" id="sentenceHand" aria-label="Wijzende vinger voor regels"></button>
 <button type="button" class="hand" id="wordHand" aria-label="Wijzende vinger voor woorden"></button>
-<div class="test-version" aria-label="Testversie 30">TEST v31</div>
+<div class="test-version" aria-label="Testversie 30">TEST v32</div>
 <div class="paraplu-scherm" id="parapluScherm" aria-hidden="true"></div>
 <button type="button" class="paraplu" id="parapluKnop" aria-label="Meer knoppen" aria-expanded="false" title="Meer"><span class="paraplu-stip" id="parapluStip" hidden></span></button>
 <button type="button" class="scroll-cue" id="scrollCue" aria-label="Verder lezen" hidden><svg viewBox="0 0 16 40" aria-hidden="true"><path d="M8 2v34M3 30l5 6 5-6"/></svg></button>
@@ -547,6 +550,19 @@ try{if(typeof openPrikbord==="function"){openPrikbord();return}}catch(e){melding
 </div>
 
 <script>
+/* v32: één hartslag voor alle terugkerende klusjes. Staat het scherm uit of is de site
+   niet zichtbaar, dan rust alles; bij terugkomen wordt meteen bijgewerkt wat achterliep. */
+const hartslagTaken=[];
+function hartslag(ms,fn){hartslagTaken.push({ms,fn,laatst:Date.now()})}
+function hartslagTik(){
+if(document.visibilityState==="hidden")return;
+const nu=Date.now();
+hartslagTaken.forEach(t=>{if(nu-t.laatst>=t.ms-500){t.laatst=nu;try{t.fn()}catch(e){console.error(e)}}});
+}
+setInterval(hartslagTik,10000);
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")setTimeout(hartslagTik,300)});
+</script>
+<script>
 function buildHamsaIcon(){
 const ns="http://www.w3.org/2000/svg";
 const svg=document.createElementNS(ns,"svg");
@@ -639,6 +655,12 @@ return svg;
 }
 document.getElementById("sentenceHand").appendChild(buildFingerIcon(1));
 document.getElementById("wordHand").appendChild(buildFingerIcon(-1));
+document.querySelectorAll("#hand1,#hand2,#sentenceHand,#wordHand").forEach(hand=>{
+const icon=hand.querySelector("svg");if(!icon)return;
+const schaduw=document.createElement("div");schaduw.className="hand-schaduw";schaduw.setAttribute("aria-hidden","true");
+const kopie=icon.cloneNode(true);kopie.querySelectorAll("[id]").forEach(n=>n.removeAttribute("id"));
+schaduw.appendChild(kopie);hand.insertBefore(schaduw,icon);
+});
 
 const NOTES_URL="https://script.google.com/macros/s/AKfycbximcSly2Yp2TyiIzJWdNZ2gt5QcQ5Is9rf4ITK3SHQfMaWQH6NCAUGYMw3kgJvHl36kQ/exec";
 const ACCESS_STORAGE_KEY="gedichten_access_token";
@@ -690,7 +712,7 @@ function ensureFont(key){
 const font=FONTS[key];
 if(!font||!font.css||document.querySelector(`link[data-font="${key}"]`))return;
 const link=document.createElement("link");
-link.rel="stylesheet";link.href=font.css;link.dataset.font=key;
+link.rel="stylesheet";link.crossOrigin="anonymous";link.href=font.css;link.dataset.font=key;
 document.head.appendChild(link);
 }
 // Lettertype, regelafstand en uitlijning toepassen.
@@ -782,7 +804,7 @@ return dailyIndexForPeriod(periodIndex());
 }
 let lastInteraction=Date.now();
 // Elke halve minuut: is er een nieuwe periode, of moet het daggedicht terugkomen?
-setInterval(()=>{
+hartslag(30000,()=>{
 if(!poems.length||isBusy())return;
 const key=currentPeriodKey();
 if(key!==lastDailyKey){lastDailyKey=key;resetHandsToEdges();show(getDailyPoemIndex(),true);return}
@@ -790,7 +812,7 @@ if(settings.returnAfter>0&&settings.rotation!=="handmatig"&&Date.now()-lastInter
 const daily=getDailyPoemIndex();
 if(daily!==currentIndex){resetHandsToEdges();show(daily,true)}
 }
-},30000);
+});
 
 
 function findColumn(row,possibleNames){
@@ -818,13 +840,14 @@ return;
 }
 lastLoadAttempt=Date.now();
 try{
-const data=await jsonpRequest({action:"poems"});
+const data=await jsonpRequest({action:"poems",ook:"alles"});
 const list=(Array.isArray(data.poems)?data.poems:[]).map(row=>({id:String(row.id||""),favorite:!!row.favoriet,title:String(row.titel||""),author:String(row.dichter||""),poem:String(row.gedicht||""),addedBy:String(row.toegevoegdDoor||""),addedOn:String(row.toegevoegdOp||"")})).filter(item=>item.poem.trim());
 applyPoems(list);
 writeCache({poems:list});
 setConnectionStatus(true);
-loadAllNotes();
-loadBriefjes();
+// Nieuw Apps Script (v13) stuurt aantekeningen en briefjes meteen mee; een ouder script niet.
+if(Array.isArray(data.notes))applyAllNotes(data);else loadAllNotes();
+if(Array.isArray(data.briefjes))applyBriefjes(data);else loadBriefjes();
 if(!isEmbed)checkForNewVersion();
 }catch(error){
 console.error(error);
@@ -915,7 +938,7 @@ document.addEventListener("visibilitychange",()=>{if(document.visibilityState===
 /* ---------- Automatisch bijwerken ---------- */
 // Als er een nieuwe versie van de site op GitHub staat, laadt de iPad die vanzelf,
 // maar alleen als er niets open staat (dus nooit midden in het schrijven).
-const APP_VERSION="31";
+const APP_VERSION="32";
 let pendingReload=false;
 async function checkForNewVersion(){
 if(location.protocol!=="https:"&&location.hostname!=="localhost")return;
@@ -1067,12 +1090,14 @@ else renderSavedNotes();
 async function loadAllNotes(){
 if(!localStorage.getItem(ACCESS_STORAGE_KEY))return;
 try{
-const data=await jsonpRequest({action:"allnotes"});
+applyAllNotes(await jsonpRequest({action:"allnotes"}));
+}catch(error){console.error("Aantekeningen konden niet worden opgehaald.",error)}
+}
+function applyAllNotes(data){
 notesRaw=Array.isArray(data.notes)?data.notes:[];
 writeCache({notes:notesRaw});
 computeNotesForCurrentPoem();
 rebuildInbox();
-}catch(error){console.error("Aantekeningen konden niet worden opgehaald.",error)}
 }
 
 /* ---------- R/S-knoppen: nieuwe aantekeningen, reacties en gedichten per persoon ---------- */
@@ -1373,6 +1398,8 @@ if(Math.abs(window.innerWidth-lastWidth)>2||Math.abs(window.innerHeight-lastHeig
 else positionNoteDots();
 });
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(scheduleFit);
+// Lettertypes laden nu op de achtergrond: als ze binnen zijn, de tekst opnieuw passend maken.
+if(document.fonts&&document.fonts.addEventListener)document.fonts.addEventListener("loadingdone",()=>scheduleFit());
 
 // 4. Datum boven de titel.
 const poemDateElement=document.getElementById("poemDate");
@@ -1380,7 +1407,7 @@ function updateDateLine(){
 poemDateElement.textContent=new Date().toLocaleDateString("nl-NL",{weekday:"long",day:"numeric",month:"long"});
 }
 updateDateLine();
-setInterval(updateDateLine,60*1000);
+hartslag(60*1000,updateDateLine);
 
 // 5. Zacht overvloeien bij een ander gedicht.
 const pageContent=[document.querySelector("header"),poemElement];
@@ -1729,8 +1756,8 @@ const sy=q(Math.max(0.5,1.2+7*h-0.55*press)),sb=q(Math.max(0.75,1.6+9*h-0.7*pres
 const key=sx+"|"+sy+"|"+sb+"|"+sa;
 if(key!==state.shadowKey){
 state.shadowKey=key;
-el.style.setProperty("--sx",sx+"px");el.style.setProperty("--sy",sy+"px");
-el.style.setProperty("--sb",sb+"px");el.style.setProperty("--sa",sa);
+const sh=state.shadowEl||(state.shadowEl=el.querySelector(".hand-schaduw"));
+if(sh){sh.style.transform=`translate3d(${sx}px,${sy}px,0) scale(${(1+(sb-1.6)*0.012).toFixed(3)})`;sh.style.opacity=(sa*0.85).toFixed(3)}
 }
 }
 function spring(value,velocity,target,k,zeta,dt){
@@ -2844,7 +2871,10 @@ writeCache({briefjes});
 async function loadBriefjes(){
 if(!localStorage.getItem(ACCESS_STORAGE_KEY))return;
 try{
-const data=await jsonpRequest({action:"briefjes"});
+applyBriefjes(await jsonpRequest({action:"briefjes"}));
+}catch(error){console.error("Briefjes konden niet worden opgehaald.",error)}
+}
+function applyBriefjes(data){
 const fresh=Array.isArray(data.briefjes)?data.briefjes:[];
 // Wat je net zelf versleept, niet terug laten springen.
 if(draggingBriefje){const d=briefjes.find(b=>b.id===draggingBriefje.id);const i=fresh.findIndex(b=>b.id===draggingBriefje.id);if(d&&i!==-1)fresh[i]=d}
@@ -2853,10 +2883,10 @@ writeCache({briefjes});
 renderBriefjes();
 rebuildInbox();
 if(prikbordBackdrop.classList.contains("visible"))renderPrikbord();
-}catch(error){console.error("Briefjes konden niet worden opgehaald.",error)}
+if(window.parapluStipje)window.parapluStipje();
 }
-setInterval(()=>{if(document.visibilityState==="visible"&&!isEmbed)loadBriefjes()},60000);
-setInterval(()=>{if(!draggingBriefje)renderBriefjes()},30000);
+hartslag(60000,()=>{if(!isEmbed&&Date.now()-lastLoadAttempt>30000)loadBriefjes()});
+hartslag(30000,()=>{if(!draggingBriefje)renderBriefjes()});
 
 // Naar een briefje toe (vanuit het R/S-venster).
 function goToBriefje(id){
@@ -3045,7 +3075,7 @@ applyLookSettings();
 
 startFromCache();
 loadPoems();
-setInterval(loadPoems,5*60*1000);
+hartslag(5*60*1000,()=>{if(Date.now()-lastLoadAttempt>60000)loadPoems()});
 </script>
 <script>
 /* v31: parapluknop */
@@ -3087,7 +3117,8 @@ const lijst=(typeof briefjes!=="undefined"&&Array.isArray(briefjes))?briefjes:[]
 stip.hidden=!lijst.some(b=>b&&b.status==="prikbord"&&!b.gelezenOp&&ik&&String(b.persoon||"").toLowerCase()!==ik.toLowerCase()&&(!b.voor||b.voor==="Ons"||String(b.voor).toLowerCase()===ik.toLowerCase()));
 }catch(e){stip.hidden=true}
 }
-stipje();setInterval(stipje,5000);
+stipje();if(typeof hartslag==="function")hartslag(10000,stipje);else setInterval(stipje,10000);
+window.parapluStipje=stipje;
 })();
 </script>
 </body>
