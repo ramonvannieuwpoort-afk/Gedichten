@@ -12,7 +12,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#ffffff">
 <title>Gedichten</title>
-<!-- Testversie 36: 21 november 2026 – één versienummer voor de hele site; label controleert ook briefje.html -->
+<!-- Versie 1.0: 21 november 2026 -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Caveat:wght@400;500;600&display=swap" rel="stylesheet" crossorigin="anonymous" media="print" onload="this.media='all'"><noscript><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Caveat:wght@400;500;600&display=swap" rel="stylesheet"></noscript>
@@ -402,7 +402,7 @@ body.embed .paraplu,body.embed .paraplu-scherm{display:none!important}
 <button type="button" class="hand" id="hand2" aria-label="Tweede Hamsa-hand"></button>
 <button type="button" class="hand" id="sentenceHand" aria-label="Wijzende vinger voor regels"></button>
 <button type="button" class="hand" id="wordHand" aria-label="Wijzende vinger voor woorden"></button>
-<div class="test-version" id="testVersie" aria-label="Testversie">TEST v36</div>
+<div class="test-version" id="testVersie" aria-label="Versie" hidden></div>
 <div class="paraplu-scherm" id="parapluScherm" aria-hidden="true"></div>
 <button type="button" class="paraplu" id="parapluKnop" aria-label="Meer knoppen" aria-expanded="false" title="Meer"><span class="paraplu-stip" id="parapluStip" hidden></span></button>
 <button type="button" class="scroll-cue" id="scrollCue" aria-label="Verder lezen" hidden><svg viewBox="0 0 16 40" aria-hidden="true"><path d="M8 2v34M3 30l5 6 5-6"/></svg></button>
@@ -938,7 +938,7 @@ document.addEventListener("visibilitychange",()=>{if(document.visibilityState===
 /* ---------- Automatisch bijwerken ---------- */
 // Als er een nieuwe versie van de site op GitHub staat, laadt de iPad die vanzelf,
 // maar alleen als er niets open staat (dus nooit midden in het schrijven).
-const APP_VERSION="36";
+const APP_VERSION="1.0";
 let pendingReload=false;
 async function checkForNewVersion(){
 if(location.protocol!=="https:"&&location.hostname!=="localhost")return;
@@ -3075,7 +3075,7 @@ location.reload();
 });
 tools.append(code,update);
 toolsRow.appendChild(tools);
-const version=document.createElement("div");version.className="setting-hint";version.textContent="Testversie "+APP_VERSION;
+const version=document.createElement("div");version.className="setting-hint";version.textContent="Versie "+APP_VERSION+(window.briefjeVersie&&window.briefjeVersie!==APP_VERSION?" (briefje-scherm: v"+window.briefjeVersie+")":"");version.id="instellingenVersie";
 toolsRow.appendChild(version);
 settingsList.scrollTop=scroll;
 }
@@ -3135,14 +3135,15 @@ window.parapluStipje=stipje;
 })();
 </script>
 <script>
-/* v36: één versienummer voor de hele site. Het label linksonder controleert ook of briefje.html al dezelfde versie heeft. */
+/* Versie: staat bij Instellingen. Alleen als briefje.html een andere versie heeft, verschijnt er linksonder een rode melding. */
 (function(){
 const label=document.getElementById("testVersie");if(!label||typeof APP_VERSION==="undefined")return;
-label.textContent="TEST v"+APP_VERSION;
 fetch("briefje.html?versie="+Date.now(),{cache:"no-store"}).then(r=>r.ok?r.text():"").then(t=>{
 const m=t.match(/name="briefje-versie" content="([^"]+)"/);
 const bv=m?m[1]:"?";
-if(bv!==APP_VERSION){label.textContent="TEST v"+APP_VERSION+" · briefje v"+bv;label.style.color="#c0392b";label.style.opacity="1"}
+window.briefjeVersie=bv;
+if(bv!==APP_VERSION){label.textContent="v"+APP_VERSION+" · briefje v"+bv;label.style.color="#c0392b";label.style.opacity="1";label.hidden=false}
+const inst=document.getElementById("instellingenVersie");if(inst)inst.textContent="Versie "+APP_VERSION+(bv!==APP_VERSION?" (briefje-scherm: v"+bv+")":"");
 }).catch(()=>{});
 })();
 </script>
