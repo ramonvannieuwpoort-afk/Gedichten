@@ -3,8 +3,9 @@
 // doorkomen) en alleen uit de opslag gehaald als er geen verbinding is.
 // Gedichten en aantekeningen bewaart de site zelf; die gaan hier niet doorheen.
 
-const CACHE = 'gedichten-v1';
-const ASSETS = ['./', './index.html', './manifest.webmanifest', './apple-touch-icon.png', './icon-192.png', './icon-512.png'];
+const CACHE = 'gedichten-v2';
+const ASSETS = ['./', './index.html', './manifest.webmanifest', './apple-touch-icon.png', './icon-192.png', './icon-512.png',
+  './briefje.html', './manifest-briefje.webmanifest', './briefje-icon.png', './briefje-192.png', './briefje-512.png'];
 
 self.addEventListener('install', event => {
   event.waitUntil(
@@ -31,17 +32,18 @@ self.addEventListener('fetch', event => {
   const isPage = request.mode === 'navigate' || url.pathname.endsWith('/') || url.pathname.endsWith('.html');
 
   if (isPage) {
-    // Eerst internet, anders de bewaarde versie.
+    // Eerst internet, anders de bewaarde versie (de gedichten of het briefje-scherm).
+    const key = url.pathname.endsWith('briefje.html') ? './briefje.html' : './index.html';
     event.respondWith(
       fetch(request)
         .then(response => {
           if (response.ok) {
             const copy = response.clone();
-            caches.open(CACHE).then(cache => cache.put('./index.html', copy));
+            caches.open(CACHE).then(cache => cache.put(key, copy));
           }
           return response;
         })
-        .catch(() => caches.match('./index.html').then(cached => cached || caches.match('./')))
+        .catch(() => caches.match(key).then(cached => cached || caches.match('./')))
     );
     return;
   }

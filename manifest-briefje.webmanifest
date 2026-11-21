@@ -1,0 +1,17 @@
+{
+  "id": "./briefje.html",
+  "name": "Briefje",
+  "short_name": "Briefje",
+  "lang": "nl",
+  "start_url": "./briefje.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f7f4ed",
+  "theme_color": "#f7f4ed",
+  "icons": [
+    { "src": "briefje-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "briefje-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "briefje-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

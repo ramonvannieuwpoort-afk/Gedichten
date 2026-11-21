@@ -12,10 +12,10 @@
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#ffffff">
 <title>Gedichten</title>
-<!-- Testversie 27: 17 november 2026 – compacte lettertypekeuze, schuifje in het midden -->
+<!-- Testversie 28: 21 november 2026 – briefjes op de muur, weer als nieuw markeren -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Caveat:wght@400;500;600&display=swap" rel="stylesheet">
 <meta name="robots" content="noindex,nofollow">
 <style>
 *{box-sizing:border-box}
@@ -95,6 +95,56 @@ button{font-family:inherit}
 .settings-tools{display:flex;gap:10px;flex-wrap:wrap}
 .settings-action{flex:1;min-height:40px;border:1px solid rgba(151,133,108,.45);border-radius:3px;padding:8px 12px;background:#fffdf8;color:#5f5547;font-family:inherit;font-size:16px;cursor:pointer}
 .settings-action:disabled{opacity:.6;cursor:wait}
+/* Briefjes */
+#briefjesLayer{position:absolute;left:0;top:0;width:0;height:0;z-index:9000;transition:opacity 500ms cubic-bezier(.4,0,.2,1),visibility 0s}
+body.reading-mode #briefjesLayer{opacity:0;visibility:hidden;transition:opacity 500ms cubic-bezier(.4,0,.2,1),visibility 0s linear 500ms}
+.briefje{position:absolute;box-sizing:border-box;padding:calc(var(--briefje-font,25px)*.9) calc(var(--briefje-font,25px)*.6) calc(var(--briefje-font,25px)*.4);background:var(--briefje-kleur,#f8e7a1);color:var(--briefje-inkt,#3b2f1c);transform:rotate(var(--draai,0deg));box-shadow:0 1px 1px rgba(80,60,20,.12),0 8px 18px rgba(80,60,20,.18);display:flex;flex-direction:column;justify-content:space-between;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;transition:box-shadow 250ms ease,transform 250ms ease,opacity 300ms ease;font-family:'Cormorant Garamond',Georgia,serif}
+.briefje.lifted{cursor:grabbing;transform:rotate(var(--draai,0deg)) scale(1.05);box-shadow:0 2px 2px rgba(80,60,20,.1),0 20px 32px rgba(80,60,20,.26);z-index:2}
+.briefje:focus-visible{outline:2px solid #a77c48;outline-offset:4px}
+.briefje-tape{position:absolute;left:50%;top:calc(var(--briefje-font,25px)*-.4);width:40%;height:calc(var(--briefje-font,25px)*.85);transform:translateX(-50%) rotate(-3deg);background:rgba(255,255,255,.55)}
+.briefje-body{flex:1;min-height:0;overflow:hidden;display:flex;flex-direction:column;gap:4px}
+.briefje-tekst{font-family:Caveat,cursive;font-size:var(--briefje-font,25px);line-height:1.08;white-space:pre-wrap;overflow-wrap:anywhere}
+.briefje-tekening{width:100%;flex:1 1 0;min-height:0}
+.briefje-meta{display:flex;justify-content:space-between;align-items:center;gap:6px;margin-top:4px;font-size:max(11px,calc(var(--briefje-font,25px)*.5));opacity:.78;white-space:nowrap}
+.briefje-status{position:absolute;top:calc(var(--briefje-font,25px)*.28);right:calc(var(--briefje-font,25px)*.4);display:flex;align-items:center;gap:4px;font-size:max(11px,calc(var(--briefje-font,25px)*.46))}
+.briefje-dot{width:7px;height:7px;border-radius:50%;background:#c9332a}
+.briefje-flap{position:absolute;left:0;top:0;width:100%;height:58%}
+.briefje-flap path{fill:none;stroke:rgba(0,0,0,.22);stroke-width:1;vector-effect:non-scaling-stroke}
+.briefje-voor{position:absolute;left:0;right:0;bottom:30%;text-align:center;font-family:Caveat,cursive;font-size:calc(var(--briefje-font,25px)*1.05)}
+.briefje-hint{position:absolute;left:0;right:0;bottom:11%;text-align:center;font-size:max(11px,calc(var(--briefje-font,25px)*.5));font-style:italic;opacity:.75}
+.briefje.ghost{opacity:.55;outline:1.5px dashed rgba(0,0,0,.28);outline-offset:3px}
+.briefje.draft{outline:2px solid #a77c48;outline-offset:4px}
+.briefje.reply{box-shadow:0 1px 1px rgba(30,40,60,.12),0 6px 14px rgba(30,40,60,.2)}
+.briefje-flash{animation:briefjeFlash 1.6s ease}
+@keyframes briefjeFlash{0%,40%{outline:3px solid rgba(255,190,70,.9);outline-offset:4px}100%{outline:3px solid rgba(255,190,70,0);outline-offset:12px}}
+.briefje-modal{max-width:440px;text-align:center}
+.briefje-groot{position:relative;width:min(300px,68vw);height:calc(min(300px,68vw)*.88);margin:16px auto 22px;cursor:default;touch-action:auto}
+.briefje-gelezen{margin:-10px 0 12px;color:#8a6845;font-size:16px;font-style:italic}
+.briefje-antwoorden{margin:0 0 12px;font-size:17px}
+.briefje-antwoord-regel{margin:4px 0;font-family:Caveat,cursive;font-size:22px}
+.briefje-acties{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:6px}
+.briefje-acties .settings-action{flex:0 1 auto}
+.briefje-acties [hidden]{display:none}
+.prikbord-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px 16px;padding:14px 6px 6px}
+.prikbord-briefje{position:relative;width:100%;height:auto;aspect-ratio:200/176;cursor:default;touch-action:auto}
+.prikbord-info{margin-top:10px;color:#887e70;font-size:14px;font-style:italic;line-height:1.3}
+.prikbord-acties{display:flex;gap:12px;margin-top:4px}
+.prikbord-acties button{border:0;border-bottom:1px solid currentColor;padding:2px 0;background:none;color:#8a6845;font-family:inherit;font-size:15px;cursor:pointer}
+.briefje-button{position:fixed;left:50%;margin-left:-20px;bottom:calc(10px + env(safe-area-inset-bottom));z-index:10002;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(167,124,72,.55);border-radius:50%;padding:0;background:#fbf3d2;color:#8a6845;box-shadow:0 2px 9px rgba(55,45,32,.09);cursor:pointer;-webkit-tap-highlight-color:transparent}
+.briefje-button svg{width:21px;height:21px;display:block}
+.briefje-button:active{transform:translateY(1px)}
+.briefje-button:focus-visible{outline:2px solid #887e70;outline-offset:3px}
+@media(max-width:600px){.briefje-button{bottom:calc(7px + env(safe-area-inset-bottom));width:38px;height:38px;margin-left:-19px}}
+.composer-overlay{position:fixed;inset:0;z-index:30000;display:flex;align-items:center;justify-content:center;background:rgba(35,30,24,.42)}
+.composer-overlay iframe{width:min(100%,480px);height:min(100%,940px);border:0;border-radius:14px;background:#f7f4ed;box-shadow:0 12px 40px rgba(35,30,24,.25)}
+@media(max-width:600px){.composer-overlay iframe{width:100%;height:100%;border-radius:0}}
+.inbox-row{position:relative}
+.inbox-mark{position:absolute;right:6px;bottom:8px;border:0;padding:6px 4px;background:none;color:#8a6845;font-family:inherit;font-size:13px;font-style:italic;text-decoration:underline;cursor:pointer}
+.inbox-mark:disabled{text-decoration:none;opacity:.8;cursor:default}
+.inbox-undo{border:0;padding:0;background:none;color:#8a6845;font-family:inherit;font-size:inherit;font-style:italic;text-decoration:underline;cursor:pointer}
+/* Voorbeeld van de muur in het briefje-scherm */
+body.embed .hand,body.embed .hand-hint,body.embed .hint-info-button,body.embed .navigation,body.embed .test-version,body.embed .poem-menu-button,body.embed .settings-button,body.embed .reset-hands-button,body.embed .person-inbox-button,body.embed .reading-mode-button,body.embed .briefje-button,body.embed .scroll-cue,body.embed .connection-status,body.embed .paper-dent{display:none!important}
+body.embed #briefjesLayer{pointer-events:none}
 /* Gecentreerde gedichten */
 body.align-center .poem{text-align:center}
 body.align-center .poem-paragraph{transform-origin:center center}
@@ -128,7 +178,7 @@ body.align-center .poem-paragraph{transform-origin:center center}
 body.reading-mode .ornament .favorite-button{opacity:0;visibility:hidden;pointer-events:none;transition:opacity 500ms cubic-bezier(.4,0,.2,1),visibility 0s linear 500ms,color 200ms ease}
 body.reading-mode .ornament-diamond{opacity:1}
 /* Na een minuut zonder aanraking vervagen de knoppen (eerste tik maakt ze weer zichtbaar) */
-body.controls-idle .hand,body.controls-idle .hand-hint,body.controls-idle .hint-info-button,body.controls-idle .navigation,body.controls-idle .test-version,body.controls-idle .poem-menu-button,body.controls-idle .settings-button,body.controls-idle .reset-hands-button,body.controls-idle .person-inbox-button,body.controls-idle .reading-mode-button{opacity:0;visibility:hidden;pointer-events:none;transition:opacity 500ms cubic-bezier(.4,0,.2,1),visibility 0s linear 500ms}
+body.controls-idle .hand,body.controls-idle .hand-hint,body.controls-idle .hint-info-button,body.controls-idle .navigation,body.controls-idle .test-version,body.controls-idle .poem-menu-button,body.controls-idle .settings-button,body.controls-idle .briefje-button,body.controls-idle .reset-hands-button,body.controls-idle .person-inbox-button,body.controls-idle .reading-mode-button{opacity:0;visibility:hidden;pointer-events:none;transition:opacity 500ms cubic-bezier(.4,0,.2,1),visibility 0s linear 500ms}
 body.controls-idle .person-inbox-button .inbox-badge{visibility:hidden}
 /* Datum, ornament en overvloeien */
 .poem-date{margin:0 0 12px;color:#a3957f;font-size:14px;letter-spacing:.2em;text-transform:uppercase}
@@ -153,10 +203,10 @@ body.controls-idle .person-inbox-button .inbox-badge{visibility:hidden}
 .hand-hint.collapsed{display:none}
 .hint-info-button{display:block;margin:22px auto 0;width:26px;height:26px;border:1px solid rgba(151,133,108,.45);border-radius:50%;padding:0;background:transparent;color:#a09688;font-family:Georgia,serif;font-size:15px;font-style:italic;line-height:24px;cursor:pointer}
 .hint-info-button[hidden]{display:none}
-.scroll-cue{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:10001;width:30px;height:46px;padding:4px 7px;border:0;background:none;color:#a89c8a;opacity:.55;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.scroll-cue{position:fixed;left:50%;bottom:calc(58px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:10001;width:30px;height:46px;padding:4px 7px;border:0;background:none;color:#a89c8a;opacity:.55;cursor:pointer;-webkit-tap-highlight-color:transparent}
 .scroll-cue svg{display:block;width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1;stroke-linecap:round;stroke-linejoin:round}
 .scroll-cue[hidden]{display:none}
-.scroll-cue:has(+.connection-status:not([hidden])){bottom:calc(46px + env(safe-area-inset-bottom))}
+.scroll-cue:has(+.connection-status:not([hidden])){bottom:calc(92px + env(safe-area-inset-bottom))}
 body.reading-mode .connection-status{display:none}
 .poem-menu-filter{flex:0 0 auto;display:flex;gap:0;margin:0 0 10px;border:1px solid rgba(151,133,108,.45);border-radius:3px;overflow:hidden}
 .poem-menu-filter button{flex:1;border:0;padding:8px 10px;background:transparent;color:#776d60;font-family:inherit;font-size:17px;cursor:pointer}
@@ -177,7 +227,7 @@ body.reading-mode .connection-status{display:none}
 .modal .reply-composer textarea{min-height:96px;margin:0 0 6px;font-size:17px}
 .reply-composer .modal-actions{margin-top:0}
 .inbox-item-reply{display:block;margin-top:4px;color:#8a6845;font-size:15px;font-style:italic}
-.connection-status{position:fixed;left:50%;bottom:calc(14px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:10001;padding:5px 12px;border-radius:12px;background:rgba(247,244,237,.92);border:1px solid rgba(151,133,108,.3);color:#8a7f70;font-size:14px;font-style:italic;white-space:nowrap;pointer-events:none}
+.connection-status{position:fixed;left:50%;bottom:calc(60px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:10001;padding:5px 12px;border-radius:12px;background:rgba(247,244,237,.92);border:1px solid rgba(151,133,108,.3);color:#8a7f70;font-size:14px;font-style:italic;white-space:nowrap;pointer-events:none}
 .connection-status[hidden]{display:none}
 .access-prompt{margin:0 0 18px;color:#887e70;font-style:italic;text-align:center}
 .access-prompt-button{display:block;margin:0 auto;border:1px solid rgba(151,133,108,.45);border-radius:3px;background:#fffdf8;color:#5f5547;font-family:inherit;font-size:19px;padding:9px 16px;cursor:pointer}
@@ -211,7 +261,7 @@ body.reading-mode .connection-status{display:none}
 .reading-mode-button svg{width:21px;height:21px;display:block}
 .reading-mode-button:active{background:#e9e1d4;transform:translateY(1px)}
 .reading-mode-button:focus-visible{outline:2px solid #887e70;outline-offset:3px}
-.hand,.hand-hint,.hint-info-button,.navigation,.test-version,.poem-menu-button,.settings-button,.reset-hands-button,.person-inbox-button,.reading-mode-button{transition:opacity 500ms cubic-bezier(.4,0,.2,1),visibility 0s;will-change:opacity}
+.hand,.hand-hint,.hint-info-button,.navigation,.test-version,.poem-menu-button,.settings-button,.briefje-button,.reset-hands-button,.person-inbox-button,.reading-mode-button{transition:opacity 500ms cubic-bezier(.4,0,.2,1),visibility 0s;will-change:opacity}
 /* In rust iets doorzichtig; bij aanraken of gebruik helemaal helder */
 .hand{opacity:.75;transition:opacity 500ms cubic-bezier(.4,0,.2,1),visibility 0s}
 .hand.in-use{opacity:1}
@@ -223,7 +273,7 @@ body.reading-mode .connection-status{display:none}
 body.reading-mode .paper-dent,body.controls-idle .paper-dent{opacity:0;transition:opacity 500ms cubic-bezier(.4,0,.2,1)}
 /* Eén ijle rimpeling bij het neerkomen */
 .landing-ripple{position:absolute;z-index:9998;pointer-events:none;border:1px solid rgba(176,142,96,.5);border-radius:50%}
-body.reading-mode .hand,body.reading-mode .hand-hint,body.reading-mode .hint-info-button,body.reading-mode .navigation,body.reading-mode .test-version,body.reading-mode .poem-menu-button,body.reading-mode .settings-button,body.reading-mode .reset-hands-button,body.reading-mode .person-inbox-button{opacity:0;visibility:hidden;pointer-events:none;transition:opacity 500ms cubic-bezier(.4,0,.2,1),visibility 0s linear 500ms}
+body.reading-mode .hand,body.reading-mode .hand-hint,body.reading-mode .hint-info-button,body.reading-mode .navigation,body.reading-mode .test-version,body.reading-mode .poem-menu-button,body.reading-mode .settings-button,body.reading-mode .briefje-button,body.reading-mode .reset-hands-button,body.reading-mode .person-inbox-button{opacity:0;visibility:hidden;pointer-events:none;transition:opacity 500ms cubic-bezier(.4,0,.2,1),visibility 0s linear 500ms}
 body.reading-mode .reading-mode-button{opacity:.4;background:#e9e1d4;box-shadow:none;transition:opacity 500ms cubic-bezier(.4,0,.2,1),background-color 500ms ease,box-shadow 500ms ease}
 @media(max-width:600px){.reading-mode-button{right:9px;bottom:calc(52px + env(safe-area-inset-bottom));width:38px;height:38px}.reading-mode-button svg{width:20px;height:20px}}
 
@@ -322,7 +372,7 @@ header{margin-bottom:34px}
 <button type="button" class="hand" id="hand2" aria-label="Tweede Hamsa-hand"></button>
 <button type="button" class="hand" id="sentenceHand" aria-label="Wijzende vinger voor regels"></button>
 <button type="button" class="hand" id="wordHand" aria-label="Wijzende vinger voor woorden"></button>
-<div class="test-version" aria-label="Testversie 27">TEST v27</div>
+<div class="test-version" aria-label="Testversie 28">TEST v28</div>
 <button type="button" class="scroll-cue" id="scrollCue" aria-label="Verder lezen" hidden><svg viewBox="0 0 16 40" aria-hidden="true"><path d="M8 2v34M3 30l5 6 5-6"/></svg></button>
 <div class="connection-status" id="connectionStatus" role="status" hidden></div>
 <button type="button" class="reading-mode-button" id="readingModeButton" aria-pressed="false" aria-label="Leesmodus" title="Leesmodus">
@@ -337,6 +387,7 @@ header{margin-bottom:34px}
     <div class="poem-menu-list" id="inboxList"></div>
   </section>
 </div>
+<button type="button" class="briefje-button" id="briefjeButton" aria-label="Briefje ophangen" title="Briefje ophangen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M5 4h14v11l-5 5H5Z"/><path d="M14 20v-5h5"/><path d="M9.5 9.5h5M12 7v5"/></svg></button>
 <button type="button" class="reset-hands-button" id="resetHandsButton" aria-label="Zet alle handjes terug naar hun beginposities" title="Handjes terugzetten">⟲</button>
 <button type="button" class="poem-menu-button" id="poemMenuButton" aria-label="Open gedichtenmenu" title="Gedichten">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M4 6.5h16M4 12h16M4 17.5h16"/></svg>
@@ -354,6 +405,7 @@ header{margin-bottom:34px}
   <section class="poem-menu-panel" role="dialog" aria-modal="true" aria-labelledby="poemMenuTitle">
     <div class="poem-menu-heading"><h2 id="poemMenuTitle">Gedichten</h2><button type="button" class="poem-menu-close" id="poemMenuClose" aria-label="Menu sluiten">×</button></div>
     <button type="button" class="poem-add-button" id="poemAddButton"><span aria-hidden="true">+</span> Gedicht toevoegen</button>
+    <button type="button" class="poem-add-button" id="prikbordButton"><span aria-hidden="true">▢</span> Prikbord met alle briefjes</button>
     <div class="poem-menu-filter" role="group" aria-label="Welke gedichten"><button type="button" data-filter="all" class="active" aria-pressed="true">Alle gedichten</button><button type="button" data-filter="fav" aria-pressed="false">♥ Favorieten</button></div>
     <div class="poem-menu-list" id="poemMenuList"><p class="poem-menu-empty">Gedichten worden geladen…</p></div>
   </section>
@@ -394,6 +446,27 @@ header{margin-bottom:34px}
 </form>
 <div class="modal-status" id="poemAddStatus"></div>
 </div>
+</div>
+
+<div class="modal-backdrop" id="briefjeBackdrop">
+<div class="modal briefje-modal" role="dialog" aria-modal="true" aria-label="Briefje">
+<div class="briefje briefje-groot" id="briefjeGroot"></div>
+<p class="modal-description" id="briefjeInfo"></p>
+<p class="briefje-gelezen" id="briefjeGelezen"></p>
+<div class="briefje-antwoorden" id="briefjeAntwoorden"></div>
+<div class="briefje-acties">
+<button type="button" class="settings-action" id="briefjeAntwoord">Antwoorden</button>
+<button type="button" class="settings-action" id="briefjeOngelezen">Markeer als nieuw</button>
+<button type="button" class="settings-action" id="briefjePrikbord">Naar het prikbord</button>
+</div>
+<div class="modal-actions"><button type="button" class="modal-button" id="briefjeSluiten">Sluiten</button></div>
+</div>
+</div>
+<div class="poem-menu-backdrop" id="prikbordBackdrop" aria-hidden="true">
+  <section class="poem-menu-panel" role="dialog" aria-modal="true" aria-labelledby="prikbordTitle">
+    <div class="poem-menu-heading"><h2 id="prikbordTitle">Prikbord</h2><button type="button" class="poem-menu-close" id="prikbordClose" aria-label="Prikbord sluiten">×</button></div>
+    <div class="poem-menu-list" id="prikbordList"></div>
+  </section>
 </div>
 
 <div class="modal-backdrop" id="noteBackdrop">
@@ -647,6 +720,8 @@ return chain(p,1);
 }
 function getDailyPoemIndex(){
 if(!poems.length)return 0;
+const wantedPoem=new URLSearchParams(location.search).get("gedicht");
+if(wantedPoem){const i=poems.findIndex(p=>p.id===wantedPoem);if(i!==-1)return i}
 if(settings.rotation==="handmatig"){
 // Alleen zelf bladeren: begin bij het gedicht dat het laatst open stond.
 const last=localStorage.getItem(LAST_POEM_KEY);
@@ -688,7 +763,7 @@ poemElement.append(p,button);
 async function loadPoems(){
 if(!localStorage.getItem(ACCESS_STORAGE_KEY)){
 showAccessPrompt("Voer de toegangscode in om de gedichten te lezen.");
-if(!accessBackdrop.classList.contains("visible")){afterAccess=loadPoems;openAccessModal()}
+if(!accessBackdrop.classList.contains("visible")&&!new URLSearchParams(location.search).has("muur")){afterAccess=loadPoems;openAccessModal()}
 return;
 }
 lastLoadAttempt=Date.now();
@@ -699,7 +774,8 @@ applyPoems(list);
 writeCache({poems:list});
 setConnectionStatus(true);
 loadAllNotes();
-checkForNewVersion();
+loadBriefjes();
+if(!isEmbed)checkForNewVersion();
 }catch(error){
 console.error(error);
 if(/toegangscode/i.test(error.message)){
@@ -777,7 +853,9 @@ const cache=readCache();
 if(!cache||!Array.isArray(cache.poems)||!cache.poems.length)return;
 applyPoems(cache.poems);
 notesRaw=Array.isArray(cache.notes)?cache.notes:[];
+briefjes=Array.isArray(cache.briefjes)?cache.briefjes:[];
 computeNotesForCurrentPoem();
+renderBriefjes();
 rebuildInbox();
 }
 // Opnieuw proberen zodra de verbinding terug is, of als het scherm weer actief wordt.
@@ -787,7 +865,7 @@ document.addEventListener("visibilitychange",()=>{if(document.visibilityState===
 /* ---------- Automatisch bijwerken ---------- */
 // Als er een nieuwe versie van de site op GitHub staat, laadt de iPad die vanzelf,
 // maar alleen als er niets open staat (dus nooit midden in het schrijven).
-const APP_VERSION="27";
+const APP_VERSION="28";
 let pendingReload=false;
 async function checkForNewVersion(){
 if(location.protocol!=="https:"&&location.hostname!=="localhost")return;
@@ -799,7 +877,7 @@ if(match&&match[1]!==APP_VERSION){pendingReload=true;reloadWhenIdle()}
 }catch(e){}
 }
 function isBusy(){
-return !!document.querySelector(".modal-backdrop.visible,.poem-menu-backdrop.visible")||handStates.some(state=>state.dragging||["sliding","returning","arc"].includes(state.mode));
+return !!document.querySelector(".modal-backdrop.visible,.poem-menu-backdrop.visible,.composer-overlay")||!!draggingBriefje||handStates.some(state=>state.dragging||["sliding","returning","arc"].includes(state.mode));
 }
 function reloadWhenIdle(){
 if(!pendingReload)return;
@@ -807,7 +885,7 @@ if(isBusy()){setTimeout(reloadWhenIdle,30000);return}
 location.reload();
 }
 
-if("serviceWorker" in navigator&&(location.protocol==="https:"||location.hostname==="localhost")){
+if("serviceWorker" in navigator&&!new URLSearchParams(location.search).has("muur")&&(location.protocol==="https:"||location.hostname==="localhost")){
 navigator.serviceWorker.register("sw.js").catch(error=>console.warn("Service worker niet geregistreerd.",error));
 }
 
@@ -981,6 +1059,12 @@ const person=canonicalPerson(p.addedBy);
 if(!person||!p.id)return;
 list.push({type:"poem",key:"p¦"+p.id,person,poemId:p.id,poemTitle:p.title,passage:"",text:"Gedicht toegevoegd"+(p.author?" · "+p.author:""),date:String(p.addedOn||""),order:1e9});
 });
+// Briefjes tellen ook mee bij de R/S-knoppen.
+briefjes.forEach(b=>{
+const person=canonicalPerson(b.persoon);
+if(!person||!b.id||isFuture(b))return;
+list.push({type:"briefje",key:"b¦"+b.id,person,briefjeId:b.id,poemId:"",poemTitle:b.antwoordOp?"Antwoord op een briefje":(b.voor&&b.voor!=="Ons"?"Briefje voor "+b.voor:"Briefje"),passage:"",text:b.tekst||"Handgeschreven briefje",date:briefjeTime(b.gemaakt),order:b.gemaakt||0});
+});
 allNotes=list;
 let seen=loadSeen();
 // Allereerste keer op dit apparaat: alles wat er al is geldt als gezien.
@@ -1000,41 +1084,58 @@ button.setAttribute("aria-label",`Van ${person}`+(count?`, ${count} nieuw`:""));
 });
 }
 
+function markInboxSeen(key){const seen=loadSeen()||new Set();seen.add(key);saveSeen(seen);updateInboxBadges()}
+function markInboxUnseen(key){const seen=loadSeen()||new Set();seen.delete(key);saveSeen(seen);updateInboxBadges()}
+
 function openInbox(person){
 const seen=loadSeen()||new Set();
 const entries=allNotes.filter(n=>n.person===person);
 const isNew=n=>!seen.has(n.key);
 entries.sort((a,b)=>(isNew(b)-isNew(a))||(b.order-a.order));
 const newCount=entries.filter(isNew).length;
+const justSeen=entries.filter(isNew).map(n=>n.key);
 // Getal verdwijnt zodra het venster opent; de nieuwe blijven in dit venster rood gemarkeerd.
 entries.forEach(n=>seen.add(n.key));
 saveSeen(seen);
 updateInboxBadges();
 
 document.getElementById("inboxTitle").textContent=`Van ${person}`;
-document.getElementById("inboxSubtitle").textContent=newCount?`${newCount} nieuw sinds de vorige keer`:"Niets nieuws – hieronder alles van eerder.";
+const subtitle=document.getElementById("inboxSubtitle");
+subtitle.innerHTML="";
+subtitle.append(newCount?`${newCount} nieuw sinds de vorige keer`:"Niets nieuws – hieronder alles van eerder.");
+if(newCount){
+// Per ongeluk geopend (bijvoorbeeld op je eigen letter getikt)? Dan staan ze zo weer als nieuw.
+const undo=document.createElement("button");undo.type="button";undo.className="inbox-undo";undo.textContent="Toch nog niet gezien";
+undo.addEventListener("click",()=>{justSeen.forEach(markInboxUnseen);undo.replaceWith(" · weer als nieuw gemarkeerd")});
+subtitle.append(" ",undo);
+}
 inboxList.innerHTML="";
 if(!entries.length){
 const empty=document.createElement("p");empty.className="poem-menu-empty";
-empty.textContent=`${person} heeft nog geen aantekeningen of gedichten toegevoegd.`;
+empty.textContent=`${person} heeft nog geen aantekeningen, briefjes of gedichten toegevoegd.`;
 inboxList.appendChild(empty);
 }
 let dividerPlaced=false;
 entries.forEach((n,i)=>{
 const fresh=i<newCount;
 if(!fresh&&newCount&&!dividerPlaced){const d=document.createElement("div");d.className="inbox-divider";d.textContent="Eerder gezien";inboxList.appendChild(d);dividerPlaced=true}
+const row=document.createElement("div");row.className="inbox-row";
 const item=document.createElement("button");item.type="button";item.className="inbox-item"+(fresh?" new":"");
 const top=document.createElement("span");top.className="inbox-item-top";
 const poemTitle=document.createElement("span");poemTitle.className="inbox-item-poem";poemTitle.textContent=n.poemTitle;
 top.appendChild(poemTitle);
 if(fresh){const label=document.createElement("span");label.className="inbox-new-label";label.textContent="Nieuw";top.appendChild(label)}
 item.appendChild(top);
-if(n.type!=="poem"){const passage=document.createElement("span");passage.className="inbox-item-passage";passage.textContent="“"+normalizePassage(n.passage)+"”";item.appendChild(passage)}
+if(n.type==="note"||n.type==="reply"){const passage=document.createElement("span");passage.className="inbox-item-passage";passage.textContent="“"+normalizePassage(n.passage)+"”";item.appendChild(passage)}
 if(n.type==="reply"){const reply=document.createElement("span");reply.className="inbox-item-reply";reply.textContent="↳ reactie op "+(n.replyTo||"een aantekening");item.appendChild(reply)}
 const text=document.createElement("span");text.className="inbox-item-text";text.textContent=n.text;item.appendChild(text);
 if(n.date){const date=document.createElement("span");date.className="inbox-item-date";date.textContent=n.date;item.appendChild(date)}
-item.addEventListener("click",()=>{closeInbox();goToPassage(n)});
-inboxList.appendChild(item);
+item.addEventListener("click",()=>{closeInbox();if(n.type==="briefje")goToBriefje(n.briefjeId);else goToPassage(n)});
+// Elk item kan weer op "nieuw" gezet worden, zodat het rode getal terugkomt.
+const mark=document.createElement("button");mark.type="button";mark.className="inbox-mark";mark.textContent="markeer als nieuw";
+mark.addEventListener("click",()=>{markInboxUnseen(n.key);mark.textContent="staat weer als nieuw";mark.disabled=true;item.classList.add("new")});
+row.append(item,mark);
+inboxList.appendChild(row);
 });
 inboxList.scrollTop=0;
 inboxBackdrop.classList.add("visible");
@@ -1184,7 +1285,7 @@ return Math.floor(low*2)/2;
 }
 function fitPoem(){
 poemElement.querySelectorAll(".note-dot").forEach(dot=>dot.remove());
-if(!poemElement.querySelector(".poem-paragraph")){poemElement.style.fontSize="";updateScrollCue(false);return}
+if(!poemElement.querySelector(".poem-paragraph")){poemElement.style.fontSize="";updateScrollCue(false);renderBriefjes();return}
 const {min,max}=poemSizeLimits();
 const poemTop=poemElement.getBoundingClientRect().top+window.scrollY;
 const bottomReserve=window.innerWidth<=600?64:78;
@@ -1200,6 +1301,7 @@ const tooLong=size===null;
 poemElement.style.fontSize=(tooLong?min:size)+"px";
 updateScrollCue(tooLong);
 positionNoteDots();
+renderBriefjes();
 }
 let fitTimer=null;
 function scheduleFit(){cancelAnimationFrame(fitTimer);fitTimer=requestAnimationFrame(fitPoem)}
@@ -2279,7 +2381,480 @@ saveButton.disabled=!selectedPerson;
 
 accessBackdrop.addEventListener("click",event=>{if(event.target===accessBackdrop)closeAccessModal()});
 noteBackdrop.addEventListener("click",event=>{if(event.target===noteBackdrop)closeNoteModal()});
-document.addEventListener("keydown",event=>{if(event.key==="Escape"){closeAccessModal();closeNoteModal();closePoemMenu();closeInbox();closeSettings()}});
+document.addEventListener("keydown",event=>{if(event.key==="Escape"){closeAccessModal();closeNoteModal();closePoemMenu();closeInbox();closeSettings();closeBriefje();closePrikbord()}});
+/* ---------- Briefjes (post-its) op de muur ---------- */
+const BRIEFJE_COLORS={geel:"#f8e7a1",roze:"#f2c9c2",mint:"#cfe6cf",blauw:"#cddff0",lila:"#ddd3ee"};
+const BRIEFJE_INK={geel:"#3b2f1c",roze:"#5e2a24",mint:"#1f3d27",blauw:"#1e3550",lila:"#3a2d57"};
+const BRIEFJE_SIZES={S:[150,132],M:[200,176],L:[250,220]};
+const PEN_COLORS=["#3b2f1c","#b23a30","#2d5b8a"];
+const isEmbed=new URLSearchParams(location.search).has("muur");
+let briefjes=[];
+let draftBriefje=null;
+const briefjeLayer=document.createElement("div");
+briefjeLayer.id="briefjesLayer";
+document.body.appendChild(briefjeLayer);
+const briefjeElements=new Map();
+
+function viewerName(){return settings.owner||""}
+function briefjeScale(){return Math.max(0.55,Math.min(1.25,window.innerWidth/820))}
+function wallHeight(){return window.innerHeight}
+function briefjeTime(ms){
+if(!ms)return "";
+const d=new Date(ms),now=new Date();
+const hm=String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0");
+if(d.toDateString()===now.toDateString())return hm;
+const y=new Date(now);y.setDate(now.getDate()-1);
+if(d.toDateString()===y.toDateString())return "gisteren "+hm;
+return d.toLocaleDateString("nl-NL",{day:"numeric",month:"short"});
+}
+// Welke briefjes hangen er nu (niet afgepeld, niet verlopen, al verschenen)?
+function isVisibleBriefje(b){
+if(!b||b.status!=="actief")return false;
+const now=Date.now();
+if(b.verschijnt&&b.verschijnt>now&&canonicalPerson(b.persoon)!==viewerName())return false;
+if(b.blijft==="gelezen"&&b.gelezenOp&&now-b.gelezenOp>30*60e3)return false;
+if(b.blijft==="vandaag"){const start=new Date(Math.max(b.gemaakt||0,b.verschijnt||0));if(start.toDateString()!==new Date().toDateString())return false}
+if(b.antwoordOp){const parent=briefjes.find(p=>p.id===b.antwoordOp);if(!isVisibleBriefje(parent))return false}
+return true;
+}
+function isFuture(b){return b.verschijnt&&b.verschijnt>Date.now()}
+function isUnreadFor(b){
+// "nieuw" voor wie kijkt: niet de schrijver zelf, en nog niet gelezen.
+return !b.gelezenOp&&canonicalPerson(b.persoon)!==viewerName();
+}
+
+/* Tekening: "c0|x,y x,y;c1|..." in coördinaten 0-1000 × 0-880 */
+function parseDrawing(text){
+if(!text)return[];
+return String(text).split(";").map(part=>{
+const [head,pts]=part.split("|");
+const color=Number(String(head||"c0").slice(1))||0;
+const points=String(pts||"").trim().split(" ").map(p=>p.split(",").map(Number)).filter(p=>p.length===2&&isFinite(p[0])&&isFinite(p[1]));
+return{color,points};
+}).filter(s=>s.points.length);
+}
+function drawingPath(points){
+if(points.length===1){const[x,y]=points[0];return `M${x} ${y}l0.1 0`}
+let d=`M${points[0][0]} ${points[0][1]}`;
+for(let i=1;i<points.length-1;i++){
+const mx=(points[i][0]+points[i+1][0])/2,my=(points[i][1]+points[i+1][1])/2;
+d+=` Q${points[i][0]} ${points[i][1]} ${mx} ${my}`;
+}
+const last=points[points.length-1];
+return d+` L${last[0]} ${last[1]}`;
+}
+function drawingSvg(text){
+const ns="http://www.w3.org/2000/svg";
+const svg=document.createElementNS(ns,"svg");
+svg.setAttribute("viewBox","0 0 1000 880");
+svg.setAttribute("class","briefje-tekening");
+svg.setAttribute("role","img");
+svg.setAttribute("aria-label","Met de vinger geschreven briefje");
+parseDrawing(text).forEach(stroke=>{
+const path=document.createElementNS(ns,"path");
+path.setAttribute("d",drawingPath(stroke.points));
+path.setAttribute("fill","none");
+path.setAttribute("stroke",PEN_COLORS[stroke.color]||PEN_COLORS[0]);
+path.setAttribute("stroke-width","9");
+path.setAttribute("stroke-linecap","round");
+path.setAttribute("stroke-linejoin","round");
+svg.appendChild(path);
+});
+return svg;
+}
+
+// De inhoud van één briefje (ook gebruikt in het venster en op het prikbord).
+function fillBriefje(el,b,options={}){
+const folded=b.envelop&&!b.gelezenOp&&!options.open;
+el.innerHTML="";
+el.style.setProperty("--briefje-kleur",BRIEFJE_COLORS[b.kleur]||BRIEFJE_COLORS.geel);
+el.style.setProperty("--briefje-inkt",BRIEFJE_INK[b.kleur]||BRIEFJE_INK.geel);
+el.classList.toggle("folded",folded);
+el.classList.toggle("is-new",!options.static&&isUnreadFor(b));
+el.classList.toggle("ghost",!!isFuture(b));
+el.classList.toggle("reply",!!b.antwoordOp);
+if(!b.antwoordOp){const tape=document.createElement("div");tape.className="briefje-tape";el.appendChild(tape)}
+if(folded){
+const ns="http://www.w3.org/2000/svg";
+const flap=document.createElementNS(ns,"svg");
+flap.setAttribute("class","briefje-flap");flap.setAttribute("viewBox","0 0 100 60");flap.setAttribute("preserveAspectRatio","none");flap.setAttribute("aria-hidden","true");
+const p=document.createElementNS(ns,"path");p.setAttribute("d","M0 0 L50 52 L100 0");flap.appendChild(p);
+el.appendChild(flap);
+const to=document.createElement("div");to.className="briefje-voor";
+to.textContent=b.voor&&b.voor!=="Ons"?"Voor "+b.voor:"Voor ons";
+el.appendChild(to);
+const hint=document.createElement("div");hint.className="briefje-hint";hint.textContent="tik om te openen";
+el.appendChild(hint);
+return;
+}
+const body=document.createElement("div");body.className="briefje-body";
+if(b.tekening){body.appendChild(drawingSvg(b.tekening))}
+if(b.tekst){const t=document.createElement("div");t.className="briefje-tekst";t.textContent=b.tekst;body.appendChild(t)}
+el.appendChild(body);
+const meta=document.createElement("div");meta.className="briefje-meta";
+const who=document.createElement("span");who.textContent=(canonicalPerson(b.persoon)||b.persoon||"")+(b.gemaakt?" · "+briefjeTime(Math.max(b.gemaakt,b.verschijnt||0)):"");
+meta.appendChild(who);
+const status=document.createElement("span");status.className="briefje-status";
+if(isFuture(b)){status.textContent="verschijnt "+briefjeTime(b.verschijnt)}
+else if(b.gelezenOp){status.textContent="gezien "+briefjeTime(b.gelezenOp)}
+else if(isUnreadFor(b)){const dot=document.createElement("span");dot.className="briefje-dot";status.append(dot,"nieuw")}
+meta.appendChild(status);
+el.appendChild(meta);
+}
+function briefjeSignature(b){
+return JSON.stringify([b.tekst,b.tekening?b.tekening.length:0,b.kleur,b.envelop,b.gelezenOp,b.verschijnt,b.voor,isUnreadFor(b),isFuture(b),viewerName()]);
+}
+
+// Wat er niet bedekt mag worden bij "naast het gedicht": de tekstregels, de kop en de knoppen.
+function briefjeObstacles(){
+const rects=[];
+const sx=window.scrollX,sy=window.scrollY,pad=8;
+const add=(l,t,r,b)=>rects.push({l:l-pad,t:t-pad,r:r+pad,b:b+pad});
+poemElement.querySelectorAll(".poem-sentence").forEach(sentence=>{
+let l=Infinity,t=Infinity,r=-Infinity,b=-Infinity;
+for(const rect of sentence.getClientRects()){if(!rect.width)continue;l=Math.min(l,rect.left);t=Math.min(t,rect.top);r=Math.max(r,rect.right);b=Math.max(b,rect.bottom)}
+if(l<Infinity)add(l+sx,t+sy,r+sx,b+sy);
+});
+["#poemDate","#title","#author",".ornament","#handHint:not(.collapsed)",".hint-info-button:not([hidden])",".navigation"].forEach(sel=>{
+const el=document.querySelector(sel);
+if(!el)return;
+const r=el.getBoundingClientRect();
+if(!r.width)return;
+let left=r.left,right=r.right;
+if(sel==="#title"||sel==="#author"||sel==="#poemDate"){
+// Alleen de tekst zelf, niet de hele breedte.
+const range=document.createRange();range.selectNodeContents(el);const tr=range.getBoundingClientRect();
+if(tr.width){left=tr.left;right=tr.right}
+}
+add(left+sx,r.top+sy,right+sx,r.bottom+sy);
+});
+// Knoppen en de plekken van de handjes (op de muur altijd vrijhouden).
+const W=window.innerWidth,H=wallHeight();
+const side=window.innerWidth<=600?54:64;
+add(0,H-170,side,H);add(W-side,H-170,W,H);
+add(W/2-34,H-64,W/2+34,H);
+add(0,60,side+20,240);add(W-side-20,60,W,240);
+return rects;
+}
+function overlaps(a,b){return a.l<b.r&&a.r>b.l&&a.t<b.b&&a.b>b.t}
+function findFreeSpot(cx,cy,w,h,obstacles){
+const W=window.innerWidth,maxY=Math.max(wallHeight(),document.documentElement.scrollHeight);
+const fits=(x,y)=>{
+const r={l:x-w/2,t:y-h/2,r:x+w/2,b:y+h/2};
+if(r.l<6||r.r>W-6||r.t<6||r.b>maxY-6)return false;
+return !obstacles.some(o=>overlaps(r,o));
+};
+if(fits(cx,cy))return[cx,cy];
+for(let radius=14;radius<=900;radius+=14){
+const steps=Math.max(12,Math.round(radius/7));
+for(let i=0;i<steps;i++){
+const a=(i/steps)*Math.PI*2;
+const x=cx+Math.cos(a)*radius,y=cy+Math.sin(a)*radius;
+if(fits(x,y))return[x,y];
+}
+}
+return[cx,cy];
+}
+function briefjeSize(b){
+const base=BRIEFJE_SIZES[b.grootte]||BRIEFJE_SIZES.M;
+const factor=b.antwoordOp?0.85:1;
+const s=briefjeScale();
+return[base[0]*s*factor,base[1]*s*factor];
+}
+let draggingBriefje=null;
+function renderBriefjes(){
+const list=briefjes.filter(isVisibleBriefje);
+if(draftBriefje)list.push(draftBriefje);
+// Eerst de briefjes zelf, daarna de antwoorden (die plakken op de hoek).
+list.sort((a,b)=>(a.antwoordOp?1:0)-(b.antwoordOp?1:0)||(a.gemaakt||0)-(b.gemaakt||0));
+const keep=new Set(list.map(b=>b.id));
+briefjeElements.forEach((el,id)=>{if(!keep.has(id)&&!(draggingBriefje&&draggingBriefje.id===id)){el.remove();briefjeElements.delete(id)}});
+const obstacles=briefjeObstacles();
+const placed=new Map();
+const W=window.innerWidth,H=wallHeight();
+list.forEach(b=>{
+let el=briefjeElements.get(b.id);
+if(!el){
+el=document.createElement("div");
+el.className="briefje";
+el.dataset.id=b.id;
+el.setAttribute("role","button");
+el.tabIndex=0;
+if(!isEmbed)attachBriefjeEvents(el);
+briefjeLayer.appendChild(el);
+briefjeElements.set(b.id,el);
+}
+const sig=briefjeSignature(b);
+if(el.dataset.sig!==sig){fillBriefje(el,b);el.dataset.sig=sig}
+el.classList.toggle("draft",b===draftBriefje);
+el.setAttribute("aria-label",(b.envelop&&!b.gelezenOp?"Dichtgevouwen briefje":"Briefje")+" van "+(b.persoon||""));
+const[w,h]=briefjeSize(b);
+el.style.width=w+"px";el.style.height=h+"px";
+el.style.setProperty("--briefje-font",Math.max(11,w/200*25*(b.antwoordOp?1.2:1)).toFixed(1)+"px");
+let cx,cy;
+if(draggingBriefje&&draggingBriefje.id===b.id){
+const r=el.getBoundingClientRect();cx=r.left+r.width/2+window.scrollX;cy=r.top+r.height/2+window.scrollY;
+}else if(b.antwoordOp&&placed.get(b.antwoordOp)){
+const p=placed.get(b.antwoordOp);
+cx=p.r-w*0.2;cy=p.b-h*0.15;
+// Past het niet rechts op de hoek, dan op de linkerhoek; en nooit van het scherm af.
+if(cx+w/2>W-6)cx=p.l+w*0.2;
+cx=Math.max(w/2+6,Math.min(W-w/2-6,cx));
+}else{
+cx=(b.x||0.8)*W;cy=(b.y||0.35)*H;
+if(b.plaatsing!=="overal"&&!(b===draftBriefje&&b.dragging))[cx,cy]=findFreeSpot(cx,cy,w,h,obstacles.concat([...placed.values()]));
+el.style.left=(cx-w/2)+"px";el.style.top=(cy-h/2)+"px";
+}
+if(b.antwoordOp&&!(draggingBriefje&&draggingBriefje.id===b.id)){el.style.left=(cx-w/2)+"px";el.style.top=(cy-h/2)+"px"}
+el.style.setProperty("--draai",(b.antwoordOp?-(Number(b.draai)||4):(Number(b.draai)||0))+"deg");
+placed.set(b.id,{l:cx-w/2-6,t:cy-h/2-6,r:cx+w/2+6,b:cy+h/2+6});
+if(b===draftBriefje&&!b.dragging&&isEmbed&&window.parent!==window){
+window.parent.postMessage({type:"concept-plek",x:cx/W,y:cy/H},"*");
+}
+});
+}
+
+/* Oppakken, verschuiven en afpellen op de muur */
+function attachBriefjeEvents(el){
+el.addEventListener("pointerdown",event=>{
+if(event.button!==undefined&&event.button!==0)return;
+const b=briefjes.find(x=>x.id===el.dataset.id);
+if(!b)return;
+event.preventDefault();
+const r=el.getBoundingClientRect();
+draggingBriefje={id:b.id,el,startX:event.clientX,startY:event.clientY,offX:event.clientX-(r.left+r.width/2),offY:event.clientY-(r.top+r.height/2),moved:false,samples:[{x:event.clientX,y:event.clientY,t:performance.now()}],pointerId:event.pointerId};
+el.classList.add("lifted");
+try{el.setPointerCapture(event.pointerId)}catch(e){}
+});
+el.addEventListener("pointermove",event=>{
+const d=draggingBriefje;
+if(!d||d.el!==el||d.pointerId!==event.pointerId)return;
+event.preventDefault();
+if(!d.moved&&Math.hypot(event.clientX-d.startX,event.clientY-d.startY)>8)d.moved=true;
+const now=performance.now();
+d.samples.push({x:event.clientX,y:event.clientY,t:now});
+while(d.samples.length>2&&now-d.samples[0].t>120)d.samples.shift();
+if(d.moved){
+const w=el.offsetWidth,h=el.offsetHeight;
+el.style.left=(event.clientX-d.offX+window.scrollX-w/2)+"px";
+el.style.top=(event.clientY-d.offY+window.scrollY-h/2)+"px";
+}
+});
+const finish=event=>{
+const d=draggingBriefje;
+if(!d||d.el!==el||d.pointerId!==event.pointerId)return;
+draggingBriefje=null;
+el.classList.remove("lifted");
+const b=briefjes.find(x=>x.id===d.id);
+if(!b)return;
+if(!d.moved){if(event.type==="pointerup")openBriefje(b);return}
+// Snelheid bij loslaten: hard weggeveegd of half van het scherm = afpellen.
+const now=performance.now();
+const s=d.samples.filter(p=>now-p.t<=90);
+let vx=0,vy=0;
+if(s.length>1&&now-s[s.length-1].t<60){const a=s[0],z=s[s.length-1],dt=Math.max(0.008,(z.t-a.t)/1000);vx=(z.x-a.x)/dt;vy=(z.y-a.y)/dt}
+const r=el.getBoundingClientRect();
+const cx=r.left+r.width/2,cy=r.top+r.height/2;
+const outside=cx<0||cx>window.innerWidth||cy<0||cy>window.innerHeight;
+if(outside||Math.hypot(vx,vy)>1500){peelBriefje(b,vx,vy);return}
+b.x=(cx+window.scrollX)/window.innerWidth;
+b.y=(cy+window.scrollY)/wallHeight();
+renderBriefjes();
+// Bij "naast het gedicht" zoekt het briefje zelf een vrije plek: daar sla je het op.
+const el2=briefjeElements.get(b.id);
+if(el2){const r2=el2.getBoundingClientRect();b.x=(r2.left+r2.width/2+window.scrollX)/window.innerWidth;b.y=(r2.top+r2.height/2+window.scrollY)/wallHeight()}
+postBriefje({action:"briefje_move",id:b.id,x:b.x.toFixed(4),y:b.y.toFixed(4)});
+};
+el.addEventListener("pointerup",finish);
+el.addEventListener("pointercancel",finish);
+el.addEventListener("keydown",event=>{if(event.key==="Enter"||event.key===" "){event.preventDefault();const b=briefjes.find(x=>x.id===el.dataset.id);if(b)openBriefje(b)}});
+}
+function peelBriefje(b,vx,vy){
+const el=briefjeElements.get(b.id);
+b.status="prikbord";
+if(el&&el.animate&&!reduceMotion){
+const speed=Math.max(1,Math.hypot(vx,vy));
+const dx=vx?vx/speed*500:300,dy=vy?vy/speed*500:-200;
+el.style.pointerEvents="none";
+el.animate([{transform:`rotate(var(--draai))`,opacity:1},{transform:`translate(${dx}px,${dy}px) rotate(${dx>0?28:-28}deg) scale(.7)`,opacity:0}],{duration:520,easing:"cubic-bezier(.3,.6,.4,1)"}).onfinish=()=>{renderBriefjes()};
+}else renderBriefjes();
+postBriefje({action:"briefje_peel",id:b.id});
+}
+
+/* Het venster van één briefje: lezen, antwoorden, als nieuw markeren, naar het prikbord */
+const briefjeBackdrop=document.getElementById("briefjeBackdrop");
+let openBriefjeId=null;
+function openBriefje(b){
+openBriefjeId=b.id;
+const viewer=viewerName();
+const isAuthor=canonicalPerson(b.persoon)===viewer&&viewer;
+if(!isAuthor&&!b.gelezenOp&&!isFuture(b)){
+// Gelezen: geldt voor iedereen behalve de schrijver zelf.
+b.gelezenOp=Date.now();
+b.gelezenDoor=viewer||(b.voor!=="Ons"?b.voor:"");
+postBriefje({action:"briefje_read",id:b.id,door:b.gelezenDoor});
+markInboxSeen("b¦"+b.id);
+}
+renderBriefjeSheet();
+briefjeBackdrop.classList.add("visible");
+renderBriefjes();
+}
+function renderBriefjeSheet(){
+const b=briefjes.find(x=>x.id===openBriefjeId);
+if(!b)return;
+const big=document.getElementById("briefjeGroot");
+fillBriefje(big,b,{open:true,static:true});
+big.style.setProperty("--briefje-font","28px");
+big.style.setProperty("--draai","-1.5deg");
+const from=canonicalPerson(b.persoon)||b.persoon;
+document.getElementById("briefjeInfo").textContent=`Van ${from} voor ${b.voor==="Ons"||!b.voor?"jullie allebei":b.voor} · ${briefjeTime(b.gemaakt)}`;
+document.getElementById("briefjeGelezen").textContent=isFuture(b)?`Verschijnt ${briefjeTime(b.verschijnt)} op de muur.`:b.gelezenOp?`Gezien ${briefjeTime(b.gelezenOp)}${b.gelezenDoor?" door "+b.gelezenDoor:""}.`:"Nog niet gezien.";
+document.getElementById("briefjeOngelezen").hidden=!b.gelezenOp;
+document.getElementById("briefjeAntwoord").hidden=!!b.antwoordOp;
+const replies=briefjes.filter(x=>x.antwoordOp===b.id&&x.status==="actief");
+const list=document.getElementById("briefjeAntwoorden");
+list.innerHTML="";
+replies.forEach(r=>{const p=document.createElement("p");p.className="briefje-antwoord-regel";p.textContent=`${r.persoon}: ${r.tekst||"(getekend antwoord)"}`;list.appendChild(p)});
+}
+function closeBriefje(){briefjeBackdrop.classList.remove("visible");openBriefjeId=null}
+document.getElementById("briefjeSluiten").addEventListener("click",closeBriefje);
+briefjeBackdrop.addEventListener("click",event=>{if(event.target===briefjeBackdrop)closeBriefje()});
+document.getElementById("briefjeOngelezen").addEventListener("click",()=>{
+const b=briefjes.find(x=>x.id===openBriefjeId);
+if(!b)return;
+b.gelezenOp=0;b.gelezenDoor="";
+postBriefje({action:"briefje_unread",id:b.id});
+markInboxUnseen("b¦"+b.id);
+renderBriefjeSheet();renderBriefjes();
+document.getElementById("briefjeGelezen").textContent="Weer als nieuw gemarkeerd.";
+});
+document.getElementById("briefjePrikbord").addEventListener("click",()=>{
+const b=briefjes.find(x=>x.id===openBriefjeId);
+closeBriefje();
+if(b)peelBriefje(b,0,-1);
+});
+document.getElementById("briefjeAntwoord").addEventListener("click",()=>{
+const id=openBriefjeId;
+closeBriefje();
+openComposer({antwoordOp:id});
+});
+
+/* Prikbord: alle briefjes, ook oude en afgepelde */
+const prikbordBackdrop=document.getElementById("prikbordBackdrop");
+const prikbordList=document.getElementById("prikbordList");
+function renderPrikbord(){
+prikbordList.innerHTML="";
+const list=briefjes.filter(b=>!b.antwoordOp).sort((a,b)=>(b.gemaakt||0)-(a.gemaakt||0));
+if(!list.length){const p=document.createElement("p");p.className="poem-menu-empty";p.textContent="Nog geen briefjes. Hang er een op met de knop onderaan.";prikbordList.appendChild(p);return}
+const grid=document.createElement("div");grid.className="prikbord-grid";
+list.forEach(b=>{
+const card=document.createElement("div");card.className="prikbord-kaart";
+const mini=document.createElement("div");mini.className="briefje prikbord-briefje";
+fillBriefje(mini,b,{open:true,static:true});
+mini.style.setProperty("--briefje-font","19px");
+mini.style.setProperty("--draai",((hashString(b.id)%7)-3)+"deg");
+const info=document.createElement("div");info.className="prikbord-info";
+const hanging=isVisibleBriefje(b);
+info.textContent=`${b.persoon} · ${briefjeTime(b.gemaakt)} · ${hanging?"hangt aan de muur":b.status==="prikbord"?"afgepeld":"verlopen"}`;
+const actions=document.createElement("div");actions.className="prikbord-acties";
+if(!hanging){
+const again=document.createElement("button");again.type="button";again.textContent="Weer ophangen";
+again.addEventListener("click",()=>{b.status="actief";b.blijft="altijd";b.verschijnt=0;postBriefje({action:"briefje_restore",id:b.id});renderBriefjes();renderPrikbord()});
+actions.appendChild(again);
+}
+const remove=document.createElement("button");remove.type="button";remove.textContent="Weggooien";
+remove.addEventListener("click",()=>{
+if(!window.confirm("Dit briefje (en de antwoorden erop) definitief weggooien?"))return;
+briefjes=briefjes.filter(x=>x.id!==b.id&&x.antwoordOp!==b.id);
+postBriefje({action:"briefje_delete",id:b.id});
+renderBriefjes();renderPrikbord();
+});
+actions.appendChild(remove);
+card.append(mini,info,actions);
+grid.appendChild(card);
+});
+prikbordList.appendChild(grid);
+}
+function openPrikbord(){closePoemMenu();renderPrikbord();prikbordBackdrop.classList.add("visible");prikbordBackdrop.setAttribute("aria-hidden","false")}
+function closePrikbord(){prikbordBackdrop.classList.remove("visible");prikbordBackdrop.setAttribute("aria-hidden","true")}
+document.getElementById("prikbordButton").addEventListener("click",openPrikbord);
+document.getElementById("prikbordClose").addEventListener("click",closePrikbord);
+prikbordBackdrop.addEventListener("click",event=>{if(event.target===prikbordBackdrop)closePrikbord()});
+
+/* Opslaan en ophalen */
+async function postBriefje(fields){
+const formData=new URLSearchParams();
+formData.append("token",localStorage.getItem(ACCESS_STORAGE_KEY)||"");
+formData.append("persoon",viewerName());
+Object.entries(fields).forEach(([k,v])=>formData.append(k,v));
+try{await fetch(NOTES_URL,{method:"POST",mode:"no-cors",body:formData})}catch(e){console.error("Briefje opslaan mislukt.",e)}
+writeCache({briefjes});
+}
+async function loadBriefjes(){
+if(!localStorage.getItem(ACCESS_STORAGE_KEY))return;
+try{
+const data=await jsonpRequest({action:"briefjes"});
+const fresh=Array.isArray(data.briefjes)?data.briefjes:[];
+// Wat je net zelf versleept, niet terug laten springen.
+if(draggingBriefje){const d=briefjes.find(b=>b.id===draggingBriefje.id);const i=fresh.findIndex(b=>b.id===draggingBriefje.id);if(d&&i!==-1)fresh[i]=d}
+briefjes=fresh;
+writeCache({briefjes});
+renderBriefjes();
+rebuildInbox();
+if(prikbordBackdrop.classList.contains("visible"))renderPrikbord();
+}catch(error){console.error("Briefjes konden niet worden opgehaald.",error)}
+}
+setInterval(()=>{if(document.visibilityState==="visible"&&!isEmbed)loadBriefjes()},60000);
+setInterval(()=>{if(!draggingBriefje)renderBriefjes()},30000);
+
+// Naar een briefje toe (vanuit het R/S-venster).
+function goToBriefje(id){
+const b=briefjes.find(x=>x.id===id);
+if(!b)return;
+const target=b.antwoordOp?briefjes.find(x=>x.id===b.antwoordOp)||b:b;
+const el=briefjeElements.get(target.id);
+if(el&&isVisibleBriefje(target)){
+el.scrollIntoView({behavior:"smooth",block:"center"});
+el.classList.remove("briefje-flash");void el.offsetWidth;el.classList.add("briefje-flash");
+setTimeout(()=>openBriefje(target),700);
+}else openPrikbord();
+}
+
+/* Schrijven: het briefje-scherm opent als laag over de muur */
+let composerOverlay=null;
+function openComposer(params={}){
+if(composerOverlay)return;
+const query=new URLSearchParams(Object.assign({inMuur:"1"},params));
+const poem=currentPoem();
+if(poem&&poem.id)query.set("gedicht",poem.id);
+composerOverlay=document.createElement("div");
+composerOverlay.className="composer-overlay";
+const frame=document.createElement("iframe");
+frame.src="briefje.html?"+query.toString();
+frame.title="Briefje schrijven";
+composerOverlay.appendChild(frame);
+document.body.appendChild(composerOverlay);
+}
+function closeComposer(){if(composerOverlay){composerOverlay.remove();composerOverlay=null}}
+document.getElementById("briefjeButton").addEventListener("click",()=>openComposer());
+
+/* Berichten tussen het briefje-scherm, de muur en het voorbeeld */
+window.addEventListener("message",event=>{
+const msg=event.data||{};
+if(msg.type==="briefje-klaar"){closeComposer();loadBriefjes()}
+else if(msg.type==="briefje-dicht"){closeComposer()}
+else if(msg.type==="concept"&&isEmbed){
+draftBriefje=msg.briefje?Object.assign({id:"concept",status:"actief",gemaakt:Date.now()},msg.briefje):null;
+renderBriefjes();
+}
+});
+if(isEmbed){
+document.body.classList.add("embed");
+// Laat het briefje-scherm weten dat het voorbeeld klaar is.
+const announce=()=>{if(window.parent!==window)window.parent.postMessage({type:"muur-klaar"},"*")};
+if(document.readyState==="complete")setTimeout(announce,50);else window.addEventListener("load",()=>setTimeout(announce,50));
+}
+
 /* ---------- Instellingenvenster ---------- */
 const settingsBackdrop=document.getElementById("settingsBackdrop");
 const settingsList=document.getElementById("settingsList");
