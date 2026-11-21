@@ -12,7 +12,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#ffffff">
 <title>Gedichten</title>
-<!-- Testversie 28: 21 november 2026 – briefjes op de muur, weer als nieuw markeren -->
+<!-- Testversie 29: 21 november 2026 – briefjesknoppen in de kolommen, bestendiger openen -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Caveat:wght@400;500;600&display=swap" rel="stylesheet">
@@ -57,19 +57,19 @@ button{font-family:inherit}
 /* Optillen bij slepen: iets groter met een zachte schaduw */
 .hand{will-change:transform;filter:drop-shadow(var(--sx,.5px) var(--sy,1.25px) var(--sb,1.5px) rgba(55,40,25,var(--sa,.16)))}
 .hand-hint{margin-top:18px;font-size:15px;color:#a09688;text-align:center;font-style:italic}
-.test-version{position:fixed;left:14px;bottom:calc(154px + env(safe-area-inset-bottom));z-index:10001;color:#9b9183;font-family:Georgia,serif;font-size:11px;letter-spacing:.08em;opacity:.78;pointer-events:none;user-select:none}
-.reset-hands-button{position:fixed;right:14px;bottom:calc(10px + env(safe-area-inset-bottom));z-index:10002;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(151,133,108,.38);border-radius:50%;padding:0;background:rgba(247,244,237,.94);color:#766b5d;font-family:Georgia,serif;font-size:30px;font-weight:400;line-height:1;padding:0 0 2px;box-shadow:0 2px 9px rgba(55,45,32,.09);cursor:pointer;-webkit-tap-highlight-color:transparent}
+.test-version{position:fixed;left:14px;bottom:calc(202px + env(safe-area-inset-bottom));z-index:10001;color:#9b9183;font-family:Georgia,serif;font-size:11px;letter-spacing:.08em;opacity:.78;pointer-events:none;user-select:none}
+.reset-hands-button{position:fixed;right:14px;bottom:calc(58px + env(safe-area-inset-bottom));z-index:10002;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(151,133,108,.38);border-radius:50%;padding:0;background:rgba(247,244,237,.94);color:#766b5d;font-family:Georgia,serif;font-size:30px;font-weight:400;line-height:1;padding:0 0 2px;box-shadow:0 2px 9px rgba(55,45,32,.09);cursor:pointer;-webkit-tap-highlight-color:transparent}
 .reset-hands-button:active{background:#e9e1d4;transform:translateY(1px)}
 .reset-hands-button:focus-visible{outline:2px solid #887e70;outline-offset:3px}
-.poem-menu-button{position:fixed;left:14px;bottom:calc(10px + env(safe-area-inset-bottom));z-index:10002;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(151,133,108,.38);border-radius:50%;padding:0;background:rgba(247,244,237,.94);color:#766b5d;box-shadow:0 2px 9px rgba(55,45,32,.09);cursor:pointer;-webkit-tap-highlight-color:transparent}
+.poem-menu-button{position:fixed;left:14px;bottom:calc(58px + env(safe-area-inset-bottom));z-index:10002;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(151,133,108,.38);border-radius:50%;padding:0;background:rgba(247,244,237,.94);color:#766b5d;box-shadow:0 2px 9px rgba(55,45,32,.09);cursor:pointer;-webkit-tap-highlight-color:transparent}
 .poem-menu-button:active{background:#e9e1d4;transform:translateY(1px)}
 .poem-menu-button:focus-visible{outline:2px solid #887e70;outline-offset:3px}
 .poem-menu-button svg{width:21px;height:21px;display:block}
-.settings-button{position:fixed;left:14px;bottom:calc(58px + env(safe-area-inset-bottom));z-index:10002;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(151,133,108,.38);border-radius:50%;padding:0;background:rgba(247,244,237,.94);color:#766b5d;box-shadow:0 2px 9px rgba(55,45,32,.09);cursor:pointer;-webkit-tap-highlight-color:transparent}
+.settings-button{position:fixed;left:14px;bottom:calc(106px + env(safe-area-inset-bottom));z-index:10002;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(151,133,108,.38);border-radius:50%;padding:0;background:rgba(247,244,237,.94);color:#766b5d;box-shadow:0 2px 9px rgba(55,45,32,.09);cursor:pointer;-webkit-tap-highlight-color:transparent}
 .settings-button:active{background:#e9e1d4;transform:translateY(1px)}
 .settings-button:focus-visible{outline:2px solid #887e70;outline-offset:3px}
 .settings-button svg{width:21px;height:21px;display:block}
-@media(max-width:600px){.settings-button{left:9px;bottom:calc(52px + env(safe-area-inset-bottom));width:38px;height:38px}.settings-button svg{width:20px;height:20px}}
+@media(max-width:600px){.settings-button{left:9px;bottom:calc(97px + env(safe-area-inset-bottom));width:38px;height:38px}.settings-button svg{width:20px;height:20px}}
 /* Instellingenvenster */
 .settings-section h3{margin:20px 0 10px;color:#a3957f;font-size:13px;font-weight:500;letter-spacing:.18em;text-transform:uppercase}
 .settings-section:first-child h3{margin-top:2px}
@@ -130,11 +130,16 @@ body.reading-mode #briefjesLayer{opacity:0;visibility:hidden;transition:opacity 
 .prikbord-info{margin-top:10px;color:#887e70;font-size:14px;font-style:italic;line-height:1.3}
 .prikbord-acties{display:flex;gap:12px;margin-top:4px}
 .prikbord-acties button{border:0;border-bottom:1px solid currentColor;padding:2px 0;background:none;color:#8a6845;font-family:inherit;font-size:15px;cursor:pointer}
-.briefje-button{position:fixed;left:50%;margin-left:-20px;bottom:calc(10px + env(safe-area-inset-bottom));z-index:10002;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(167,124,72,.55);border-radius:50%;padding:0;background:#fbf3d2;color:#8a6845;box-shadow:0 2px 9px rgba(55,45,32,.09);cursor:pointer;-webkit-tap-highlight-color:transparent}
-.briefje-button svg{width:21px;height:21px;display:block}
-.briefje-button:active{transform:translateY(1px)}
-.briefje-button:focus-visible{outline:2px solid #887e70;outline-offset:3px}
-@media(max-width:600px){.briefje-button{bottom:calc(7px + env(safe-area-inset-bottom));width:38px;height:38px;margin-left:-19px}}
+.briefje-button,.prikbord-knop{position:fixed;bottom:calc(10px + env(safe-area-inset-bottom));z-index:10002;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(151,133,108,.38);border-radius:50%;padding:0;background:rgba(247,244,237,.94);color:#766b5d;box-shadow:0 2px 9px rgba(55,45,32,.09);cursor:pointer;-webkit-tap-highlight-color:transparent}
+.briefje-button{left:14px}
+.prikbord-knop{right:14px}
+.briefje-button svg,.prikbord-knop svg{width:21px;height:21px;display:block}
+.briefje-button:active,.prikbord-knop:active{background:#e9e1d4;transform:translateY(1px)}
+.briefje-button:focus-visible,.prikbord-knop:focus-visible{outline:2px solid #887e70;outline-offset:3px}
+@media(max-width:600px){.briefje-button,.prikbord-knop{bottom:calc(7px + env(safe-area-inset-bottom));width:38px;height:38px}.briefje-button{left:9px}.prikbord-knop{right:9px}.briefje-button svg,.prikbord-knop svg{width:20px;height:20px}}
+.melding{position:fixed;left:50%;bottom:calc(64px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:40000;max-width:min(90vw,520px);padding:10px 16px;border-radius:12px;background:#302c26;color:#f7f4ed;font-size:16px;line-height:1.3;box-shadow:0 6px 20px rgba(35,30,24,.25)}
+.composer-probleem{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(86vw,400px);padding:22px;border-radius:6px;background:#f7f4ed;color:#302c26;font-size:18px;line-height:1.35;text-align:center;box-shadow:0 12px 40px rgba(35,30,24,.25)}
+.composer-probleem .settings-tools{margin-top:16px}
 .composer-overlay{position:fixed;inset:0;z-index:30000;display:flex;align-items:center;justify-content:center;background:rgba(35,30,24,.42)}
 .composer-overlay iframe{width:min(100%,480px);height:min(100%,940px);border:0;border-radius:14px;background:#f7f4ed;box-shadow:0 12px 40px rgba(35,30,24,.25)}
 @media(max-width:600px){.composer-overlay iframe{width:100%;height:100%;border-radius:0}}
@@ -143,7 +148,7 @@ body.reading-mode #briefjesLayer{opacity:0;visibility:hidden;transition:opacity 
 .inbox-mark:disabled{text-decoration:none;opacity:.8;cursor:default}
 .inbox-undo{border:0;padding:0;background:none;color:#8a6845;font-family:inherit;font-size:inherit;font-style:italic;text-decoration:underline;cursor:pointer}
 /* Voorbeeld van de muur in het briefje-scherm */
-body.embed .hand,body.embed .hand-hint,body.embed .hint-info-button,body.embed .navigation,body.embed .test-version,body.embed .poem-menu-button,body.embed .settings-button,body.embed .reset-hands-button,body.embed .person-inbox-button,body.embed .reading-mode-button,body.embed .briefje-button,body.embed .scroll-cue,body.embed .connection-status,body.embed .paper-dent{display:none!important}
+body.embed .hand,body.embed .hand-hint,body.embed .hint-info-button,body.embed .navigation,body.embed .test-version,body.embed .poem-menu-button,body.embed .settings-button,body.embed .reset-hands-button,body.embed .person-inbox-button,body.embed .reading-mode-button,body.embed .briefje-button,body.embed .prikbord-knop,body.embed .scroll-cue,body.embed .connection-status,body.embed .paper-dent{display:none!important}
 body.embed #briefjesLayer{pointer-events:none}
 /* Gecentreerde gedichten */
 body.align-center .poem{text-align:center}
@@ -178,7 +183,7 @@ body.align-center .poem-paragraph{transform-origin:center center}
 body.reading-mode .ornament .favorite-button{opacity:0;visibility:hidden;pointer-events:none;transition:opacity 500ms cubic-bezier(.4,0,.2,1),visibility 0s linear 500ms,color 200ms ease}
 body.reading-mode .ornament-diamond{opacity:1}
 /* Na een minuut zonder aanraking vervagen de knoppen (eerste tik maakt ze weer zichtbaar) */
-body.controls-idle .hand,body.controls-idle .hand-hint,body.controls-idle .hint-info-button,body.controls-idle .navigation,body.controls-idle .test-version,body.controls-idle .poem-menu-button,body.controls-idle .settings-button,body.controls-idle .briefje-button,body.controls-idle .reset-hands-button,body.controls-idle .person-inbox-button,body.controls-idle .reading-mode-button{opacity:0;visibility:hidden;pointer-events:none;transition:opacity 500ms cubic-bezier(.4,0,.2,1),visibility 0s linear 500ms}
+body.controls-idle .hand,body.controls-idle .hand-hint,body.controls-idle .hint-info-button,body.controls-idle .navigation,body.controls-idle .test-version,body.controls-idle .poem-menu-button,body.controls-idle .settings-button,body.controls-idle .briefje-button,body.controls-idle .prikbord-knop,body.controls-idle .reset-hands-button,body.controls-idle .person-inbox-button,body.controls-idle .reading-mode-button{opacity:0;visibility:hidden;pointer-events:none;transition:opacity 500ms cubic-bezier(.4,0,.2,1),visibility 0s linear 500ms}
 body.controls-idle .person-inbox-button .inbox-badge{visibility:hidden}
 /* Datum, ornament en overvloeien */
 .poem-date{margin:0 0 12px;color:#a3957f;font-size:14px;letter-spacing:.2em;text-transform:uppercase}
@@ -203,10 +208,10 @@ body.controls-idle .person-inbox-button .inbox-badge{visibility:hidden}
 .hand-hint.collapsed{display:none}
 .hint-info-button{display:block;margin:22px auto 0;width:26px;height:26px;border:1px solid rgba(151,133,108,.45);border-radius:50%;padding:0;background:transparent;color:#a09688;font-family:Georgia,serif;font-size:15px;font-style:italic;line-height:24px;cursor:pointer}
 .hint-info-button[hidden]{display:none}
-.scroll-cue{position:fixed;left:50%;bottom:calc(58px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:10001;width:30px;height:46px;padding:4px 7px;border:0;background:none;color:#a89c8a;opacity:.55;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.scroll-cue{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:10001;width:30px;height:46px;padding:4px 7px;border:0;background:none;color:#a89c8a;opacity:.55;cursor:pointer;-webkit-tap-highlight-color:transparent}
 .scroll-cue svg{display:block;width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1;stroke-linecap:round;stroke-linejoin:round}
 .scroll-cue[hidden]{display:none}
-.scroll-cue:has(+.connection-status:not([hidden])){bottom:calc(92px + env(safe-area-inset-bottom))}
+.scroll-cue:has(+.connection-status:not([hidden])){bottom:calc(46px + env(safe-area-inset-bottom))}
 body.reading-mode .connection-status{display:none}
 .poem-menu-filter{flex:0 0 auto;display:flex;gap:0;margin:0 0 10px;border:1px solid rgba(151,133,108,.45);border-radius:3px;overflow:hidden}
 .poem-menu-filter button{flex:1;border:0;padding:8px 10px;background:transparent;color:#776d60;font-family:inherit;font-size:17px;cursor:pointer}
@@ -227,14 +232,14 @@ body.reading-mode .connection-status{display:none}
 .modal .reply-composer textarea{min-height:96px;margin:0 0 6px;font-size:17px}
 .reply-composer .modal-actions{margin-top:0}
 .inbox-item-reply{display:block;margin-top:4px;color:#8a6845;font-size:15px;font-style:italic}
-.connection-status{position:fixed;left:50%;bottom:calc(60px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:10001;padding:5px 12px;border-radius:12px;background:rgba(247,244,237,.92);border:1px solid rgba(151,133,108,.3);color:#8a7f70;font-size:14px;font-style:italic;white-space:nowrap;pointer-events:none}
+.connection-status{position:fixed;left:50%;bottom:calc(14px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:10001;padding:5px 12px;border-radius:12px;background:rgba(247,244,237,.92);border:1px solid rgba(151,133,108,.3);color:#8a7f70;font-size:14px;font-style:italic;white-space:nowrap;pointer-events:none}
 .connection-status[hidden]{display:none}
 .access-prompt{margin:0 0 18px;color:#887e70;font-style:italic;text-align:center}
 .access-prompt-button{display:block;margin:0 auto;border:1px solid rgba(151,133,108,.45);border-radius:3px;background:#fffdf8;color:#5f5547;font-family:inherit;font-size:19px;padding:9px 16px;cursor:pointer}
 .poem-add-modal textarea{min-height:260px;font-size:19px;line-height:1.45}
-@media(max-width:600px){.poem-menu-button{left:9px;bottom:calc(7px + env(safe-area-inset-bottom));width:38px;height:38px}.poem-menu-button svg{width:20px;height:20px}.poem-menu-panel{height:80vh;max-height:calc(100vh - 30px);margin:5vh auto;padding:22px}}
+@media(max-width:600px){.poem-menu-button{left:9px;bottom:calc(52px + env(safe-area-inset-bottom));width:38px;height:38px}.poem-menu-button svg{width:20px;height:20px}.poem-menu-panel{height:80vh;max-height:calc(100vh - 30px);margin:5vh auto;padding:22px}}
 /* R- en S-knoppen met rood meldingsgetal (zoals op de iPhone) */
-.person-inbox-button{position:fixed;bottom:calc(106px + env(safe-area-inset-bottom));z-index:10002;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(151,133,108,.38);border-radius:50%;padding:0 0 2px;background:rgba(247,244,237,.94);font-family:Georgia,serif;font-size:20px;font-weight:400;line-height:1;box-shadow:0 2px 9px rgba(55,45,32,.09);cursor:pointer;-webkit-tap-highlight-color:transparent}
+.person-inbox-button{position:fixed;bottom:calc(154px + env(safe-area-inset-bottom));z-index:10002;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(151,133,108,.38);border-radius:50%;padding:0 0 2px;background:rgba(247,244,237,.94);font-family:Georgia,serif;font-size:20px;font-weight:400;line-height:1;box-shadow:0 2px 9px rgba(55,45,32,.09);cursor:pointer;-webkit-tap-highlight-color:transparent}
 .person-inbox-button:active{background:#e9e1d4;transform:translateY(1px)}
 .person-inbox-button:focus-visible{outline:2px solid #887e70;outline-offset:3px}
 #ramonInboxButton{left:14px;color:#607b88}
@@ -254,14 +259,14 @@ body.reading-mode .connection-status{display:none}
 .inbox-divider{margin:16px 0 4px;color:#a09688;font-size:14px;font-style:italic;text-align:center}
 @keyframes passageFlash{0%,30%{background:rgba(255,190,70,.55);box-shadow:0 0 0 5px rgba(255,190,70,.55)}100%{background:rgba(255,190,70,0);box-shadow:0 0 0 5px rgba(255,190,70,0)}}
 .passage-flash{animation:passageFlash 3s ease-out;border-radius:3px}
-@media(max-width:600px){.person-inbox-button{bottom:calc(97px + env(safe-area-inset-bottom));width:38px;height:38px;font-size:19px}#ramonInboxButton{left:9px}#sanneInboxButton{right:9px}}
+@media(max-width:600px){.person-inbox-button{bottom:calc(142px + env(safe-area-inset-bottom));width:38px;height:38px;font-size:19px}#ramonInboxButton{left:9px}#sanneInboxButton{right:9px}}
 
 /* Leesmodus */
-.reading-mode-button{position:fixed;right:14px;bottom:calc(58px + env(safe-area-inset-bottom));z-index:10002;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(151,133,108,.38);border-radius:50%;padding:0;background:rgba(247,244,237,.94);color:#766b5d;box-shadow:0 2px 9px rgba(55,45,32,.09);cursor:pointer;-webkit-tap-highlight-color:transparent}
+.reading-mode-button{position:fixed;right:14px;bottom:calc(106px + env(safe-area-inset-bottom));z-index:10002;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(151,133,108,.38);border-radius:50%;padding:0;background:rgba(247,244,237,.94);color:#766b5d;box-shadow:0 2px 9px rgba(55,45,32,.09);cursor:pointer;-webkit-tap-highlight-color:transparent}
 .reading-mode-button svg{width:21px;height:21px;display:block}
 .reading-mode-button:active{background:#e9e1d4;transform:translateY(1px)}
 .reading-mode-button:focus-visible{outline:2px solid #887e70;outline-offset:3px}
-.hand,.hand-hint,.hint-info-button,.navigation,.test-version,.poem-menu-button,.settings-button,.briefje-button,.reset-hands-button,.person-inbox-button,.reading-mode-button{transition:opacity 500ms cubic-bezier(.4,0,.2,1),visibility 0s;will-change:opacity}
+.hand,.hand-hint,.hint-info-button,.navigation,.test-version,.poem-menu-button,.settings-button,.briefje-button,.prikbord-knop,.reset-hands-button,.person-inbox-button,.reading-mode-button{transition:opacity 500ms cubic-bezier(.4,0,.2,1),visibility 0s;will-change:opacity}
 /* In rust iets doorzichtig; bij aanraken of gebruik helemaal helder */
 .hand{opacity:.75;transition:opacity 500ms cubic-bezier(.4,0,.2,1),visibility 0s}
 .hand.in-use{opacity:1}
@@ -273,9 +278,9 @@ body.reading-mode .connection-status{display:none}
 body.reading-mode .paper-dent,body.controls-idle .paper-dent{opacity:0;transition:opacity 500ms cubic-bezier(.4,0,.2,1)}
 /* Eén ijle rimpeling bij het neerkomen */
 .landing-ripple{position:absolute;z-index:9998;pointer-events:none;border:1px solid rgba(176,142,96,.5);border-radius:50%}
-body.reading-mode .hand,body.reading-mode .hand-hint,body.reading-mode .hint-info-button,body.reading-mode .navigation,body.reading-mode .test-version,body.reading-mode .poem-menu-button,body.reading-mode .settings-button,body.reading-mode .briefje-button,body.reading-mode .reset-hands-button,body.reading-mode .person-inbox-button{opacity:0;visibility:hidden;pointer-events:none;transition:opacity 500ms cubic-bezier(.4,0,.2,1),visibility 0s linear 500ms}
+body.reading-mode .hand,body.reading-mode .hand-hint,body.reading-mode .hint-info-button,body.reading-mode .navigation,body.reading-mode .test-version,body.reading-mode .poem-menu-button,body.reading-mode .settings-button,body.reading-mode .briefje-button,body.reading-mode .prikbord-knop,body.reading-mode .reset-hands-button,body.reading-mode .person-inbox-button{opacity:0;visibility:hidden;pointer-events:none;transition:opacity 500ms cubic-bezier(.4,0,.2,1),visibility 0s linear 500ms}
 body.reading-mode .reading-mode-button{opacity:.4;background:#e9e1d4;box-shadow:none;transition:opacity 500ms cubic-bezier(.4,0,.2,1),background-color 500ms ease,box-shadow 500ms ease}
-@media(max-width:600px){.reading-mode-button{right:9px;bottom:calc(52px + env(safe-area-inset-bottom));width:38px;height:38px}.reading-mode-button svg{width:20px;height:20px}}
+@media(max-width:600px){.reading-mode-button{right:9px;bottom:calc(97px + env(safe-area-inset-bottom));width:38px;height:38px}.reading-mode-button svg{width:20px;height:20px}}
 
 /* Woordenboek in het aantekeningenvenster */
 .dictionary-tools{margin:-4px 0 18px}
@@ -290,7 +295,7 @@ body.reading-mode .reading-mode-button{opacity:.4;background:#e9e1d4;box-shadow:
 .dictionary-message{color:#776d60;font-style:italic}
 .dictionary-source{margin-top:12px;padding-top:8px;border-top:1px solid #ebe4d8;font-size:15px;color:#998d7d}
 .dictionary-source a{color:#8a6845}
-@media(max-width:600px){.test-version{left:9px;bottom:calc(142px + env(safe-area-inset-bottom));font-size:10px}.reset-hands-button{right:9px;bottom:calc(7px + env(safe-area-inset-bottom));width:38px;height:38px;font-size:29px}}
+@media(max-width:600px){.test-version{left:9px;bottom:calc(187px + env(safe-area-inset-bottom));font-size:10px}.reset-hands-button{right:9px;bottom:calc(52px + env(safe-area-inset-bottom));width:38px;height:38px;font-size:29px}}
 .modal-backdrop{display:none;position:fixed;top:0;right:0;bottom:0;left:0;width:100%;height:100%;z-index:20000;background:rgba(35,30,24,.42);align-items:center;justify-content:center;padding:20px;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .modal-backdrop.visible{display:-webkit-box;display:-webkit-flex;display:flex}
 .modal{width:100%;max-width:460px;background:#f7f4ed;border:1px solid #d5cdbf;border-radius:4px;padding:30px;box-shadow:0 12px 40px rgba(35,30,24,.2);position:relative;margin:auto;flex-shrink:0}
@@ -372,7 +377,7 @@ header{margin-bottom:34px}
 <button type="button" class="hand" id="hand2" aria-label="Tweede Hamsa-hand"></button>
 <button type="button" class="hand" id="sentenceHand" aria-label="Wijzende vinger voor regels"></button>
 <button type="button" class="hand" id="wordHand" aria-label="Wijzende vinger voor woorden"></button>
-<div class="test-version" aria-label="Testversie 28">TEST v28</div>
+<div class="test-version" aria-label="Testversie 29">TEST v29</div>
 <button type="button" class="scroll-cue" id="scrollCue" aria-label="Verder lezen" hidden><svg viewBox="0 0 16 40" aria-hidden="true"><path d="M8 2v34M3 30l5 6 5-6"/></svg></button>
 <div class="connection-status" id="connectionStatus" role="status" hidden></div>
 <button type="button" class="reading-mode-button" id="readingModeButton" aria-pressed="false" aria-label="Leesmodus" title="Leesmodus">
@@ -387,7 +392,28 @@ header{margin-bottom:34px}
     <div class="poem-menu-list" id="inboxList"></div>
   </section>
 </div>
-<button type="button" class="briefje-button" id="briefjeButton" aria-label="Briefje ophangen" title="Briefje ophangen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M5 4h14v11l-5 5H5Z"/><path d="M14 20v-5h5"/><path d="M9.5 9.5h5M12 7v5"/></svg></button>
+<button type="button" class="briefje-button" id="briefjeButton" aria-label="Nieuw briefje" title="Nieuw briefje"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M5 4.5h14v10.5l-4.5 4.5H5Z"/><path d="M14.5 19.5V15H19"/><path d="M8.5 9h7M8.5 12h4.5"/></svg></button>
+<button type="button" class="prikbord-knop" id="prikbordWallButton" aria-label="Prikbord met alle briefjes" title="Prikbord"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="14" rx="1.5"/><path d="M7 9h4.5v4H7Z"/><path d="M13.5 11h3.5v4.5h-3.5Z"/><circle cx="9.2" cy="9" r=".9" fill="currentColor"/><circle cx="15.2" cy="11" r=".9" fill="currentColor"/></svg></button>
+<script>
+// Los van de rest: deze twee knoppen werken altijd, ook als elders iets misgaat.
+(function(){
+function melding(tekst){
+var m=document.createElement("div");m.className="melding";m.setAttribute("role","status");m.textContent=tekst;
+document.body.appendChild(m);setTimeout(function(){m.remove()},9000);
+}
+window.toonMelding=melding;
+window.addEventListener("error",function(e){if(e&&e.message)melding("Er ging iets mis: "+e.message)});
+document.getElementById("briefjeButton").addEventListener("click",function(){
+try{
+if(typeof openComposer==="function"){openComposer();return}
+}catch(e){melding("Briefje openen lukte niet ("+e.message+"). Ik open het als losse pagina.")}
+location.href="briefje.html";
+});
+document.getElementById("prikbordWallButton").addEventListener("click",function(){
+try{if(typeof openPrikbord==="function"){openPrikbord();return}}catch(e){melding("Prikbord openen lukte niet: "+e.message)}
+});
+})();
+</script>
 <button type="button" class="reset-hands-button" id="resetHandsButton" aria-label="Zet alle handjes terug naar hun beginposities" title="Handjes terugzetten">⟲</button>
 <button type="button" class="poem-menu-button" id="poemMenuButton" aria-label="Open gedichtenmenu" title="Gedichten">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M4 6.5h16M4 12h16M4 17.5h16"/></svg>
@@ -865,7 +891,7 @@ document.addEventListener("visibilitychange",()=>{if(document.visibilityState===
 /* ---------- Automatisch bijwerken ---------- */
 // Als er een nieuwe versie van de site op GitHub staat, laadt de iPad die vanzelf,
 // maar alleen als er niets open staat (dus nooit midden in het schrijven).
-const APP_VERSION="28";
+const APP_VERSION="29";
 let pendingReload=false;
 async function checkForNewVersion(){
 if(location.protocol!=="https:"&&location.hostname!=="localhost")return;
@@ -2531,8 +2557,7 @@ add(left+sx,r.top+sy,right+sx,r.bottom+sy);
 // Knoppen en de plekken van de handjes (op de muur altijd vrijhouden).
 const W=window.innerWidth,H=wallHeight();
 const side=window.innerWidth<=600?54:64;
-add(0,H-170,side,H);add(W-side,H-170,W,H);
-add(W/2-34,H-64,W/2+34,H);
+add(0,H-222,side,H);add(W-side,H-222,W,H);
 add(0,60,side+20,240);add(W-side-20,60,W,240);
 return rects;
 }
@@ -2834,9 +2859,23 @@ frame.src="briefje.html?"+query.toString();
 frame.title="Briefje schrijven";
 composerOverlay.appendChild(frame);
 document.body.appendChild(composerOverlay);
+frame.addEventListener("load",()=>{
+let title="";
+try{title=frame.contentDocument?frame.contentDocument.title:""}catch(e){title="Briefje"}
+if(title!=="Briefje")composerProblem("Het briefje-scherm is niet gevonden. Staat het bestand briefje.html op GitHub, in dezelfde map als index.html?");
+});
+}
+function composerProblem(text){
+if(!composerOverlay)return;
+const box=document.createElement("div");box.className="composer-probleem";box.setAttribute("role","alertdialog");
+const p=document.createElement("p");p.style.margin="0";p.textContent=text;
+const tools=document.createElement("div");tools.className="settings-tools";
+const close=document.createElement("button");close.type="button";close.className="settings-action";close.textContent="Sluiten";close.addEventListener("click",closeComposer);
+tools.appendChild(close);
+box.append(p,tools);
+composerOverlay.appendChild(box);
 }
 function closeComposer(){if(composerOverlay){composerOverlay.remove();composerOverlay=null}}
-document.getElementById("briefjeButton").addEventListener("click",()=>openComposer());
 
 /* Berichten tussen het briefje-scherm, de muur en het voorbeeld */
 window.addEventListener("message",event=>{
