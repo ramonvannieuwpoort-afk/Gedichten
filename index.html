@@ -12,7 +12,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#ffffff">
 <title>Gedichten</title>
-<!-- Testversie 30: 21 november 2026 – briefje-scherm ook op oudere iPads -->
+<!-- Testversie 31: 21 november 2026 – één parapluknop voor alle knoppen -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Caveat:wght@400;500;600&display=swap" rel="stylesheet">
@@ -211,7 +211,6 @@ body.controls-idle .person-inbox-button .inbox-badge{visibility:hidden}
 .scroll-cue{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:10001;width:30px;height:46px;padding:4px 7px;border:0;background:none;color:#a89c8a;opacity:.55;cursor:pointer;-webkit-tap-highlight-color:transparent}
 .scroll-cue svg{display:block;width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1;stroke-linecap:round;stroke-linejoin:round}
 .scroll-cue[hidden]{display:none}
-.scroll-cue:has(+.connection-status:not([hidden])){bottom:calc(46px + env(safe-area-inset-bottom))}
 body.reading-mode .connection-status{display:none}
 .poem-menu-filter{flex:0 0 auto;display:flex;gap:0;margin:0 0 10px;border:1px solid rgba(151,133,108,.45);border-radius:3px;overflow:hidden}
 .poem-menu-filter button{flex:1;border:0;padding:8px 10px;background:transparent;color:#776d60;font-family:inherit;font-size:17px;cursor:pointer}
@@ -351,6 +350,29 @@ header{margin-bottom:34px}
 }
 @media(prefers-reduced-motion:reduce){.poem-paragraph,.hand,.hand svg{transition:none!important}.poem-enter{animation:none!important}}
 @media(max-width:600px){.note-dot{left:calc(-17px - var(--dot-shift,0) * 10px);width:7px;height:7px;margin-top:-3.5px}.poem-date{font-size:12px;margin-bottom:9px}.ornament{max-width:240px;margin-top:10px}}
+
+/* v31: één parapluknop (hamsa) onderaan in het midden; de andere knoppen waaieren eruit */
+.paraplu{position:fixed;left:50%;bottom:calc(8px + env(safe-area-inset-bottom));z-index:10004;width:54px;height:54px;margin-left:-27px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(151,133,108,.38);border-radius:50%;padding:0;background:rgba(247,244,237,.96);box-shadow:0 2px 10px rgba(55,45,32,.12);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:opacity 500ms cubic-bezier(.4,0,.2,1),visibility 0s,transform 260ms cubic-bezier(.3,1.4,.5,1)}
+.paraplu .hand-icon{width:34px;height:40px;transform:none;transition:transform 300ms cubic-bezier(.3,1.4,.5,1)}
+body.fan-open .paraplu{transform:scale(1.06)}
+body.fan-open .paraplu .hand-icon{transform:rotate(-8deg) scale(1.05)}
+.paraplu-stip{position:absolute;top:2px;right:2px;width:11px;height:11px;border-radius:50%;background:#d84a3a;border:2px solid #f7f4ed}
+.paraplu-stip[hidden]{display:none}
+.fan-item{left:50%!important;right:auto!important;bottom:calc(15px + env(safe-area-inset-bottom))!important;margin-left:-21px;width:42px!important;height:42px!important;z-index:10003!important;opacity:0!important;visibility:hidden!important;pointer-events:none!important;transform:translate(0,0) scale(.3);transition:transform 220ms cubic-bezier(.4,0,.2,1),opacity 180ms ease,visibility 0s linear 220ms!important}
+.fan-item::after{content:attr(data-kort);position:absolute;top:100%;left:50%;transform:translateX(-50%);margin-top:3px;white-space:nowrap;font-family:Georgia,serif;font-size:11px;color:#7d7264;background:rgba(247,244,237,.9);padding:0 4px;border-radius:6px;pointer-events:none}
+body.fan-open .fan-item{opacity:1!important;visibility:visible!important;pointer-events:auto!important;transform:translate(var(--fx),var(--fy)) scale(1);transition:transform 340ms cubic-bezier(.3,1.35,.5,1) var(--fd),opacity 200ms ease var(--fd),visibility 0s!important}
+.paraplu-scherm{position:fixed;top:0;right:0;bottom:0;left:0;z-index:10002;background:rgba(247,244,237,0);pointer-events:none;transition:background-color 250ms ease}
+body.fan-open .paraplu-scherm{background:rgba(247,244,237,.55);pointer-events:auto}
+body.controls-idle .paraplu{opacity:0;visibility:hidden;pointer-events:none;transition:opacity 500ms cubic-bezier(.4,0,.2,1),visibility 0s linear 500ms}
+body.reading-mode .paraplu{opacity:.4;box-shadow:none}
+body.embed .paraplu,body.embed .paraplu-scherm{display:none!important}
+/* R en S zakken naar de onderste rij, symmetrisch met de paraplu */
+.person-inbox-button{bottom:calc(14px + env(safe-area-inset-bottom))!important}
+.test-version{bottom:calc(64px + env(safe-area-inset-bottom))!important}
+.connection-status{bottom:calc(70px + env(safe-area-inset-bottom))!important}
+.scroll-cue{bottom:calc(68px + env(safe-area-inset-bottom))!important}
+.scroll-cue.met-status{bottom:calc(100px + env(safe-area-inset-bottom))!important}
+@media(max-width:600px){.person-inbox-button{bottom:calc(11px + env(safe-area-inset-bottom))!important}.paraplu{width:50px;height:50px;margin-left:-25px}.paraplu .hand-icon{width:31px;height:37px}.fan-item{width:40px!important;height:40px!important;margin-left:-20px}.test-version{bottom:calc(60px + env(safe-area-inset-bottom))!important}}
 </style>
 </head>
 <body>
@@ -377,7 +399,9 @@ header{margin-bottom:34px}
 <button type="button" class="hand" id="hand2" aria-label="Tweede Hamsa-hand"></button>
 <button type="button" class="hand" id="sentenceHand" aria-label="Wijzende vinger voor regels"></button>
 <button type="button" class="hand" id="wordHand" aria-label="Wijzende vinger voor woorden"></button>
-<div class="test-version" aria-label="Testversie 30">TEST v30</div>
+<div class="test-version" aria-label="Testversie 30">TEST v31</div>
+<div class="paraplu-scherm" id="parapluScherm" aria-hidden="true"></div>
+<button type="button" class="paraplu" id="parapluKnop" aria-label="Meer knoppen" aria-expanded="false" title="Meer"><span class="paraplu-stip" id="parapluStip" hidden></span></button>
 <button type="button" class="scroll-cue" id="scrollCue" aria-label="Verder lezen" hidden><svg viewBox="0 0 16 40" aria-hidden="true"><path d="M8 2v34M3 30l5 6 5-6"/></svg></button>
 <div class="connection-status" id="connectionStatus" role="status" hidden></div>
 <button type="button" class="reading-mode-button" id="readingModeButton" aria-pressed="false" aria-label="Leesmodus" title="Leesmodus">
@@ -891,7 +915,7 @@ document.addEventListener("visibilitychange",()=>{if(document.visibilityState===
 /* ---------- Automatisch bijwerken ---------- */
 // Als er een nieuwe versie van de site op GitHub staat, laadt de iPad die vanzelf,
 // maar alleen als er niets open staat (dus nooit midden in het schrijven).
-const APP_VERSION="30";
+const APP_VERSION="31";
 let pendingReload=false;
 async function checkForNewVersion(){
 if(location.protocol!=="https:"&&location.hostname!=="localhost")return;
@@ -1338,6 +1362,7 @@ function updateScrollCue(isLong){
 if(isLong!==undefined)poemIsLong=isLong;
 const bottom=poemElement.getBoundingClientRect().bottom;
 scrollCue.hidden=!(poemIsLong&&bottom>window.innerHeight-40);
+{const cs=document.querySelector(".connection-status");scrollCue.classList.toggle("met-status",!!(cs&&!cs.hidden))}
 }
 scrollCue.addEventListener("click",()=>window.scrollBy({top:window.innerHeight*0.6,behavior:"smooth"}));
 window.addEventListener("scroll",()=>updateScrollCue(),{passive:true});
@@ -2557,7 +2582,7 @@ add(left+sx,r.top+sy,right+sx,r.bottom+sy);
 // Knoppen en de plekken van de handjes (op de muur altijd vrijhouden).
 const W=window.innerWidth,H=wallHeight();
 const side=window.innerWidth<=600?54:64;
-add(0,H-222,side,H);add(W-side,H-222,W,H);
+add(0,H-70,side,H);add(W-side,H-70,W,H);add(W/2-40,H-80,W/2+40,H);
 add(0,60,side+20,240);add(W-side-20,60,W,240);
 return rects;
 }
@@ -3021,6 +3046,49 @@ applyLookSettings();
 startFromCache();
 loadPoems();
 setInterval(loadPoems,5*60*1000);
+</script>
+<script>
+/* v31: parapluknop */
+(function(){
+const knop=document.getElementById("parapluKnop"),scherm=document.getElementById("parapluScherm"),stip=document.getElementById("parapluStip");
+if(!knop)return;
+try{if(typeof buildHamsaIcon==="function")knop.insertBefore(buildHamsaIcon(),stip)}catch(e){knop.textContent="✋"}
+// Van links naar rechts over de boog.
+const items=[["settingsButton","Instellingen"],["poemMenuButton","Gedichten"],["briefjeButton","Briefje"],["prikbordWallButton","Prikbord"],["resetHandsButton","Handjes"],["readingModeButton","Lezen"]];
+const els=items.map(([id,kort])=>{const el=document.getElementById(id);if(el){el.classList.add("fan-item");el.setAttribute("data-kort",kort)}return el}).filter(Boolean);
+function plaats(){
+const smal=window.innerWidth<=600;
+const r=smal?126:132,n=els.length;
+els.forEach((el,i)=>{
+const hoek=(162-(144/(n-1))*i)*Math.PI/180;
+el.style.setProperty("--fx",Math.round(Math.cos(hoek)*r)+"px");
+el.style.setProperty("--fy",Math.round(-Math.sin(hoek)*r*0.92-6)+"px");
+el.style.setProperty("--fd",(Math.abs(i-(n-1)/2)*30)+"ms");
+});
+}
+plaats();window.addEventListener("resize",plaats);
+function open(){plaats();document.body.classList.add("fan-open");knop.setAttribute("aria-expanded","true")}
+function dicht(){if(!document.body.classList.contains("fan-open"))return;document.body.classList.remove("fan-open");knop.setAttribute("aria-expanded","false")}
+window.sluitParaplu=dicht;
+knop.addEventListener("click",e=>{
+e.stopPropagation();
+if(document.body.classList.contains("reading-mode")&&typeof setReadingMode==="function"){setReadingMode(false);return}
+document.body.classList.contains("fan-open")?dicht():open();
+});
+scherm.addEventListener("click",dicht);
+els.forEach(el=>el.addEventListener("click",()=>setTimeout(dicht,0)));
+document.addEventListener("keydown",e=>{if(e.key==="Escape")dicht()});
+new MutationObserver(()=>{const c=document.body.classList;if(c.contains("fan-open")&&(c.contains("controls-idle")||c.contains("reading-mode")))dicht()}).observe(document.body,{attributes:true,attributeFilter:["class"]});
+// Rood stipje: een ongelezen briefje voor jou dat al op het prikbord ligt.
+function stipje(){
+try{
+const ik=(typeof viewerName==="function"&&viewerName())||"";
+const lijst=(typeof briefjes!=="undefined"&&Array.isArray(briefjes))?briefjes:[];
+stip.hidden=!lijst.some(b=>b&&b.status==="prikbord"&&!b.gelezenOp&&ik&&String(b.persoon||"").toLowerCase()!==ik.toLowerCase()&&(!b.voor||b.voor==="Ons"||String(b.voor).toLowerCase()===ik.toLowerCase()));
+}catch(e){stip.hidden=true}
+}
+stipje();setInterval(stipje,5000);
+})();
 </script>
 </body>
 </html>
