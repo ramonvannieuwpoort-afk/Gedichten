@@ -1,0 +1,31 @@
+{
+ "reeksen": [
+  {
+   "id": "song-of-myself",
+   "titel": "Song of Myself",
+   "dichter": "Walt Whitman",
+   "bestand": "reeks-song-of-myself.json",
+   "dagen": 37,
+   "sausje": "gras",
+   "beschrijving": "Whitmans grote lied over zichzelf, en daarmee over iedereen: gras, lichaam, stad, dood en het open veld. In 37 dagen, uit de eindversie van 1891–92."
+  },
+  {
+   "id": "awater",
+   "titel": "Awater",
+   "dichter": "Martinus Nijhoff",
+   "bestand": "reeks-awater.json",
+   "dagen": 8,
+   "sausje": "veer",
+   "beschrijving": "Een dichter die zijn broer verloor volgt op een avond een gewone kantoorman door de stad, op zoek naar een reisgenoot. Het grote moderne Nederlandse gedicht uit 1934, in acht avonden."
+  },
+  {
+   "id": "het-uur-u",
+   "titel": "Het uur U",
+   "dichter": "Martinus Nijhoff",
+   "bestand": "reeks-het-uur-u.json",
+   "dagen": 8,
+   "sausje": "bloesem",
+   "beschrijving": "Op een hete zomerdag loopt een vreemdeling door een gewone straat, en alles wat daar verborgen zat komt even boven. Nijhoffs verhalende gedicht uit 1937, in acht dagen."
+  }
+ ]
+}
