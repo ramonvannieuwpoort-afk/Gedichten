@@ -4,7 +4,7 @@
 // Gedichten en aantekeningen bewaart de site zelf; die gaan hier niet doorheen.
 // Lettertypes van Google worden ook bewaard, zodat de tekst meteen en offline goed staat.
 
-const CACHE = 'gedichten-v4';
+const CACHE = 'gedichten-v5';
 const FONT_CACHE = 'gedichten-lettertypes-v1';
 const ASSETS = ['./', './index.html', './manifest.webmanifest', './apple-touch-icon.png', './icon-192.png', './icon-512.png',
   './briefje.html', './manifest-briefje.webmanifest', './briefje-icon.png', './briefje-192.png', './briefje-512.png'];
@@ -71,6 +71,23 @@ self.addEventListener('fetch', event => {
           return response;
         })
         .catch(() => caches.match(key).then(cached => cached || caches.match('./')))
+    );
+    return;
+  }
+
+  if (url.pathname.endsWith('.json') && !url.pathname.endsWith('.webmanifest')) {
+    // Reeksen (bijv. Song of Myself): eerst internet, anders de bewaarde versie.
+    const key = url.pathname;
+    event.respondWith(
+      fetch(new Request(request.url, { cache: 'no-cache', credentials: 'same-origin' }))
+        .then(response => {
+          if (response.ok) {
+            const copy = response.clone();
+            caches.open(CACHE).then(cache => cache.put(key, copy));
+          }
+          return response;
+        })
+        .catch(() => caches.match(key))
     );
     return;
   }
