@@ -12,7 +12,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#ffffff">
 <title>Gedichten</title>
-<!-- Versie 1.5: 22 november 2026 – reeks Het uur U (Nijhoff) toegevoegd -->
+<!-- Versie 1.7: 23 november 2026 – gelezen-rij vervaagt mee met de knoppen -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Caveat:wght@400;500;600&display=swap" rel="stylesheet" crossorigin="anonymous" media="print" onload="this.media='all'"><noscript><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Caveat:wght@400;500;600&display=swap" rel="stylesheet"></noscript>
@@ -189,7 +189,7 @@ body.align-center .poem-paragraph{transform-origin:center center}
 body.reading-mode .ornament .favorite-button{opacity:0;visibility:hidden;pointer-events:none;transition:opacity 500ms cubic-bezier(.4,0,.2,1),visibility 0s linear 500ms,color 200ms ease}
 body.reading-mode .ornament-diamond{opacity:1}
 /* Na een minuut zonder aanraking vervagen de knoppen (eerste tik maakt ze weer zichtbaar) */
-body.controls-idle .hand,body.controls-idle .hand-hint,body.controls-idle .hint-info-button,body.controls-idle .navigation,body.controls-idle .test-version,body.controls-idle .poem-menu-button,body.controls-idle .settings-button,body.controls-idle .briefje-button,body.controls-idle .prikbord-knop,body.controls-idle .reset-hands-button,body.controls-idle .person-inbox-button,body.controls-idle .reading-mode-button{opacity:0;visibility:hidden;pointer-events:none;transition:opacity 500ms cubic-bezier(.4,0,.2,1),visibility 0s linear 500ms}
+body.controls-idle .hand,body.controls-idle .reeks-lezen,body.controls-idle .hand-hint,body.controls-idle .hint-info-button,body.controls-idle .navigation,body.controls-idle .test-version,body.controls-idle .poem-menu-button,body.controls-idle .settings-button,body.controls-idle .briefje-button,body.controls-idle .prikbord-knop,body.controls-idle .reset-hands-button,body.controls-idle .person-inbox-button,body.controls-idle .reading-mode-button{opacity:0;visibility:hidden;pointer-events:none;transition:opacity 500ms cubic-bezier(.4,0,.2,1),visibility 0s linear 500ms}
 body.controls-idle .person-inbox-button .inbox-badge{visibility:hidden}
 /* Datum, ornament en overvloeien */
 .poem-date{margin:0 0 12px;color:#a3957f;font-size:14px;letter-spacing:.2em;text-transform:uppercase}
@@ -283,7 +283,7 @@ body.reading-mode .connection-status{display:none}
 body.reading-mode .paper-dent,body.controls-idle .paper-dent{opacity:0;transition:opacity 500ms cubic-bezier(.4,0,.2,1)}
 /* Eén ijle rimpeling bij het neerkomen */
 .landing-ripple{position:absolute;z-index:9998;pointer-events:none;border:1px solid rgba(176,142,96,.5);border-radius:50%}
-body.reading-mode .hand,body.reading-mode .hand-hint,body.reading-mode .hint-info-button,body.reading-mode .navigation,body.reading-mode .test-version,body.reading-mode .poem-menu-button,body.reading-mode .settings-button,body.reading-mode .briefje-button,body.reading-mode .prikbord-knop,body.reading-mode .reset-hands-button,body.reading-mode .person-inbox-button{opacity:0;visibility:hidden;pointer-events:none;transition:opacity 500ms cubic-bezier(.4,0,.2,1),visibility 0s linear 500ms}
+body.reading-mode .hand,body.reading-mode .reeks-lezen,body.reading-mode .hand-hint,body.reading-mode .hint-info-button,body.reading-mode .navigation,body.reading-mode .test-version,body.reading-mode .poem-menu-button,body.reading-mode .settings-button,body.reading-mode .briefje-button,body.reading-mode .prikbord-knop,body.reading-mode .reset-hands-button,body.reading-mode .person-inbox-button{opacity:0;visibility:hidden;pointer-events:none;transition:opacity 500ms cubic-bezier(.4,0,.2,1),visibility 0s linear 500ms}
 body.reading-mode .reading-mode-button{opacity:.4;background:#e9e1d4;box-shadow:none;transition:opacity 500ms cubic-bezier(.4,0,.2,1),background-color 500ms ease,box-shadow 500ms ease}
 @media(max-width:600px){.reading-mode-button{right:9px;bottom:calc(97px + env(safe-area-inset-bottom));width:38px;height:38px}.reading-mode-button svg{width:20px;height:20px}}
 
@@ -437,6 +437,35 @@ body.sausje-veer .gras-rand{background:linear-gradient(to top,rgba(160,170,190,.
 .gras-rand .veertje{width:5px;height:26px;border-radius:50% 50% 40% 40%;background:linear-gradient(to right,rgba(190,196,210,.2),rgba(150,160,182,.55) 45%,rgba(190,196,210,.2));transform-origin:50% 0}
 @keyframes dwarrel{0%{transform:translate(0,0) rotate(0deg);opacity:0}8%{opacity:.75}50%{transform:translate(var(--drift),50vh) rotate(calc(var(--draai) / 2))}92%{opacity:.6}100%{transform:translate(calc(var(--drift) * -.5),105vh) rotate(var(--draai));opacity:0}}
 @media(prefers-reduced-motion:reduce){.gras-rand .blaadje,.gras-rand .veertje{animation:none!important;opacity:0}}
+
+/* v1.6: samen lezen – blaadjes en lievelingsregels */
+.reeks-lezen{max-width:30em;margin:22px auto 0;text-align:center;transition:opacity 500ms cubic-bezier(.4,0,.2,1),visibility 0s}
+.lees-knoppen{display:flex;justify-content:center;gap:12px}
+.lees-knop{display:inline-flex;align-items:center;gap:7px;padding:7px 14px 7px 10px;border:1px solid rgba(151,133,108,.35);border-radius:999px;background:rgba(255,253,248,.7);color:#8f8676;font-family:inherit;font-size:15px;cursor:pointer;transition:background-color 300ms ease,color 300ms ease,border-color 300ms ease}
+.lees-knop svg{width:18px;height:18px;transition:transform 400ms cubic-bezier(.3,1.5,.5,1)}
+.lees-knop.ramon.aan{color:#4f6a4a;border-color:rgba(95,128,88,.55);background:rgba(143,164,107,.16)}
+.lees-knop.sanne.aan{color:#5f6a36;border-color:rgba(128,140,70,.55);background:rgba(170,180,100,.16)}
+.lees-knop.aan svg{transform:rotate(-12deg) scale(1.12)}
+.lees-knop.aan svg path:first-child{fill-opacity:.55}
+.lees-regel{margin:10px auto 0;font-style:italic;color:#6f675b;font-size:15.5px;line-height:1.45}
+.lees-regel span{font-style:normal;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#7f9660;margin-right:4px}
+.lees-uitleg{margin:10px auto 0;color:#8b8172;font-size:14.5px;font-style:italic;line-height:1.45}
+.lees-uitleg.kiezen{color:#5f7a45}
+.lees-kies{display:block;margin-top:4px}
+.lees-link{border:0;border-bottom:1px solid currentColor;padding:1px 0;margin:0 8px;background:none;color:#7f9660;font-family:inherit;font-size:14px;font-style:normal;cursor:pointer}
+body.regel-kiezen .poem-sentence{cursor:pointer;border-radius:4px;background:rgba(143,164,107,.07)}
+.poem-sentence.lieveling-ramon{box-shadow:inset 0 -.16em 0 rgba(120,150,100,.35)}
+.poem-sentence.lieveling-sanne{box-shadow:inset 0 -.16em 0 rgba(170,175,95,.38)}
+.poem-sentence.lieveling-ramon.lieveling-sanne{box-shadow:inset 0 -.16em 0 rgba(120,150,100,.35),inset 0 -.32em 0 rgba(170,175,95,.3)}
+/* blaadjes aan de sprietjes: links Ramon, rechts Sanne */
+.spriet{position:relative}
+.spriet .blad{position:absolute;top:38%;width:6px;height:3px;border-radius:100% 0;opacity:0;transform:scale(.2);transition:opacity 500ms ease,transform 700ms cubic-bezier(.3,1.5,.5,1)}
+.spriet .blad.ramon{right:100%;background:#7d9a5e;transform-origin:100% 50%}
+.spriet .blad.sanne{left:100%;top:52%;background:#a7b065;transform-origin:0 50%;border-radius:0 100%}
+.spriet .blad.uit{opacity:1;transform:rotate(-18deg) scale(1)}
+.spriet .blad.sanne.uit{transform:rotate(18deg) scale(1)}
+body.sausje-bloesem .spriet .blad{display:none}
+@media(max-width:600px){.lees-knop{font-size:14px;padding:6px 12px 6px 9px}}
 </style>
 </head>
 <body>
@@ -450,6 +479,7 @@ body.sausje-veer .gras-rand{background:linear-gradient(to top,rgba(160,170,190,.
 <main>
 <div class="poem" id="poem"></div>
 <div class="reeks-inleiding" id="reeksInleiding" hidden></div>
+<div class="reeks-lezen" id="reeksLezenRij" hidden></div>
 <button type="button" class="hint-info-button" id="hintInfoButton" aria-label="Uitleg over de handjes" aria-expanded="false" hidden>i</button>
 <div class="hand-hint" id="handHint">Sleep de bovenste handjes over het gedicht om passages te vergroten. Gebruik de linker vinger voor regels en de rechter vinger voor woorden. Tik op een handje om een aantekening toe te voegen. Geef een handje een zetje richting zijn hoek om het terug te sturen.</div>
 </main>
@@ -805,24 +835,43 @@ else scheduleFit();
 const REEKS_CATALOGUS="reeksen.json";
 const REEKS_CACHE_KEY="gedichten_reeks_v2";
 const REEKS_STANDAARD_CATALOGUS=[{id:"song-of-myself",titel:"Song of Myself",dichter:"Walt Whitman",bestand:"reeks-song-of-myself.json",dagen:37,sausje:"gras",beschrijving:"Whitmans grote lied over zichzelf, en daarmee over iedereen: gras, lichaam, stad, dood en het open veld."}];
-let reeksCatalogus=REEKS_STANDAARD_CATALOGUS.slice(),reeksData=null,reeksStand={actief:null,reeksen:{}};
+let reeksCatalogus=REEKS_STANDAARD_CATALOGUS.slice(),reeksData=null,reeksStand={actief:null,reeksen:{}},reeksLezen={},reeksGemigreerd=false;
+const MENSEN=["Ramon","Sanne"];
 function normaliseerStand(raw){
 if(!raw||typeof raw!=="object")return{actief:null,reeksen:{}};
-if(raw.reeksen&&typeof raw.reeksen==="object")return{actief:raw.actief||null,gepland:raw.gepland||null,reeksen:raw.reeksen};
+if(raw.reeksen&&typeof raw.reeksen==="object"){
+const uit={actief:raw.actief||null,gepland:raw.gepland||null,reeksen:{}};
+Object.keys(raw.reeksen).forEach(id=>{uit.reeksen[id]=migreerStaat(raw.reeksen[id])});
+return uit;
+}
 // Formaat van versie 1.2: één reeks met pauzeTotaal.
 if(raw.reeks&&typeof raw.start==="number"){
 const s={start:raw.start,pauzes:[],bijstelling:-(raw.pauzeTotaal||0),tempo:"dag",tot:null,inleiding:"onder"};
 if(typeof raw.pauzeVanaf==="number")s.pauzes.push([raw.pauzeVanaf,null]);
-return{actief:raw.aan===false?null:raw.reeks,gepland:null,reeksen:{[raw.reeks]:s}};
+return{actief:raw.aan===false?null:raw.reeks,gepland:null,reeksen:{[raw.reeks]:migreerStaat(s)}};
 }
 return{actief:null,reeksen:{}};
 }
 try{
 const c=JSON.parse(localStorage.getItem(REEKS_CACHE_KEY)||"null");
-if(c){if(Array.isArray(c.catalogus)&&c.catalogus.length)reeksCatalogus=c.catalogus;reeksData=c.data||null;reeksStand=normaliseerStand(c.stand)}
+if(c){if(Array.isArray(c.catalogus)&&c.catalogus.length)reeksCatalogus=c.catalogus;reeksData=c.data||null;reeksLezen=c.lezen&&typeof c.lezen==="object"?c.lezen:{};reeksStand=normaliseerStand(c.stand)}
 else{const oud=JSON.parse(localStorage.getItem("gedichten_reeks_v1")||"null");if(oud){reeksData=oud.data||null;reeksStand=normaliseerStand(oud.stand)}}
 }catch(e){}
-function bewaarReeks(){try{localStorage.setItem(REEKS_CACHE_KEY,JSON.stringify({catalogus:reeksCatalogus,data:reeksData,stand:reeksStand}))}catch(e){}}
+// v1.6: van "kalenderdagen sinds de start" naar "welk deel, sinds wanneer" (nodig om op elkaar te kunnen wachten).
+function migreerStaat(o){
+if(!o||typeof o!=="object")return o;
+if(o.v===2)return o;
+const t=reeksVandaag();
+let d=0;
+if(typeof o.start==="number"&&t>=o.start){
+d=reeksTel(o.start,t,o);
+(o.pauzes||[]).forEach(p=>{const begin=Math.max(p[0],o.start),eind=(p[1]===null||p[1]===undefined)?t:Math.min(t,p[1]-1);if(eind>=begin)d-=reeksTel(begin,eind,o)});
+d+=o.bijstelling||0;
+}
+reeksGemigreerd=true;
+return{v:2,begon:typeof o.start==="number"?o.start:t,start:typeof o.start==="number"?o.start:t,dag:Math.max(1,d),sinds:typeof o.start==="number"&&o.start>t?o.start:t,pauzes:o.pauzes||[],tempo:o.tempo||"dag",tot:o.tot||null,inleiding:o.inleiding||"onder",wachten:true};
+}
+function bewaarReeks(){try{localStorage.setItem(REEKS_CACHE_KEY,JSON.stringify({catalogus:reeksCatalogus,data:reeksData,stand:reeksStand,lezen:reeksLezen}))}catch(e){}}
 function reeksVandaag(){const d=new Date();const local=d.getTime()-d.getTimezoneOffset()*60000;return Math.floor((local-(settings.switchHour||0)*36e5)/864e5)}
 function weekdag(d){return((d+4)%7+7)%7}// 0 = zondag
 function reeksInfo(id){return reeksCatalogus.find(c=>c.id===id)||(reeksData&&reeksData.id===id?{id,titel:reeksData.titel,dichter:reeksData.dichter,dagen:reeksData.dagen.length,sausje:reeksData.sausje}:null)}
@@ -835,31 +884,66 @@ if(s.tempo==="omdedag")return((d-s.start)%2+2)%2===0;
 return true;
 }
 function reeksTel(a,b,s){let n=0;for(let d=a;d<=b;d++)if(reeksTelt(d,s))n++;return n}
-// Het dagnummer in de reeks; tijdens een pauze of op een rustdag: de laatst getoonde dag.
-function reeksRuweDag(id,t=reeksVandaag()){
-const s=reeksStaat(id);if(!s||typeof s.start!=="number"||t<s.start)return 0;
-let n=reeksTel(s.start,t,s);
-(s.pauzes||[]).forEach(p=>{const begin=Math.max(p[0],s.start),eind=(p[1]===null||p[1]===undefined)?t:Math.min(t,p[1]-1);if(eind>=begin)n-=reeksTel(begin,eind,s)});
-return n+(s.bijstelling||0);
-}
 function reeksGepauzeerd(id){const s=reeksStaat(id);return!!(s&&(s.pauzes||[]).some(p=>p[1]===null||p[1]===undefined))}
-function reeksGepland(id){const s=reeksStaat(id);return!!(s&&reeksVandaag()<s.start)}
-function reeksKlaar(id){const n=reeksAantal(id);return!!reeksStaat(id)&&n>0&&reeksRuweDag(id)>n}
-function reeksVoortgangVan(id){return Math.max(0,Math.min(reeksAantal(id),reeksRuweDag(id)))}
+// Mag op dag x een deel van de reeks op de muur? (tempo en pauzes)
+function reeksVrij(s,x){
+if(!reeksTelt(x,s))return false;
+for(const p of s.pauzes||[]){const eind=(p[1]===null||p[1]===undefined)?Infinity:p[1]-1;if(x>=p[0]&&x<=eind)return false}
+return true;
+}
+function reeksVolgendeVrij(s,x,grens){for(let y=x;y<=grens;y++)if(reeksVrij(s,y))return y;return Infinity}
+// Welk deel is het nu? Het volgende deel komt de dag nadat jullie allebei het vorige gelezen hebben.
+// Heeft één van jullie gelezen, dan komt het uiterlijk 3 dagen daarna. Heeft nog niemand gelezen, dan wacht het.
+function reeksStatus(id,t=reeksVandaag()){
+const s=reeksStaat(id),n=reeksAantal(id);
+if(!s||typeof s.dag!=="number")return{dag:0,sinds:0,klaar:false,volgende:null,wacht:null};
+let d=s.dag,sinds=s.sinds,volgende=null,wacht=null;
+const lezen=reeksLezen[id]||{};
+for(let k=0;k<2000&&d<=n;k++){
+let vroegst;
+if(s.wachten===false)vroegst=sinds+1;
+else{
+const l=lezen[d]||{};
+const ops=MENSEN.map(m=>l[m]&&typeof l[m].op==="number"?l[m].op:null).filter(v=>v!==null);
+if(!ops.length){wacht="niemand";break}
+if(ops.length>=MENSEN.length)vroegst=Math.max(sinds+1,Math.max(...ops)+1);
+else{vroegst=Math.max(sinds+1,Math.min(...ops)+3);wacht="een"}
+}
+const x=reeksVolgendeVrij(s,vroegst,Math.max(t,vroegst)+400);
+if(x===Infinity)break;
+if(x>t){volgende=x;break}
+d++;sinds=x;wacht=null;
+}
+return{dag:d,sinds,klaar:n>0&&d>n,volgende,wacht};
+}
+function reeksGepland(id){const s=reeksStaat(id);return!!(s&&reeksVandaag()<s.begon)}
+function reeksKlaar(id){return reeksStatus(id).klaar}
+function reeksVoortgangVan(id){
+const s=reeksStaat(id);if(!s||reeksVandaag()<s.begon)return 0;
+return Math.max(0,Math.min(reeksAantal(id),reeksStatus(id).dag));
+}
+// Hoeveel dagen stond er al een reeksdeel op de muur? (zodat de gewone willekeur daarna verdergaat waar hij was)
+function reeksBezetteDagen(id){
+const s=reeksStaat(id);if(!s||s.tot||typeof s.begon!=="number")return 0;
+const t=reeksVandaag(),st=reeksStatus(id,t);
+const eind=st.klaar?st.sinds-1:t;
+let n=0;for(let y=s.begon;y<=eind;y++)if(reeksVrij(s,y))n++;
+return n;
+}
 // Na het "tot"-uur (en tot de volgende wisseltijd) staat er een gewoon gedicht.
 function reeksNaMenguur(s){if(!s||!s.tot)return false;const h=new Date().getHours();return h>=s.tot||h<(settings.switchHour||0)}
 function reeksDagVanVandaag(){
 const id=reeksStand.actief;if(!id||!reeksData||reeksData.id!==id)return 0;
-const s=reeksStaat(id);if(!s||reeksGepauzeerd(id))return 0;
-const t=reeksVandaag();if(t<s.start||!reeksTelt(t,s)||reeksNaMenguur(s))return 0;
-const d=reeksRuweDag(id,t);return d>=1&&d<=reeksData.dagen.length?d:0;
+const s=reeksStaat(id);if(!s)return 0;
+const t=reeksVandaag();if(t<s.begon||!reeksVrij(s,t)||reeksNaMenguur(s))return 0;
+const st=reeksStatus(id,t);return!st.klaar&&st.dag>=1?st.dag:0;
 }
 function reeksVoortgang(){return reeksStand.actief?reeksVoortgangVan(reeksStand.actief):0}
 // De gewone willekeur schuift alle dagen over die helemaal door een reeks gevuld waren,
 // zodat hij daarna verdergaat waar hij was.
 function reeksVerschuiving(){
 if(settings.rotation!=="dag")return 0;
-let n=0;Object.keys(reeksStand.reeksen||{}).forEach(id=>{const s=reeksStaat(id);if(s&&!s.tot)n+=reeksVoortgangVan(id)});
+let n=0;Object.keys(reeksStand.reeksen||{}).forEach(id=>{n+=reeksBezetteDagen(id)});
 return n;
 }
 function reeksSleutel(){return "r"+(reeksStand.actief||"")+"."+reeksDagVanVandaag()+"."+reeksVerschuiving()}
@@ -893,6 +977,8 @@ if(r.ok){const j=await r.json();if(j&&Array.isArray(j.reeksen)&&j.reeksen.length
 reeksGeplandeStart();
 await laadActieveReeks();
 reeksVernieuwd();
+// Oude stand (versie 1.5 of eerder) omgezet: één keer opslaan, zodat alle apparaten hetzelfde rekenen.
+if(reeksGemigreerd){reeksGemigreerd=false;reeksOpslaan()}
 }
 function reeksOpslaan(){
 reeksVernieuwd();
@@ -911,7 +997,8 @@ if(startDag>t){reeksStand.gepland={id,dag:startDag};reeksOpslaan();return}
 if(reeksStand.actief&&reeksStand.actief!==id)reeksPauzeerIntern(reeksStand.actief);
 const oud=reeksStaat(id)||{};
 reeksStand.reeksen=reeksStand.reeksen||{};
-reeksStand.reeksen[id]={start:startDag,pauzes:[],bijstelling:0,tempo:oud.tempo||"dag",tot:oud.tot||null,inleiding:oud.inleiding||"onder"};
+reeksStand.reeksen[id]={v:2,begon:startDag,start:startDag,dag:1,sinds:startDag,pauzes:[],tempo:oud.tempo||"dag",tot:oud.tot||null,inleiding:oud.inleiding||"onder",wachten:oud.wachten!==false};
+reeksLezen[id]={};
 reeksStand.actief=id;
 if(reeksStand.gepland&&reeksStand.gepland.id===id)reeksStand.gepland=null;
 await laadActieveReeks();
@@ -932,16 +1019,40 @@ reeksOpslaan();
 }
 function reeksPauzeer(id){reeksPauzeerIntern(id);reeksOpslaan()}
 function reeksSchuif(id,stap){
-const d=reeksRuweDag(id)+stap;if(d<1||d>reeksAantal(id))return;
-const s=reeksStaat(id);s.bijstelling=(s.bijstelling||0)+stap;reeksOpslaan();
+const s=reeksStaat(id);if(!s)return;
+const st=reeksStatus(id),d=st.dag+stap;
+if(d<1||d>reeksAantal(id))return;
+s.dag=d;s.sinds=reeksVandaag();reeksOpslaan();
 }
 // Tempo wijzigen zonder dat de reeks verspringt: vanaf vandaag opnieuw tellen.
 function reeksZetTempo(id,tempo){
 const s=reeksStaat(id);if(!s||s.tempo===tempo)return;
-const d=reeksRuweDag(id),t=reeksVandaag(),open=reeksGepauzeerd(id);
-s.tempo=tempo;s.start=t;s.pauzes=open?[[t,null]]:[];
-s.bijstelling=d-(open?0:(reeksTelt(t,s)?1:0));
+const st=reeksStatus(id);
+s.dag=Math.max(1,st.dag);s.sinds=st.sinds;s.tempo=tempo;s.start=reeksVandaag();
 reeksOpslaan();
+}
+// Gelezen (en eventueel een lievelingsregel) voor één persoon en één deel.
+function reeksMarkeer(id,dag,wie,gelezen,regel){
+if(!id||!MENSEN.includes(wie))return;
+const huidig=reeksStatus(id);
+// Een eerder deel weer op "niet gelezen" zetten mag de reeks niet terug laten springen.
+if(!gelezen&&dag!==huidig.dag)return;
+const s=reeksStaat(id);if(s){s.dag=Math.max(1,huidig.dag);s.sinds=huidig.sinds}
+reeksLezen[id]=reeksLezen[id]||{};
+const L=reeksLezen[id][dag]=reeksLezen[id][dag]||{};
+const oud=L[wie]||{};
+if(gelezen)L[wie]={op:typeof oud.op==="number"?oud.op:reeksVandaag(),regel:regel===undefined?(oud.regel??null):regel};
+else delete L[wie];
+bewaarReeks();
+reeksVernieuwd();
+try{
+const f=new URLSearchParams();
+f.append("action","reeks_lees");f.append("token",localStorage.getItem(ACCESS_STORAGE_KEY)||"");
+f.append("reeks",id);f.append("dag",String(dag));f.append("wie",wie);f.append("gelezen",gelezen?"ja":"nee");
+f.append("op",String(gelezen?L[wie].op:""));f.append("regel",gelezen&&L[wie].regel!==null&&L[wie].regel!==undefined?String(L[wie].regel):"");
+fetch(NOTES_URL,{method:"POST",mode:"no-cors",body:f}).catch(()=>{});
+}catch(e){}
+if(s)reeksOpslaan();
 }
 function reeksZet(id,sleutel,waarde){const s=reeksStaat(id);if(!s)return;s[sleutel]=waarde;reeksOpslaan()}
 function reeksDatum(dagnummer){
@@ -952,21 +1063,24 @@ function reeksDagUitDatum(waarde){const p=String(waarde||"").split("-").map(Numb
 function reeksDatumVeld(dagnummer){const d=new Date(dagnummer*864e5);return d.toISOString().slice(0,10)}
 
 /* De voortgang als rijtje: sprietjes (gras), blaadjes (bloesem) of veertjes (veer). */
-function voortgangHtml(totaal,dag,sausje,klein){
+function voortgangHtml(totaal,dag,sausje,klein,id){
 let html="";
+const lezen=id&&reeksLezen[id]||{};
 for(let i=1;i<=totaal;i++){
 const h=hashString("spriet"+i);
 const gegroeid=i<=dag;
 const hoogte=gegroeid?(klein?8+(h%8):13+(h%15)):(klein?2:3+(h%3));
 const kanteling=((h>>5)%13)-6;
-html+='<span class="spriet'+(gegroeid?" gegroeid":"")+(i===dag&&!klein?" nieuw":"")+'" style="height:'+hoogte+'px;--kantel:'+kanteling+'deg;animation-delay:-'+((h>>9)%5000)/1000+'s"></span>';
+let bladeren="";
+if(gegroeid&&!klein){const L=lezen[i]||{};MENSEN.forEach(m=>{bladeren+='<span class="blad '+m.toLowerCase()+(L[m]?" uit":"")+'"></span>'})}
+html+='<span class="spriet'+(gegroeid?" gegroeid":"")+(i===dag&&!klein?" nieuw":"")+'" style="height:'+hoogte+'px;--kantel:'+kanteling+'deg;animation-delay:-'+((h>>9)%5000)/1000+'s">'+bladeren+'</span>';
 }
 return html;
 }
 function tekenGrasVoortgang(item){
 const el=document.getElementById("grasVoortgang");if(!el)return;
 if(!item||!item.reeks){el.innerHTML="";return}
-el.innerHTML=voortgangHtml(item.total,item.dag,item.sausje,false);
+el.innerHTML=voortgangHtml(item.total,item.dag,item.sausje,false,item.reeksId);
 el.setAttribute("aria-label","Dag "+item.dag+" van "+item.total);
 }
 // Onderaan het scherm: gras met wind, vallende bloesem of zwevende veertjes.
@@ -1001,6 +1115,8 @@ document.body.classList.toggle("reeks-actief",actief);
 ["gras","bloesem","veer"].forEach(n=>document.body.classList.toggle("sausje-"+n,sausje===n));
 if(actief)tekenRand(sausje);
 tekenGrasVoortgang(item);
+if(regelKiezer&&(!item||!item.reeks||regelKiezer.dag!==item.dag))zetRegelKiezer(null);
+tekenLeesRij(item);
 const intro=document.getElementById("reeksInleiding");
 if(intro){
 const s=actief?reeksStaat(item.reeksId):null;
@@ -1012,6 +1128,69 @@ if(plek==="boven"){if(intro.nextElementSibling!==poemElement)poemElement.parentN
 else if(poemElement.nextElementSibling!==intro)poemElement.parentNode.insertBefore(intro,poemElement.nextSibling);
 }
 }
+/* Gelezen-rij onder het gedicht: twee namen met een blaadje, en de lievelingsregels. */
+const BLAD_SVG='<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 16C4 8 9 4 17 3c0 8-4 13-12 13Z" fill="currentColor" fill-opacity=".18" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M4 16 12 8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>';
+let regelKiezer=null,regelKiezerTimer=null;
+function htmlVeilig(t){return String(t).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function regelTekst(index){const z=poemElement.querySelectorAll(".poem-sentence")[index];return z?z.textContent.replace(/\s+/g," ").trim():""}
+function zetRegelKiezer(k){
+regelKiezer=k;clearTimeout(regelKiezerTimer);
+document.body.classList.toggle("regel-kiezen",!!k);
+if(k)regelKiezerTimer=setTimeout(()=>zetRegelKiezer(null),90000);
+tekenLeesRij(poems[currentIndex]);
+}
+function tekenLeesRij(item){
+const el=document.getElementById("reeksLezenRij");if(!el)return;
+poemElement.querySelectorAll(".lieveling-ramon,.lieveling-sanne").forEach(z=>z.classList.remove("lieveling-ramon","lieveling-sanne"));
+if(!item||!item.reeks){el.hidden=true;el.innerHTML="";return}
+const id=item.reeksId,L=(reeksLezen[id]||{})[item.dag]||{};
+const st=reeksStatus(id),vandaagDeel=item.dag===st.dag;
+let html='<div class="lees-knoppen" role="group" aria-label="Gelezen">';
+MENSEN.forEach(m=>{const aan=!!L[m];html+='<button type="button" class="lees-knop '+m.toLowerCase()+(aan?" aan":"")+'" data-wie="'+m+'" aria-pressed="'+aan+'">'+BLAD_SVG+'<span>'+m+'</span></button>'});
+html+='</div>';
+MENSEN.forEach(m=>{
+if(!L[m]||typeof L[m].regel!=="number")return;
+const z=poemElement.querySelectorAll(".poem-sentence")[L[m].regel];
+if(z)z.classList.add("lieveling-"+m.toLowerCase());
+const tekst=regelTekst(L[m].regel);
+if(tekst)html+='<div class="lees-regel '+m.toLowerCase()+'"><span>'+m+' koos</span> ‘'+htmlVeilig(tekst)+'’</div>';
+});
+if(regelKiezer&&regelKiezer.id===id&&regelKiezer.dag===item.dag){
+html+='<div class="lees-uitleg kiezen">'+htmlVeilig(regelKiezer.wie)+', tik je lievelingsregel aan. <button type="button" class="lees-link" data-actie="stop">Liever niet</button></div>';
+}else{
+const zin=vandaagDeel?reeksWachtTekst(id):"";
+const kies=MENSEN.filter(m=>L[m]).map(m=>'<button type="button" class="lees-link" data-actie="kies" data-wie="'+m+'">'+(typeof L[m].regel==="number"?m+": andere regel":m+": kies een lievelingsregel")+'</button>').join("");
+html+='<div class="lees-uitleg">'+(Object.keys(L).length?"":"Gelezen? Tik op je naam. ")+htmlVeilig(zin)+(kies?'<span class="lees-kies">'+kies+'</span>':"")+'</div>';
+}
+el.innerHTML=html;el.hidden=false;
+}
+(function(){
+const el=document.getElementById("reeksLezenRij");if(!el)return;
+el.addEventListener("click",e=>{
+const item=poems[currentIndex];if(!item||!item.reeks)return;
+const knop=e.target.closest(".lees-knop");
+if(knop){
+const wie=knop.dataset.wie,aan=knop.classList.contains("aan");
+reeksMarkeer(item.reeksId,item.dag,wie,!aan);
+zetRegelKiezer(!aan?{id:item.reeksId,dag:item.dag,wie}:null);
+return;
+}
+const link=e.target.closest(".lees-link");
+if(link){if(link.dataset.actie==="stop")zetRegelKiezer(null);else zetRegelKiezer({id:item.reeksId,dag:item.dag,wie:link.dataset.wie})}
+});
+// Kiesstand: een tik op een regel maakt hem de lievelingsregel.
+poemElement.addEventListener("click",e=>{
+if(!regelKiezer)return;
+const z=e.target.closest(".poem-sentence");if(!z)return;
+const item=poems[currentIndex];if(!item||!item.reeks)return;
+const index=[...poemElement.querySelectorAll(".poem-sentence")].indexOf(z);
+if(index<0)return;
+e.preventDefault();e.stopPropagation();
+const k=regelKiezer;
+reeksMarkeer(k.id,k.dag,k.wie,true,index);
+zetRegelKiezer(null);
+},true);
+})();
 function updateCounter(){
 const item=poems[currentIndex];
 if(!item){counterElement.textContent="";return}
@@ -1053,6 +1232,29 @@ parent.appendChild(row);
 if(uitleg){const p=document.createElement("div");p.className="setting-hint";p.textContent=uitleg;row.hint=p}
 return row;
 }
+function reeksWanneer(x){
+const v=x-reeksVandaag();
+if(v<=0)return "vandaag";if(v===1)return "morgen";if(v===2)return "overmorgen";
+return "op "+reeksDatum(x);
+}
+// Zin over het volgende deel: wie heeft gelezen, en wanneer het volgende deel komt.
+function reeksWachtTekst(id){
+const s=reeksStaat(id);if(!s)return "";
+const st=reeksStatus(id),n=reeksAantal(id);
+if(st.klaar||st.dag<1)return "";
+const L=(reeksLezen[id]||{})[st.dag]||{};
+const gelezen=MENSEN.filter(m=>L[m]);
+const laatste=st.dag>=n;
+const wat=laatste?"Het slot":"Dag "+(st.dag+1);
+if(s.wachten===false)return laatste?"Dit is het laatste deel.":wat+" komt "+(st.volgende?reeksWanneer(st.volgende):"morgen")+".";
+if(gelezen.length>=MENSEN.length)return laatste?"Jullie hebben de hele reeks gelezen.":"Jullie hebben het allebei gelezen. "+wat+" komt "+(st.volgende?reeksWanneer(st.volgende):"morgen")+".";
+if(gelezen.length===1){
+const ander=MENSEN.find(m=>m!==gelezen[0]);
+if(laatste)return gelezen[0]+" heeft het gelezen.";
+return wat+" komt zodra "+ander+" ook gelezen heeft"+(st.volgende?", en anders "+reeksWanneer(st.volgende):"")+".";
+}
+return laatste?"Het laatste deel.":wat+" komt als jullie dit deel gelezen hebben.";
+}
 function reeksStatusTekst(id){
 const n=reeksAantal(id),s=reeksStaat(id);
 const g=reeksStand.gepland;
@@ -1063,7 +1265,8 @@ const v=reeksVoortgangVan(id);
 if(reeksGepauzeerd(id))return "Gepauzeerd na dag "+v+" van "+n+".";
 if(reeksStand.actief!==id)return "Gestopt bij dag "+v+" van "+n+".";
 const t=reeksVandaag(),delen=["Dag "+Math.max(1,v)+" van "+n+"."];
-if(!reeksTelt(t,s))delen.push("Vandaag is een rustdag.");
+if(!reeksVrij(s,t))delen.push("Vandaag is een rustdag.");
+const wt=reeksWachtTekst(id);if(wt)delen.push(wt);
 if(s.tempo==="weekend")delen.push("Alleen op zaterdag en zondag.");
 else if(s.tempo==="omdedag")delen.push("Om de dag een nieuw stuk.");
 if(s.tot)delen.push("Tot "+String(s.tot).padStart(2,"0")+":00, daarna een gewoon gedicht.");
@@ -1078,7 +1281,7 @@ const info=reeksInfo(id),s=reeksStaat(id);
 const kaart=document.createElement("section");kaart.className="reeks-kaart lopend sausje-"+(info.sausje||"gras");
 kaart.innerHTML='<div class="reeks-kaart-kop"><span class="reeks-label">Loopt nu</span><h3></h3><div class="reeks-dichter"></div></div><div class="reeks-mini" aria-hidden="true"></div><p class="reeks-status"></p>';
 kaart.querySelector("h3").textContent=info.titel;kaart.querySelector(".reeks-dichter").textContent=info.dichter||"";
-kaart.querySelector(".reeks-mini").innerHTML=voortgangHtml(reeksAantal(id),reeksVoortgangVan(id),info.sausje,true);
+kaart.querySelector(".reeks-mini").innerHTML=voortgangHtml(reeksAantal(id),reeksVoortgangVan(id),info.sausje,true,id);
 kaart.querySelector(".reeks-status").textContent=reeksStatusTekst(id);
 lijst.appendChild(kaart);
 if(s&&!reeksKlaar(id)){
@@ -1086,10 +1289,13 @@ const r1=reeksRij(kaart,"Volgen");
 reeksKnoppen(r1,[["aan","Volgen"],["pauze","Pauze"]],reeksGepauzeerd(id)?"pauze":"aan",w=>{w==="pauze"?reeksPauzeer(id):reeksHervat(id)});
 if(!reeksGepauzeerd(id)){
 const r2=reeksRij(kaart,"Dag bijstellen","Een dag overslaan, of er een terug.");
-const d=reeksRuweDag(id);
+const d=reeksStatus(id).dag;
 reeksKnoppen(r2,[[-1,"← Dag terug",d-1<1],[1,"Dag verder →",d+1>reeksAantal(id)]],"",stap=>reeksSchuif(id,Number(stap)));
 if(r2.hint)r2.appendChild(r2.hint);
 }
+const rw=reeksRij(kaart,"Op elkaar wachten","Het volgende deel komt als jullie allebei gelezen hebben. Heeft één van jullie gelezen, dan komt het na 3 dagen toch. Heeft nog niemand gelezen, dan wacht het.");
+reeksKnoppen(rw,[["ja","Aan"],["nee","Uit"]],s.wachten===false?"nee":"ja",w=>{const st=reeksStatus(id);s.dag=Math.max(1,st.dag);s.sinds=st.sinds;reeksZet(id,"wachten",w==="ja")});
+if(rw.hint)rw.appendChild(rw.hint);
 const r3=reeksRij(kaart,"Tempo","Bij een ander tempo gaat de reeks gewoon verder waar hij is.");
 reeksKnoppen(r3,[["dag","Elke dag"],["omdedag","Om de dag"],["weekend","Weekend"]],s.tempo||"dag",w=>reeksZetTempo(id,w));
 if(r3.hint)r3.appendChild(r3.hint);
@@ -1257,6 +1463,7 @@ try{
 const data=await jsonpRequest({action:"poems",ook:"alles"});
 const list=(Array.isArray(data.poems)?data.poems:[]).map(row=>({id:String(row.id||""),favorite:!!row.favoriet,title:String(row.titel||""),author:String(row.dichter||""),poem:String(row.gedicht||""),addedBy:String(row.toegevoegdDoor||""),addedOn:String(row.toegevoegdOp||"")})).filter(item=>item.poem.trim());
 // Gedeelde reeksstand (Apps Script v15) eerst, zodat het juiste deel meteen goed staat.
+if(data.reeksLezen&&typeof data.reeksLezen==="object")reeksLezen=data.reeksLezen;
 if(data.reeksStand&&typeof data.reeksStand==="object")reeksStand=normaliseerStand(data.reeksStand);
 applyPoems(list);
 writeCache({poems:list});
@@ -1355,7 +1562,7 @@ document.addEventListener("visibilitychange",()=>{if(document.visibilityState===
 /* ---------- Automatisch bijwerken ---------- */
 // Als er een nieuwe versie van de site op GitHub staat, laadt de iPad die vanzelf,
 // maar alleen als er niets open staat (dus nooit midden in het schrijven).
-const APP_VERSION="1.5";
+const APP_VERSION="1.7";
 let pendingReload=false;
 async function checkForNewVersion(){
 if(location.protocol!=="https:"&&location.hostname!=="localhost")return;
@@ -3019,7 +3226,7 @@ let l=Infinity,t=Infinity,r=-Infinity,b=-Infinity;
 for(const rect of sentenceRects(sentence)){if(!rect.width)continue;l=Math.min(l,rect.left);t=Math.min(t,rect.top);r=Math.max(r,rect.right);b=Math.max(b,rect.bottom)}
 if(l<Infinity)add(l+sx,t+sy,r+sx,b+sy);
 });
-["#poemDate","#title","#author",".ornament","#reeksInleiding:not([hidden])","#handHint:not(.collapsed)",".hint-info-button:not([hidden])",".navigation"].forEach(sel=>{
+["#poemDate","#title","#author",".ornament","#reeksInleiding:not([hidden])","#reeksLezenRij:not([hidden])","#handHint:not(.collapsed)",".hint-info-button:not([hidden])",".navigation"].forEach(sel=>{
 const el=document.querySelector(sel);
 if(!el)return;
 const r=el.getBoundingClientRect();
