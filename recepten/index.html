@@ -1,1778 +1,616 @@
-<!DOCTYPE html>
-<html lang="nl">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Recepten">
-<meta name="theme-color" content="#f7f4ed">
-<meta name="robots" content="noindex,nofollow">
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
-<link rel="manifest" href="manifest.webmanifest">
-<title>Recepten</title>
-<!-- Recepten, versie 1.0 – zusje van de Gedichten. Gemaakt voor de iPad aan de muur (Safari 14) en jullie telefoons. -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Caveat:wght@400;500;600&display=swap" rel="stylesheet" crossorigin="anonymous" media="print" onload="this.media='all'"><noscript><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Caveat:wght@400;500;600&display=swap" rel="stylesheet"></noscript>
-<style>
-/* Let op voor de iPad (Safari 14.0): geen gap bij flexbox, geen :has(), geen aspect-ratio, geen inset. Grid-gap mag wel. */
-*{box-sizing:border-box}
-:root{--papier:#f7f4ed;--achter:#eee9df;--inkt:#302c26;--zacht:#887e70;--lijn:#d5cdbf;--accent:#b5654a;--accent-donker:#8f4a33;--accent-zacht:rgba(181,101,74,.12);--ramon:#7895a3;--ramon-donker:#4f6976;--sanne:#b88a54;--sanne-donker:#76552f;--schaal:1}
-html{background:#fff;-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--achter);color:var(--inkt);font-family:'Cormorant Garamond',Georgia,serif;font-size:19px}
-button,input,select,textarea{font-family:inherit;color:inherit}
-[hidden]{display:none!important}
-.page{max-width:900px;min-height:100vh;margin:0 auto;padding:72px 60px 160px;background:linear-gradient(to bottom,#fff 0,#fff 25px,var(--papier) 75px,var(--achter) 160px)}
-@media(max-width:600px){.page{padding:58px 18px 150px}}
-.datum{margin:0 0 10px;color:#a3957f;font-size:14px;letter-spacing:.2em;text-transform:uppercase;text-align:center}
-h1{font-size:calc(42px * var(--schaal));font-weight:500;line-height:1.1;margin:0 0 8px;text-align:center}
-@media(max-width:600px){h1{font-size:calc(34px * var(--schaal))}}
-h2{font-size:26px;font-weight:500;margin:30px 0 10px}
-.sub{color:var(--zacht);font-style:italic;text-align:center;font-size:20px;margin:0}
-.uitleg{color:#8b8172;font-size:16px;font-style:italic;line-height:1.4;margin:6px 0 12px}
-.midden{text-align:center}
-.ornament{display:flex;align-items:center;justify-content:center;margin:16px auto 24px;max-width:320px}
-.ornament .l,.ornament .r{flex:1;height:1px}
-.ornament .l{background:linear-gradient(to right,rgba(201,184,156,0),#c9b89c)}
-.ornament .r{background:linear-gradient(to left,rgba(201,184,156,0),#c9b89c)}
-.ornament i{display:block;width:7px;height:7px;margin:0 12px;border:1px solid var(--accent);background:var(--accent-zacht);transform:rotate(45deg)}
-.knop{display:inline-block;min-height:46px;margin:5px 4px;border:1px solid rgba(151,133,108,.45);border-radius:3px;padding:9px 16px;background:#fffdf8;font-size:18px;line-height:1.2;cursor:pointer;-webkit-tap-highlight-color:transparent;color:var(--inkt);vertical-align:middle;text-align:center}
-.knop:active{background:#e9e1d4}
-.knop.hoofd{background:var(--accent);border-color:var(--accent);color:#fffaf4;font-weight:600}
-.knop.hoofd:active{background:var(--accent-donker)}
-.knop.klein{min-height:36px;padding:5px 11px;font-size:16px}
-.knop:disabled{opacity:.45}
-.link{border:0;background:none;padding:4px 2px;color:#8a6845;border-bottom:1px solid currentColor;font-size:16px;cursor:pointer}
-.segmented{display:flex;border:1px solid rgba(151,133,108,.45);border-radius:3px;overflow:hidden;background:rgba(255,253,248,.6)}
-.segmented button{flex:1;min-height:44px;border:0;padding:6px 6px;background:transparent;color:#776d60;font-size:17px;line-height:1.15;cursor:pointer}
-.segmented button+button{border-left:1px solid rgba(151,133,108,.45)}
-.segmented button.active{background:#e9e1d4;color:var(--inkt);font-weight:600}
-.kaart{position:relative;margin:0 0 22px;background:#fffdf8;border:1px solid rgba(151,133,108,.22);border-radius:3px;padding:24px 24px 18px;box-shadow:0 1px 1px rgba(80,60,20,.06),0 8px 20px rgba(80,60,20,.08)}
-.plakband{position:absolute;left:50%;top:-11px;width:96px;height:22px;margin-left:-48px;background:rgba(255,255,255,.62);box-shadow:0 1px 2px rgba(0,0,0,.05);transform:rotate(-2.5deg)}
-.chip{display:inline-block;padding:2px 11px;border-radius:999px;font-size:15px;margin:0 4px 4px 0;border:1px solid rgba(151,133,108,.35);background:rgba(255,253,248,.75);color:#5f5547;white-space:nowrap}
-.chip.Ramon{color:var(--ramon-donker);background:rgba(112,145,160,.16);border-color:rgba(120,149,163,.45)}
-.chip.Sanne{color:var(--sanne-donker);background:rgba(182,145,96,.16);border-color:rgba(184,138,84,.45)}
-.chip.Samen{color:#5f5547;background:linear-gradient(90deg,rgba(112,145,160,.22),rgba(182,145,96,.22));border-color:rgba(151,133,108,.45)}
-.chip.knopchip{cursor:pointer}
-.chip.knopchip.active{background:#e9e1d4;color:var(--inkt);font-weight:600}
-.stip{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:middle;background:#b8ad9d}
-.stip.Ramon{background:var(--ramon)}.stip.Sanne{background:var(--sanne)}.stip.Voorraad{background:var(--accent)}
-.cijfers{font-family:Caveat,cursive;font-size:25px;line-height:1.1}
-.cijfers .Ramon{color:var(--ramon-donker)}.cijfers .Sanne{color:var(--sanne-donker)}
-.cijfers .wacht{font-family:'Cormorant Garamond',Georgia,serif;font-size:15px;font-style:italic;color:var(--zacht)}
-.hart{color:#c2453b}
-.letop{position:relative;margin:16px 0;padding:12px 16px 12px 46px;background:linear-gradient(to right,rgba(181,101,74,.15),rgba(181,101,74,.04));border-left:3px solid var(--accent);border-radius:2px;font-size:18px;line-height:1.4;text-align:left}
-.letop:before{content:"!";position:absolute;left:13px;top:11px;width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;text-align:center;line-height:22px;font-family:Georgia,serif;font-size:14px}
-.letop b{font-weight:600}
-.melding{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:40000;max-width:min(92vw,560px);padding:10px 16px;border-radius:12px;background:#302c26;color:#f7f4ed;font-size:17px;line-height:1.3;box-shadow:0 6px 20px rgba(35,30,24,.25);display:flex;align-items:center}
-.melding button{margin-left:14px;border:0;background:none;color:#f3c9a8;font-size:17px;text-decoration:underline;cursor:pointer;white-space:nowrap}
-.verbinding{position:fixed;left:50%;bottom:calc(76px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:10001;padding:5px 12px;border-radius:12px;background:rgba(247,244,237,.94);border:1px solid rgba(151,133,108,.3);color:#8a7f70;font-size:14px;font-style:italic;white-space:nowrap;pointer-events:none}
+// Recepten – Apps Script
+// Versie 1.0: recepten (met versies en geschiedenis), weekmenu, boodschappen (Lidl en AH),
+// voorraad in de kast (met logboek en automatisch aanvullen), cijfers en "onderweg".
+//
+// Eenmalig: zet bij Projectinstellingen → Scripteigenschappen de eigenschap SECRET_TOKEN
+// (dezelfde toegangscode als bij de gedichten) en voer daarna de functie installeer() uit.
 
-/* Vanavond */
-.vanavond-kaart{text-align:center;padding:30px 26px 22px}
-.vanavond-kaart h2{margin:8px 0 6px;font-size:calc(34px * var(--schaal));line-height:1.15}
-.vraag-kaart{text-align:center;background:linear-gradient(to bottom,rgba(255,253,248,.96),rgba(250,245,236,.96))}
-.vraag-kaart p{margin:0 0 8px;font-size:21px}
-.strook{margin:6px 0 0}
-.status-regel{margin:22px 0 0;text-align:center;color:#6f675b;font-size:18px}
-.status-regel a{color:#8a6845}
+const VERSIE = '1.0';
 
-/* Recepten */
-.zoekbalk{display:flex;align-items:center;margin:0 0 12px}
-.zoekbalk input{flex:1;min-height:46px;border:1px solid #cfc5b5;border-radius:3px;padding:9px 12px;background:#fffdf8;font-size:18px;-webkit-appearance:none}
-.filters{margin:0 0 6px}
-.raster{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));grid-gap:28px 20px;gap:28px 20px;margin-top:24px}
-.receptkaart{margin:0;cursor:pointer;min-height:150px;transform:rotate(var(--draai,0deg));-webkit-tap-highlight-color:transparent;transition:transform 200ms ease}
-.receptkaart:active{transform:rotate(var(--draai,0deg)) scale(.98)}
-.receptkaart h3{margin:4px 0 6px;font-size:25px;font-weight:500;line-height:1.15}
-.meta{color:var(--zacht);font-size:16px;font-style:italic}
-.nieuw-kaart{display:flex;align-items:center;justify-content:center;min-height:150px;border:1px dashed rgba(151,133,108,.6);border-radius:3px;background:rgba(255,253,248,.5);color:#6f6253;font-size:21px;cursor:pointer}
-.nieuw-kaart span{color:var(--accent);font-size:28px;margin-right:8px}
-
-/* Eén recept */
-.personen{display:flex;align-items:center;justify-content:center;margin:12px 0 4px}
-.personen button{width:48px;height:48px;border-radius:50%;border:1px solid rgba(151,133,108,.45);background:#fffdf8;font-size:26px;line-height:1;cursor:pointer;padding:0}
-.personen span{min-width:150px;text-align:center;font-size:22px}
-.kolommen{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);grid-gap:36px;gap:36px;margin-top:8px}
-@media(max-width:720px){.kolommen{grid-template-columns:minmax(0,1fr);grid-gap:6px;gap:6px}}
-.groep-kop{margin:18px 0 4px;font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:#a3957f}
-.ingr{position:relative;padding:8px 6px;border-bottom:1px solid rgba(213,205,191,.7);font-size:calc(19px * var(--schaal));line-height:1.3;border-radius:2px;transform-origin:left center;transition:background-color 200ms ease,transform 380ms cubic-bezier(.22,1,.36,1)}
-.ingr .h{display:inline-block;min-width:78px;font-weight:600;font-variant-numeric:lining-nums tabular-nums}
-.ingr .noot{color:var(--zacht);font-style:italic;font-size:.88em}
-.ingr .kast{display:block;padding-left:78px;color:#8a7a5f;font-size:14px;font-style:italic}
-.ingr .kast.weinig{color:#b0442f}
-.stap{position:relative;margin:0 0 12px;padding:10px 12px 10px 48px;font-size:calc(21px * var(--schaal));line-height:1.45;border-radius:3px;transform-origin:left center;transition:transform 380ms cubic-bezier(.22,1,.36,1),background-color 200ms ease}
-.stap .nr{position:absolute;left:8px;top:10px;width:28px;height:28px;border-radius:50%;border:1px solid var(--accent);color:var(--accent);text-align:center;line-height:26px;font-size:16px;font-weight:600}
-.stap .stap-letop{display:block;margin-top:6px;color:var(--accent-donker);font-size:.84em;font-style:italic}
-.stap .stap-timer{display:inline-block;margin:4px 0 0 8px;font-size:15px;color:#8a6845}
-.vergroot{transform:scale(1.09);font-weight:600;background:rgba(255,253,248,.95);z-index:2;box-shadow:0 6px 18px rgba(80,60,20,.08)}
-.aangewezen{background:rgba(255,190,70,.24);box-shadow:0 0 0 2px rgba(190,130,50,.16)}
-.ingr.aangewezen{background:rgba(38,183,190,.18);box-shadow:0 0 0 2px rgba(38,150,160,.14)}
-.stap.bladwijzer{background:rgba(255,190,70,.13)}
-.bel{position:absolute;z-index:9500;max-width:280px;padding:8px 12px;border-radius:10px;background:var(--inkt);color:var(--papier);font-size:16px;line-height:1.3;pointer-events:none;box-shadow:0 6px 18px rgba(35,30,24,.25)}
-.acties{margin:28px 0 0;text-align:center}
-
-/* Koken */
-body.koken .page{max-width:none;padding:22px 26px 150px;background:var(--papier)}
-.kook-kop{display:flex;align-items:center;justify-content:space-between;margin:0 0 10px}
-.kook-kop .titel{font-size:21px;color:var(--zacht);font-style:italic;flex:1;padding:0 12px;text-align:center}
-.kook-voortgang{display:flex;margin:0 0 18px}
-.kook-voortgang i{flex:1;height:5px;margin-right:4px;border-radius:3px;background:#ddd3c3}
-.kook-voortgang i.gedaan{background:var(--accent)}
-.kook-voortgang i.nu{background:#e2a98f}
-.kook-vlak{position:relative;min-height:56vh;max-width:860px;margin:0 auto}
-.kook-zone{position:absolute;top:0;bottom:0;width:50%;z-index:1;-webkit-tap-highlight-color:transparent}
-.kook-zone.links{left:0}.kook-zone.rechts{right:0}
-.kook-inhoud{position:relative;z-index:2;pointer-events:none}
-.kook-inhoud .knop,.kook-inhoud button{pointer-events:auto}
-.kook-nr{color:var(--accent);font-size:18px;letter-spacing:.18em;text-transform:uppercase;margin:6px 0 6px}
-.kook-stap{font-size:calc(34px * var(--schaal));line-height:1.35;margin:0 0 18px}
-@media(max-width:600px){.kook-stap{font-size:calc(27px * var(--schaal))}}
-.kook-ingr{margin:0 0 16px;font-size:22px;color:#5f5547}
-.kook-ingr div{padding:3px 0}
-.kook-ingr b{font-weight:600;color:var(--inkt)}
-.kook-hint{display:flex;justify-content:space-between;color:#b3a795;font-size:15px;font-style:italic;margin-top:26px}
-.vooruit{font-size:17px}
-.vooruit:before{background:#d99a7f}
-
-/* Timers */
-.timer-strook{position:fixed;top:calc(8px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:12000;display:flex;flex-wrap:wrap;justify-content:center;max-width:94vw}
-.timer{margin:0 4px 6px;padding:7px 15px;border-radius:999px;background:var(--inkt);color:var(--papier);font-size:18px;box-shadow:0 4px 14px rgba(35,30,24,.2);border:0;cursor:pointer;font-variant-numeric:tabular-nums}
-.timer.klaar{background:#c2453b;-webkit-animation:knipper 1s infinite;animation:knipper 1s infinite}
-@-webkit-keyframes knipper{50%{opacity:.55}}
-@keyframes knipper{50%{opacity:.55}}
-
-/* Weekmenu */
-.dag{position:relative;display:flex;align-items:center;padding:14px 10px 14px 20px;border-bottom:1px solid rgba(213,205,191,.75);cursor:pointer;-webkit-tap-highlight-color:transparent}
-.dag:before{content:"";position:absolute;left:4px;top:10px;bottom:10px;width:5px;border-radius:3px;background:transparent}
-.dag.Ramon:before{background:var(--ramon)}.dag.Sanne:before{background:var(--sanne)}.dag.Samen:before{background:linear-gradient(var(--ramon),var(--sanne))}
-.dag.vandaag{background:rgba(255,253,248,.85)}
-.dag:active{background:#ece5d9}
-.dag .naam{width:118px;flex:0 0 auto;font-size:16px;color:var(--zacht);line-height:1.2}
-.dag .naam b{display:block;color:var(--inkt);font-size:20px;font-weight:600}
-.dag .wat{flex:1;font-size:21px;line-height:1.25}
-.dag .leeg{color:#b3a795;font-style:italic}
-.kies-lijst{max-height:42vh;overflow-y:auto;-webkit-overflow-scrolling:touch;border:1px solid rgba(151,133,108,.3);border-radius:3px;background:#fffdf8;margin:8px 0 14px}
-.kies-item{display:block;width:100%;border:0;border-bottom:1px solid rgba(213,205,191,.75);padding:11px 12px;background:transparent;text-align:left;font-size:19px;cursor:pointer}
-.kies-item.active{background:var(--accent-zacht);font-weight:600}
-.dagkeuze{display:flex;flex-wrap:wrap;margin:6px 0 12px}
-.dagkeuze button{margin:0 6px 6px 0;min-height:40px;padding:4px 10px;border:1px solid rgba(151,133,108,.45);border-radius:3px;background:#fffdf8;font-size:16px;cursor:pointer}
-.dagkeuze button.active{background:#e9e1d4;font-weight:600}
-
-/* Boodschappen */
-.onderweg{margin:14px 0;padding:10px 14px;border-radius:12px;background:rgba(48,44,38,.92);color:var(--papier);text-align:center;font-size:18px}
-.toevoegen{display:flex;margin:16px 0 8px}
-.toevoegen input{flex:1;min-height:48px;margin-right:8px;border:1px solid #cfc5b5;border-radius:3px;padding:10px 12px;background:#fffdf8;font-size:18px;-webkit-appearance:none}
-.toevoegen .knop{margin:0}
-.afdeling{margin:20px 0 2px;font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:#a3957f}
-.item{display:flex;align-items:center;padding:10px 2px;border-bottom:1px solid rgba(213,205,191,.75)}
-.item .vink{flex:0 0 auto;position:relative;width:32px;height:32px;margin-right:12px;border:1.5px solid #b3a795;border-radius:50%;background:#fffdf8;padding:0;cursor:pointer}
-.item.gekocht .vink{background:var(--accent);border-color:var(--accent)}
-.item.gekocht .vink:after{content:"";position:absolute;left:10px;top:4px;width:8px;height:15px;border:solid #fff;border-width:0 3px 3px 0;transform:rotate(45deg)}
-.item .wat{flex:1;font-size:20px;line-height:1.25;cursor:pointer}
-.item.gekocht .wat{text-decoration:line-through;color:#a39886}
-.item .waarom{display:block;font-size:14px;color:var(--zacht);font-style:italic;text-decoration:none}
-.item .mini{flex:0 0 auto;margin-left:6px;min-width:44px;min-height:38px;border:1px solid rgba(151,133,108,.35);border-radius:3px;background:#fffdf8;color:#766b5d;font-size:15px;cursor:pointer}
-
-/* Kast */
-.product{display:flex;align-items:center;padding:10px 2px;border-bottom:1px solid rgba(213,205,191,.75)}
-.product .naam{flex:1;font-size:20px;line-height:1.2;cursor:pointer}
-.product .naam small{display:block;color:var(--zacht);font-size:14px;font-style:italic}
-.teller{display:flex;align-items:center;flex:0 0 auto}
-.teller button{width:52px;height:52px;border-radius:50%;border:1px solid rgba(151,133,108,.45);background:#fffdf8;font-size:28px;line-height:1;cursor:pointer;padding:0;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
-.teller button:active{background:#e9e1d4}
-.teller .aantal{min-width:58px;text-align:center;font-family:Caveat,cursive;font-size:38px;line-height:1}
-.product.laag .aantal{color:#c2453b}
-.niveaus{flex:0 0 auto;width:300px;max-width:58%}
-.niveaus button{font-size:15px;min-height:42px}
-
-/* Modals */
-.modal-backdrop{display:none;position:fixed;top:0;right:0;bottom:0;left:0;z-index:20000;background:rgba(35,30,24,.42);padding:16px;overflow-y:auto;-webkit-overflow-scrolling:touch}
-.modal-backdrop.zichtbaar{display:block}
-.modal{width:100%;max-width:540px;margin:4vh auto;background:var(--papier);border:1px solid var(--lijn);border-radius:4px;padding:26px;box-shadow:0 12px 40px rgba(35,30,24,.2)}
-@media(max-width:600px){.modal{padding:20px;margin:2vh auto}}
-.modal h2{margin:0 0 10px;font-size:28px}
-.modal-acties{display:flex;justify-content:flex-end;align-items:center;flex-wrap:wrap;margin-top:16px}
-.modal-acties .knop{margin:6px 0 0 10px}
-.veld{display:block;margin:0 0 12px}
-.veld>span{display:block;font-size:16px;color:#5f5547;margin-bottom:4px}
-.tekst{width:100%;border:1px solid #cfc5b5;border-radius:2px;background:#fffdf8;padding:9px 11px;font-size:18px;-webkit-appearance:none;appearance:none}
-textarea.tekst{min-height:80px;line-height:1.4;resize:vertical}
-select.tekst{-webkit-appearance:menulist;appearance:menulist}
-.keus{display:flex;align-items:center;padding:9px 2px;border-bottom:1px solid rgba(213,205,191,.7);cursor:pointer}
-.keus input[type=checkbox]{flex:0 0 auto;width:26px;height:26px;margin:0 12px 0 0}
-.keus .tekst2{flex:1;font-size:19px;line-height:1.25}
-.keus small{display:block;color:var(--zacht);font-style:italic;font-size:14px}
-.keus .mini{flex:0 0 auto;margin-left:8px;min-width:52px;min-height:36px;border:1px solid rgba(151,133,108,.45);border-radius:3px;background:#fffdf8;font-size:15px;cursor:pointer}
-.keus .niveaus{width:250px}
-.persoonkeuze{display:flex;margin:0 0 6px}
-.persoonkeuze button{flex:1;min-height:52px;margin-right:10px;border:1px solid transparent;border-radius:3px;padding:9px 14px;font-size:20px;cursor:pointer}
-.persoonkeuze button:last-child{margin-right:0}
-.persoonkeuze .sanne,.persoonkeuze .Sanne{color:var(--sanne-donker);background:linear-gradient(135deg,rgba(182,145,96,.25),rgba(182,145,96,.09));border-color:rgba(184,138,84,.35)}
-.persoonkeuze .ramon,.persoonkeuze .Ramon{color:var(--ramon-donker);background:linear-gradient(135deg,rgba(112,145,160,.25),rgba(112,145,160,.09));border-color:rgba(120,149,163,.35)}
-.persoonkeuze .Samen{color:#5f5547;background:linear-gradient(135deg,rgba(112,145,160,.22),rgba(182,145,96,.22));border-color:rgba(151,133,108,.4)}
-.persoonkeuze button.active{border-color:currentColor;box-shadow:inset 0 0 0 1px currentColor;font-weight:600}
-.cijfer-rij{margin:0 0 14px}
-.cijfer-rij .wie{font-size:18px;margin:0 0 6px}
-.cijfer-rij .wie.Ramon{color:var(--ramon-donker)}.cijfer-rij .wie.Sanne{color:var(--sanne-donker)}
-.cijferknoppen{display:grid;grid-template-columns:repeat(10,1fr);grid-gap:5px;gap:5px}
-@media(max-width:600px){.cijferknoppen{grid-template-columns:repeat(5,1fr)}}
-.cijferknoppen button{min-height:50px;border:1px solid rgba(151,133,108,.45);border-radius:3px;background:#fffdf8;font-family:Caveat,cursive;font-size:30px;line-height:1;cursor:pointer;padding:0}
-.cijferknoppen button.active{background:var(--accent);border-color:var(--accent);color:#fff}
-
-/* Bewerken */
-.bewerk-blok{margin:0 0 26px}
-.ingr-rij{display:grid;grid-template-columns:76px 112px minmax(0,1fr) 42px;grid-gap:6px;gap:6px;align-items:start;padding:10px 0;border-bottom:1px solid rgba(213,205,191,.75)}
-.ingr-rij .tekst,.stap-rij .tekst{font-size:17px;padding:8px 9px}
-.ingr-rij .extra{grid-column:1 / 5;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto;grid-gap:6px;gap:6px;align-items:center}
-.ingr-rij .koppeling{grid-column:1 / 5;font-size:14px;font-style:italic;color:#8a7a5f}
-.ingr-rij label.mee{font-size:15px;color:#5f5547;white-space:nowrap}
-.weg-knop{width:42px;height:42px;border:1px solid rgba(151,133,108,.4);border-radius:50%;background:#fffdf8;color:#8a6845;font-size:22px;line-height:1;cursor:pointer;padding:0}
-.stap-rij{display:grid;grid-template-columns:minmax(0,1fr) 42px;grid-gap:6px;gap:6px;padding:10px 0;border-bottom:1px solid rgba(213,205,191,.75)}
-.stap-rij .extra{display:grid;grid-template-columns:120px minmax(0,1fr);grid-gap:6px;gap:6px}
-.toevoeg-knop{display:block;width:100%;margin:10px 0 0;padding:11px 12px;border:1px dashed rgba(151,133,108,.6);border-radius:3px;background:rgba(255,253,248,.7);color:#6f6253;font-size:18px;text-align:left;cursor:pointer}
-.instelling{margin:0 0 20px}
-.instelling .label{font-size:18px;margin:0 0 7px}
-input[type=range]{width:100%}
-
-/* Hamsa-waaier (zoals bij de gedichten) */
-.paraplu{position:fixed;left:50%;bottom:calc(8px + env(safe-area-inset-bottom));z-index:10004;width:56px;height:56px;margin-left:-28px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(151,133,108,.38);border-radius:50%;padding:0;background:rgba(247,244,237,.96);box-shadow:0 2px 10px rgba(55,45,32,.12);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:opacity 500ms cubic-bezier(.4,0,.2,1),visibility 0s,transform 260ms cubic-bezier(.3,1.4,.5,1)}
-.paraplu .hand-icon{width:34px;height:40px;transition:transform 300ms cubic-bezier(.3,1.4,.5,1)}
-body.fan-open .paraplu{transform:scale(1.06)}
-body.fan-open .paraplu .hand-icon{transform:rotate(-8deg) scale(1.05)}
-.fan-knop{position:fixed;left:50%;bottom:calc(15px + env(safe-area-inset-bottom));margin-left:-21px;width:42px;height:42px;z-index:10003;display:flex;align-items:center;justify-content:center;border:1px solid rgba(151,133,108,.38);border-radius:50%;padding:0;background:rgba(247,244,237,.97);color:#766b5d;box-shadow:0 2px 9px rgba(55,45,32,.1);cursor:pointer;-webkit-tap-highlight-color:transparent;opacity:0;visibility:hidden;pointer-events:none;transform:translate(0,0) scale(.3);transition:transform 220ms cubic-bezier(.4,0,.2,1),opacity 180ms ease,visibility 0s linear 220ms}
-.fan-knop svg{width:21px;height:21px;display:block}
-.fan-knop:after{content:attr(data-kort);position:absolute;top:100%;left:50%;transform:translateX(-50%);margin-top:3px;white-space:nowrap;font-family:Georgia,serif;font-size:11px;color:#7d7264;background:rgba(247,244,237,.92);padding:0 4px;border-radius:6px;pointer-events:none}
-.fan-knop.huidig{background:var(--accent);border-color:var(--accent);color:#fff}
-body.fan-open .fan-knop{opacity:1;visibility:visible;pointer-events:auto;transform:translate(var(--fx),var(--fy)) scale(1);transition:transform 340ms cubic-bezier(.3,1.35,.5,1) var(--fd),opacity 200ms ease var(--fd),visibility 0s}
-.paraplu-scherm{position:fixed;top:0;right:0;bottom:0;left:0;z-index:10002;background:rgba(247,244,237,0);pointer-events:none;transition:background-color 250ms ease}
-body.fan-open .paraplu-scherm{background:rgba(247,244,237,.6);pointer-events:auto}
-body.controls-idle .paraplu,body.controls-idle .hand{opacity:0;visibility:hidden;pointer-events:none;transition:opacity 500ms cubic-bezier(.4,0,.2,1),visibility 0s linear 500ms}
-
-/* Handjes */
-.hand{display:none;position:fixed;z-index:9999;width:60px;height:60px;border:0;background:transparent;padding:0;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;cursor:grab;-webkit-appearance:none;appearance:none;filter:drop-shadow(1px 2px 1.5px rgba(40,30,15,.2));transition:opacity 500ms ease}
-body.met-handjes .hand{display:block}
-.hand svg{width:100%;height:100%;display:block;pointer-events:none;overflow:visible}
-.hand.vast{cursor:grabbing;filter:drop-shadow(5px 11px 7px rgba(40,30,15,.24));z-index:10000}
-.hand.vast svg{transform:scale(1.1)}
-.hand.op-papier{position:absolute}
-#handHamsa{left:max(8px,calc((100vw - 900px)/2 + 8px));top:96px}
-#handRegel{left:max(8px,calc((100vw - 900px)/2 + 8px));top:156px}
-#handWoord{right:max(8px,calc((100vw - 900px)/2 + 8px));top:156px}
-#handHamsa svg{transform:rotate(60deg)}
-#handRegel svg{transform:rotate(60deg)}
-#handWoord svg{transform:rotate(-60deg)}
-#handHamsa.vast svg,#handRegel.vast svg{transform:rotate(60deg) scale(1.1)}
-#handWoord.vast svg{transform:rotate(-60deg) scale(1.1)}
-@media(max-width:600px){.hand{width:44px;height:44px}#handHamsa{top:70px}#handRegel{top:118px;left:4px}#handWoord{top:118px;right:4px}#handHamsa{left:4px}}
-
-/* Hartjes bij samen koken */
-.hartje{position:fixed;bottom:-30px;z-index:30000;color:#c2453b;font-size:26px;pointer-events:none;-webkit-animation:stijg 2.8s ease-out forwards;animation:stijg 2.8s ease-out forwards}
-@-webkit-keyframes stijg{0%{transform:translateY(0) scale(.6);opacity:0}15%{opacity:1}100%{transform:translateY(-75vh) scale(1.2);opacity:0}}
-@keyframes stijg{0%{transform:translateY(0) scale(.6);opacity:0}15%{opacity:1}100%{transform:translateY(-75vh) scale(1.2);opacity:0}}
-@media(prefers-reduced-motion:reduce){.hartje{display:none}.ingr,.stap{transition:none}}
-</style>
-</head>
-<body>
-<div class="page" id="page"><main id="inhoud"></main></div>
-<div class="timer-strook" id="timerStrook" hidden></div>
-<div class="verbinding" id="verbinding" hidden></div>
-<div class="paraplu-scherm" id="parapluScherm" aria-hidden="true"></div>
-<button type="button" class="paraplu" id="parapluKnop" aria-label="Menu" aria-expanded="false"></button>
-<div class="modal-backdrop" id="modalBackdrop"><div class="modal" id="modal" role="dialog" aria-modal="true"></div></div>
-<script>
-/* ======================================================================
-   Recepten 1.0
-   ====================================================================== */
-/* Iconen: dezelfde hamsa-hand en wijsvingers als bij de gedichten. */
-function buildHamsaIcon(){
-const ns="http://www.w3.org/2000/svg";
-const svg=document.createElementNS(ns,"svg");
-svg.setAttribute("viewBox","0 0 100 120");
-svg.setAttribute("class","hand-icon");
-svg.setAttribute("aria-hidden","true");
-const clipId="hamsaClip"+Math.random().toString(36).slice(2);
-const silhouette="M24 76 L8 53 Q2 44 8 36 Q15 28 23 34 L23 29 Q23 18 32 18 Q41 18 41 29 L41 17 Q41 4 50 4 Q59 4 59 17 L59 29 Q59 18 68 18 Q77 18 77 29 L77 34 Q85 28 92 36 Q98 44 92 53 L76 76 Q73 99 62 108 Q56 114 50 115 Q44 114 38 108 Q27 99 24 76 Z";
-svg.innerHTML=`
-<defs><clipPath id="${clipId}"><path d="${silhouette}"/></clipPath></defs>
-<path d="${silhouette}" fill="#fff8e9" stroke="#352b2b" stroke-width="3.2" stroke-linejoin="round"/>
-<g clip-path="url(#${clipId})">
-<rect x="5" y="3" width="90" height="113" fill="#13c9d5"/>
-<path d="M5 27 L24 27 L24 62 L5 62Z" fill="#ff8a24" stroke="#352b2b" stroke-width="1.5"/>
-<path d="M76 27 L95 27 L95 62 L76 62Z" fill="#ff8a24" stroke="#352b2b" stroke-width="1.5"/>
-<path d="M7 36 L23 36 L23 43 L7 43Z" fill="#ffe12e"/>
-<path d="M77 36 L93 36 L93 43 L77 43Z" fill="#ffe12e"/>
-<path d="M23 17 L41 17 L41 64 L23 64Z" fill="#ff4fa3" stroke="#352b2b" stroke-width="1.5"/>
-<path d="M59 17 L77 17 L77 64 L59 64Z" fill="#ff4fa3" stroke="#352b2b" stroke-width="1.5"/>
-<path d="M25 23 L39 23 L39 30 L25 30Z" fill="#ffe12e"/>
-<path d="M61 23 L75 23 L75 30 L61 30Z" fill="#ffe12e"/>
-<path d="M41 4 L59 4 L59 65 L41 65Z" fill="#ffe12e" stroke="#352b2b" stroke-width="1.6"/>
-<path d="M44 12 Q50 5 56 12 L56 21 Q50 27 44 21Z" fill="#8b5cf6" stroke="#352b2b" stroke-width="1.2"/>
-<circle cx="50" cy="15" r="3" fill="#13c9d5" stroke="#352b2b" stroke-width="1"/>
-<path d="M44 31 L50 25 L56 31 L50 37Z" fill="#ff4fa3" stroke="#352b2b" stroke-width="1.2"/>
-<path d="M45 45 L50 39 L55 45 L50 51Z" fill="#13c9d5" stroke="#352b2b" stroke-width="1.2"/>
-<g fill="#ffe12e" stroke="#352b2b" stroke-width="1">
-<path d="M29 39 L33 34 L37 39 L33 44Z"/><path d="M63 39 L67 34 L71 39 L67 44Z"/>
-<path d="M12 49 L16 44 L20 49 L16 54Z"/><path d="M80 49 L84 44 L88 49 L84 54Z"/>
-</g>
-<g fill="#8b5cf6" stroke="#352b2b" stroke-width=".8">
-<circle cx="33" cy="53" r="2.3"/><circle cx="67" cy="53" r="2.3"/><circle cx="16" cy="58" r="2"/><circle cx="84" cy="58" r="2"/>
-</g>
-<path d="M13 64 Q50 48 87 64 L83 91 Q75 111 50 116 Q25 111 17 91Z" fill="#ff4fa3" stroke="#352b2b" stroke-width="2"/>
-<g stroke="#352b2b" stroke-width="1.4" stroke-linejoin="round">
-<path d="M18 86 Q20 65 36 72 Q36 88 18 86Z" fill="#a8e63f"/>
-<path d="M82 86 Q80 65 64 72 Q64 88 82 86Z" fill="#a8e63f"/>
-<path d="M21 83 Q27 76 32 75" fill="none" stroke="#ff8a24" stroke-width="2"/>
-<path d="M79 83 Q73 76 68 75" fill="none" stroke="#ff8a24" stroke-width="2"/>
-</g>
-<g transform="translate(50 83)">
-<circle r="23" fill="#ffe12e" stroke="#352b2b" stroke-width="2"/>
-<g fill="#13c9d5" stroke="#352b2b" stroke-width="1.2">
-<path d="M0 -22 Q7 -14 0 -9 Q-7 -14 0 -22Z"/>
-<path d="M0 -22 Q7 -14 0 -9 Q-7 -14 0 -22Z" transform="rotate(45)"/>
-<path d="M0 -22 Q7 -14 0 -9 Q-7 -14 0 -22Z" transform="rotate(90)"/>
-<path d="M0 -22 Q7 -14 0 -9 Q-7 -14 0 -22Z" transform="rotate(135)"/>
-<path d="M0 -22 Q7 -14 0 -9 Q-7 -14 0 -22Z" transform="rotate(180)"/>
-<path d="M0 -22 Q7 -14 0 -9 Q-7 -14 0 -22Z" transform="rotate(225)"/>
-<path d="M0 -22 Q7 -14 0 -9 Q-7 -14 0 -22Z" transform="rotate(270)"/>
-<path d="M0 -22 Q7 -14 0 -9 Q-7 -14 0 -22Z" transform="rotate(315)"/>
-</g>
-<circle r="14" fill="#8b5cf6" stroke="#352b2b" stroke-width="1.5"/>
-<ellipse rx="11" ry="7.5" fill="#fff8e9" stroke="#352b2b" stroke-width="1.2"/>
-<circle r="4.2" fill="#13c9d5" stroke="#352b2b" stroke-width="1"/>
-<circle r="1.8" fill="#252525"/>
-<circle cx="-17" cy="0" r="1.6" fill="#ff4fa3"/><circle cx="17" cy="0" r="1.6" fill="#ff4fa3"/>
-</g>
-<path d="M20 101 Q50 120 80 101" fill="none" stroke="#ffe12e" stroke-width="4"/>
-<g fill="#8b5cf6" stroke="#352b2b" stroke-width=".8">
-<circle cx="27" cy="103" r="3"/><circle cx="39" cy="109" r="3"/><circle cx="50" cy="112" r="3"/><circle cx="61" cy="109" r="3"/><circle cx="73" cy="103" r="3"/>
-</g>
-<g fill="#ffe12e" stroke="#352b2b" stroke-width=".7"><circle cx="32" cy="94" r="2"/><circle cx="68" cy="94" r="2"/></g>
-</g>
-<path d="${silhouette}" fill="none" stroke="#352b2b" stroke-width="3" stroke-linejoin="round"/>
-<path d="${silhouette}" fill="none" stroke="#fffdf8" stroke-width=".9" stroke-linejoin="round" transform="translate(0.7 0.7)"/>
-`;
-return svg;
-}
-
-function buildFingerIcon(direction){
-const svg=document.createElementNS("http://www.w3.org/2000/svg","svg");
-svg.setAttribute("viewBox","0 0 100 100");
-svg.setAttribute("class","finger-icon");
-svg.setAttribute("aria-hidden","true");
-svg.innerHTML=`
-<g stroke="#352b2b" stroke-width="2.7" stroke-linejoin="round" stroke-linecap="round">
-  <path d="M29 91 Q23 86 24 76 L18 60 Q15 52 21 48 Q27 44 32 52 L38 63 L39 17 Q39 7 48 5 Q57 7 57 17 L57 55 L63 47 Q69 41 75 47 Q80 53 74 60 L67 82 Q64 92 53 94Z" fill="#13c9d5"/>
-  <path d="M39 19 Q39 8 48 5 Q57 8 57 19 L55 33 L41 33Z" fill="#ffe12e"/>
-  <path d="M42 17 Q48 9 54 17 L53 25 L43 25Z" fill="#ff4fa3" stroke-width="1.5"/>
-  <path d="M40 38 L56 38 L56 46 L40 46Z" fill="#ff8a24" stroke-width="1.5"/>
-  <path d="M39 59 L57 59 L57 68 L39 68Z" fill="#ff4fa3" stroke-width="1.5"/>
-  <path d="M28 75 Q46 84 66 75" fill="none" stroke="#ffe12e" stroke-width="5"/>
-  <path d="M31 84 Q47 91 61 84" fill="none" stroke="#8b5cf6" stroke-width="4"/>
-  <circle cx="48" cy="53" r="4" fill="#a8e63f" stroke-width="1.5"/>
-  <circle cx="48" cy="53" r="1.5" fill="#352b2b" stroke="none"/>
-</g>`;
-return svg;
-}
-
-const APP_VERSION="1.0";
-// Plak hier de web-app-URL van het Recepten Apps Script (eindigt op /exec):
-const RECEPTEN_URL="https://script.google.com/macros/s/AKfycbxDoDzE2EqPLyzmtx573RPd7PWPYOGITEXFY9zDIcUCjJuRsmNN4Ba7uvyI1Bb1Iz9niA/exec";
-
-const GEDICHTEN_TOKEN="gedichten_access_token";   // gedeeld met de gedichten
-const EIGEN_TOKEN="recepten_access_token";        // alleen als de recepten een andere code hebben
-const GEDICHTEN_INST="gedichten_instellingen_v1"; // "van wie is dit apparaat" (gedeeld)
-const INST_KEY="recepten_instellingen_v1";
-const CACHE_KEY="recepten_cache_v1";
-const TIMERS_KEY="recepten_timers_v1";
-const BLADWIJZER_KEY="recepten_bladwijzers_v1";
-const MENSEN=["Sanne","Ramon"];
-const KOKS=["Sanne","Ramon","Samen"];
-const NIVEAUS=["vol","half","bijna op","op"];
-const AFDELINGEN=["Groente & fruit","Brood","Zuivel & eieren","Plantaardig","Kaas","Vlees & vis","Pasta & rijst","Conserven","Wereldkeuken","Sauzen & kruiden","Noten & zaden","Ontbijt","Koffie & thee","Dranken","Diepvries","Huishouden","Overig"];
-const EENHEDEN=["","g","kg","ml","l","el","tl","st","teen","takje","bos","blik","pot","pak","zak","snufje","naar smaak"];
-const ZONDER_GETAL=["naar smaak"];
-
-/* ---------- Kleine hulpjes ---------- */
-const $=id=>document.getElementById(id);
-function el(tag,attrs){
-const e=document.createElement(tag);
-if(attrs)Object.keys(attrs).forEach(k=>{
-const v=attrs[k];
-if(v===null||v===undefined||v===false)return;
-if(k==="class")e.className=v;
-else if(k==="text")e.textContent=v;
-else if(k.slice(0,2)==="on"&&typeof v==="function")e.addEventListener(k.slice(2),v);
-else e.setAttribute(k,v===true?"":v);
-});
-for(let n=2;n<arguments.length;n++)voegKind(e,arguments[n]);
-return e;
-}
-function voegKind(e,c){
-if(c===null||c===undefined||c===false)return;
-if(Array.isArray(c)){c.forEach(x=>voegKind(e,x));return}
-e.appendChild(typeof c==="object"?c:document.createTextNode(String(c)));
-}
-function leesJSON(k,d){try{const v=JSON.parse(localStorage.getItem(k)||"null");return v===null?d:v}catch(e){return d}}
-function bewaarJSON(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
-function nieuwId(p){return p+Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
-const wacht=ms=>new Promise(r=>setTimeout(r,ms));
-function ornament(){return el("div",{class:"ornament","aria-hidden":"true"},el("span",{class:"l"}),el("i"),el("span",{class:"r"}))}
-function getal(n){
-if(n===null||n===undefined||n===""||isNaN(n))return "";
-n=Number(n);
-const heel=Math.floor(n+1e-9),rest=Math.round((n-heel)*100)/100;
-const breuk={0.25:"¼",0.5:"½",0.75:"¾"}[rest];
-if(breuk)return(heel?heel:"")+breuk;
-if(rest===0)return String(heel);
-return String(Math.round(n*10)/10).replace(".",",");
-}
-function melding(tekst,actieLabel,actie,duur){
-document.querySelectorAll(".melding").forEach(m=>m.remove());
-const m=el("div",{class:"melding",role:"status"},el("span",{text:tekst}));
-if(actieLabel)m.appendChild(el("button",{type:"button",onclick:()=>{m.remove();actie()}},actieLabel));
-document.body.appendChild(m);
-setTimeout(()=>m.remove(),duur||6000);
-}
-window.addEventListener("error",e=>{if(e&&e.message)melding("Er ging iets mis: "+e.message)});
-
-/* ---------- Datums ---------- */
-function datumStr(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
-function vandaag(){return datumStr(new Date())}
-function alsDatum(s){const p=String(s).split("-").map(Number);return new Date(p[0],p[1]-1,p[2])}
-function plusDagen(s,n){const d=alsDatum(s);d.setDate(d.getDate()+n);return datumStr(d)}
-function hoofdletter(t){return t.charAt(0).toUpperCase()+t.slice(1)}
-function dagNaam(s){
-const v=vandaag();
-if(s===v)return "Vandaag";
-if(s===plusDagen(v,1))return "Morgen";
-if(s===plusDagen(v,-1))return "Gisteren";
-return hoofdletter(alsDatum(s).toLocaleDateString("nl-NL",{weekday:"long"}));
-}
-function korteDatum(s){return alsDatum(s).toLocaleDateString("nl-NL",{day:"numeric",month:"short"})}
-function langeDatum(d){return d.toLocaleDateString("nl-NL",{weekday:"long",day:"numeric",month:"long"})}
-function leesTijd(t){const m=String(t||"").match(/^(\d{2})-(\d{2})-(\d{4})(?: (\d{2}):(\d{2}))?/);return m?new Date(+m[3],+m[2]-1,+m[1],+(m[4]||0),+(m[5]||0)):null}
-
-/* ---------- Instellingen ---------- */
-const inst=Object.assign({schaal:1,idle:60,handjes:true},leesJSON(INST_KEY,{}));
-function bewaarInst(){bewaarJSON(INST_KEY,inst)}
-function eigenaar(){const g=leesJSON(GEDICHTEN_INST,{});return MENSEN.indexOf(g.owner)!==-1?g.owner:""}
-function zetEigenaar(v){const g=leesJSON(GEDICHTEN_INST,{});g.owner=v;bewaarJSON(GEDICHTEN_INST,g)}
-function token(){return localStorage.getItem(EIGEN_TOKEN)||localStorage.getItem(GEDICHTEN_TOKEN)||""}
-function pasSchaalToe(){document.documentElement.style.setProperty("--schaal",String(inst.schaal||1))}
-pasSchaalToe();
-
-/* ---------- Gegevens ---------- */
-let D={recepten:[],ingredienten:[],stappen:[],weekmenu:[],boodschappen:[],producten:[],cijfers:[],onderweg:null};
-const IX={recept:{},ingr:{},stap:{},product:{}};
-function indexeer(){
-IX.recept={};IX.ingr={};IX.stap={};IX.product={};
-D.recepten.forEach(r=>{IX.recept[r.id]=r});
-D.ingredienten.forEach(i=>{(IX.ingr[i.receptId]=IX.ingr[i.receptId]||[]).push(i)});
-D.stappen.forEach(s=>{(IX.stap[s.receptId]=IX.stap[s.receptId]||[]).push(s)});
-Object.keys(IX.ingr).forEach(k=>IX.ingr[k].sort((a,b)=>Number(a.volgorde)-Number(b.volgorde)));
-Object.keys(IX.stap).forEach(k=>IX.stap[k].sort((a,b)=>Number(a.nr)-Number(b.nr)));
-D.producten.forEach(p=>{IX.product[p.id]=p});
-}
-function ingesteld(){return /^https:\/\/script\.google(usercontent)?\.com\//.test(RECEPTEN_URL)}
-
-function jsonp(params){
-return new Promise((resolve,reject)=>{
-const naam="receptCb"+Date.now()+Math.floor(Math.random()*1e5);
-const s=document.createElement("script");
-const url=new URL(RECEPTEN_URL);
-Object.keys(params).forEach(k=>url.searchParams.set(k,params[k]));
-url.searchParams.set("token",token());
-url.searchParams.set("callback",naam);
-let klaar=false;
-const timer=setTimeout(()=>{op();reject(new Error("Time-out"))},20000);
-function op(){if(klaar)return;klaar=true;clearTimeout(timer);delete window[naam];if(s.parentNode)s.parentNode.removeChild(s)}
-window[naam]=d=>{op();if(!d||!d.success){reject(new Error((d&&d.error)||"Ongeldig antwoord"));return}resolve(d)};
-s.onerror=()=>{op();reject(new Error("Geen verbinding met Google"))};
-s.src=url.toString();
-document.head.appendChild(s);
-});
-}
-async function post(velden){
-const f=new URLSearchParams();
-f.append("token",token());
-Object.keys(velden).forEach(k=>{const v=velden[k];f.append(k,typeof v==="object"?JSON.stringify(v):String(v===undefined||v===null?"":v))});
-await fetch(RECEPTEN_URL,{method:"POST",mode:"no-cors",body:f});
-}
-// Na opslaan: even later opnieuw ophalen, zodat alle apparaten weer hetzelfde zien.
-let naladenTimer=null;
-function straksLaden(ms){clearTimeout(naladenTimer);naladenTimer=setTimeout(()=>laad(),ms||1600)}
-
-let laatsteLaad=0,wachtRender=false;
-async function laad(){
-if(!ingesteld())return;
-if(!token()){vraagCode();return}
-laatsteLaad=Date.now();
-try{
-const d=await jsonp({action:"alles"});
-D=d;indexeer();
-bewaarJSON(CACHE_KEY,{data:d,op:Date.now()});
-zetVerbinding(true);
-if(bezig())wachtRender=true;else render();
-}catch(e){
-if(/toegangscode/i.test(e.message)){vraagCode("Deze toegangscode werkt niet voor de recepten.");return}
-zetVerbinding(false);
-}
-}
-function zetVerbinding(online){
-const v=$("verbinding");
-if(online){v.hidden=true;return}
-const c=leesJSON(CACHE_KEY,null);
-let t="Geen verbinding";
-if(c&&c.op){const d=new Date(c.op);t+=" · bijgewerkt "+(d.toDateString()===new Date().toDateString()?"om ":korteDatum(datumStr(d))+" ")+String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0")}
-v.textContent=t;v.hidden=false;
-}
-// Niet opnieuw tekenen terwijl iemand iets invult of in een venster bezig is.
-let kastWachtrij={};
-function bezig(){
-const r=route();
-if(r.v==="bewerk")return true;
-if(modalOpen)return true;
-if(Object.keys(kastWachtrij).length)return true;
-const a=document.activeElement;
-return !!(a&&(a.tagName==="INPUT"||a.tagName==="TEXTAREA"));
-}
-
-/* ---------- Wie ben je? ---------- */
-function wie(cb,vraag){
-const e=eigenaar();
-if(e){cb(e);return}
-const m=modal(vraag||"Wie ben je?",el("div",{class:"persoonkeuze"},MENSEN.map(p=>el("button",{type:"button",class:p,onclick:()=>{m.sluit();cb(p)}},p))),[["Annuleren",()=>m.sluit()]]);
-}
-
-/* ---------- Vensters ---------- */
-let modalOpen=null;
-function modal(titel,inhoud,acties,opties){
-const bd=$("modalBackdrop"),box=$("modal");
-box.innerHTML="";
-box.appendChild(el("h2",{text:titel}));
-if(inhoud)box.appendChild(inhoud);
-const rij=el("div",{class:"modal-acties"});
-(acties||[]).forEach(a=>{if(a)rij.appendChild(el("button",{type:"button",class:"knop "+(a[2]||""),onclick:a[1]},a[0]))});
-box.appendChild(rij);
-bd.classList.add("zichtbaar");
-bd.scrollTop=0;
-const ctl={box,sluit(){if(modalOpen!==ctl)return;bd.classList.remove("zichtbaar");modalOpen=null;if(wachtRender){wachtRender=false;render()}},vast:!!(opties&&opties.vast)};
-modalOpen=ctl;
-return ctl;
-}
-$("modalBackdrop").addEventListener("click",e=>{if(e.target.id==="modalBackdrop"&&modalOpen&&!modalOpen.vast)modalOpen.sluit()});
-function vraagCode(boodschap){
-const invoer=el("input",{type:"password",class:"tekst",placeholder:"Toegangscode",autocomplete:"current-password"});
-const m=modal("Toegang",el("div",{},el("p",{class:"uitleg",text:boodschap||"Voer de toegangscode in (dezelfde als bij de gedichten). Op dit apparaat hoeft dat maar één keer."}),invoer),[["Verder",()=>{const c=invoer.value.trim();if(!c)return;localStorage.setItem(EIGEN_TOKEN,c);m.sluit();laad()},"hoofd"]],{vast:true});
-setTimeout(()=>invoer.focus(),300);
-}
-
-/* ---------- Schalen en omrekenen ---------- */
-const HELE_DINGEN=/(^|\s)(ei|eieren|ui|uien|limoen|limoenen|citroen|citroenen|paprika|paprika's|sjalot|sjalotten|avocado|avocado's)(\s|$)/i;
-function basisPersonen(r){return Number(r&&r.personen)||2}
-const gekozenPersonen={};
-function personenVoor(id){return gekozenPersonen[id]||basisPersonen(IX.recept[id])}
-function factorVoor(id){return personenVoor(id)/basisPersonen(IX.recept[id])}
-function schaal(i,f){
-const ruw=Number(String(i.hoeveelheid).replace(",","."));
-if(i.hoeveelheid===""||isNaN(ruw))return{h:null,e:i.eenheid,ben:false};
-if(i.schalen==="nee"||f===1)return{h:ruw,e:i.eenheid,ben:false};
-let h=ruw*f,e=i.eenheid;
-if(e==="kg"&&h<1){h*=1000;e="g"}else if(e==="g"&&h>=1000){h/=1000;e="kg"}
-if(e==="l"&&h<1){h*=1000;e="ml"}else if(e==="ml"&&h>=1000){h/=1000;e="l"}
-const voor=h;
-if(e==="g"||e==="ml")h=h<10?Math.max(1,Math.round(h)):h<100?Math.round(h/5)*5:h<500?Math.round(h/10)*10:Math.round(h/25)*25;
-else if(e==="kg"||e==="l")h=Math.round(h*10)/10;
-else if(e==="el"||e==="tl")h=Math.max(.25,Math.round(h*4)/4);
-else if(e==="teen"||((e==="st"||e==="")&&HELE_DINGEN.test(i.naam)))h=Math.max(1,Math.round(h));
-else h=Math.max(.5,Math.round(h*2)/2);
-const ben=(e==="teen"||e==="st"||e==="")&&Math.abs(h-voor)>.05;
-return{h,e,ben};
-}
-const MEERVOUD={teen:"tenen",takje:"takjes",blik:"blikken",blikje:"blikjes",pot:"potten",pak:"pakken",zak:"zakken",bos:"bossen",fles:"flessen",flesje:"flesjes",snufje:"snufjes",stuk:"stuks"};
-function meervoud(e,h){return Number(h)>1&&MEERVOUD[e]?MEERVOUD[e]:e}
-function hoeveelheidTekst(s,eenheid){
-if(eenheid==="naar smaak")return "";
-if(s.h===null)return eenheid||"";
-return (s.ben?"≈ ":"")+getal(s.h)+(s.e&&s.e!=="st"?" "+meervoud(s.e,s.h):"");
-}
-// Hoeveel verpakkingen van een product gebruikt een ingrediënt? (0,15 = een stukje van de zak)
-const LEPEL={el:15,tl:5};
-function deelVan(i,f,p){
-if(!p||p.soort==="niveau")return 0;
-const ruw=Number(String(i.hoeveelheid).replace(",","."));
-if(i.hoeveelheid===""||isNaN(ruw))return .25;
-const h=ruw*(i.schalen==="nee"?1:f);
-const inhoud=Number(p.inhoud)||0;
-if(i.eenheid===p.verpakking||((i.eenheid==="st"||i.eenheid==="")&&!inhoud))return h;
-let w=null,soort="";
-if(i.eenheid==="g"||i.eenheid==="ml"){w=h;soort=i.eenheid}
-else if(i.eenheid==="kg"||i.eenheid==="l"){w=h*1000;soort=i.eenheid==="kg"?"g":"ml"}
-else if(LEPEL[i.eenheid]){w=h*LEPEL[i.eenheid];soort="?"}
-if(w!==null&&inhoud&&(soort===p.eenheid||soort==="?"))return w/inhoud;
-return .25;
-}
-// Wat is al ingepland in het weekmenu (nog niet gekookt)? Per product het aantal verpakkingen.
-function reserveringen(behalve){
-const res={},v=vandaag();
-D.weekmenu.forEach(w=>{
-if(!w.receptId||w.gekookt||w.datum<v||(behalve&&behalve.indexOf(w.id)!==-1))return;
-const r=IX.recept[w.receptId];if(!r)return;
-const f=(Number(w.personen)||basisPersonen(r))/basisPersonen(r);
-(IX.ingr[w.receptId]||[]).forEach(i=>{
-const p=IX.product[i.productId];
-if(!p||p.soort==="niveau")return;
-const x=res[p.id]=res[p.id]||{som:0,voor:[]};
-x.som+=deelVan(i,f,p);
-if(x.voor.indexOf(r.titel)===-1)x.voor.push(r.titel);
-});
-});
-Object.keys(res).forEach(k=>{res[k].aantal=Math.ceil(res[k].som-1e-9)});
-return res;
-}
-function kastTekst(p,res){
-if(p.soort==="niveau")return "in de kast: "+(p.niveau||"?");
-const a=Number(p.aantal)||0,g=res&&res[p.id]?res[p.id].aantal:0;
-let t=a+" "+meervoud(p.verpakking,a)+" in de kast";
-if(g)t+=" · "+g+" gepland · "+Math.max(0,a-g)+" vrij";
-return t;
-}
-function productBijNaam(naam){
-const n=String(naam||"").trim().toLowerCase();
-if(!n)return null;
-return D.producten.find(p=>p.naam.toLowerCase()===n||String(p.synoniemen||"").toLowerCase().split(",").map(s=>s.trim()).indexOf(n)!==-1)||null;
-}
-const AFDELING_WOORDEN=[
-["Groente & fruit",/ui|knoflook|tomaat|tomaten|paprika|courgette|wortel|prei|spinazie|sla|komkommer|aardappel|citroen|limoen|appel|banaan|peterselie|basilicum|koriander|munt|gember|champignon|broccoli|bloemkool|sjalot|avocado|biet|pompoen|aubergine|lente|selderij|bieslook|dille|tijm|rozemarijn/],
-["Zuivel & eieren",/ei$|eieren|yoghurt|kwark|melk|boter|room|crème/],
-["Kaas",/kaas|parmezaan|feta|mozzarella|ricotta|halloumi/],
-["Brood",/brood|pita|wrap|tortilla|stokbrood/],
-["Pasta & rijst",/pasta|spaghetti|penne|rijst|noedel|couscous|bulgur|quinoa|linzen/],
-["Conserven",/blik|kikkererwten|bonen|mais/],
-["Vlees & vis",/kip|gehakt|vis|zalm|tonijn|spek|worst|garnaal/],
-["Sauzen & kruiden",/olie|azijn|saus|bouillon|zout|peper|komijn|kurkuma|paprikapoeder|kaneel|chili|mosterd|ketjap|sojasaus|honing/],
-["Noten & zaden",/noot|noten|amandel|zaad|zaden|pinda/],
-["Diepvries",/diepvries|bevroren/]
-];
-function raadAfdeling(naam){const n=String(naam||"").toLowerCase();const r=AFDELING_WOORDEN.find(a=>a[1].test(n));return r?r[0]:"Overig"}
-function afdelingIndex(a){const i=AFDELINGEN.indexOf(a);return i===-1?AFDELINGEN.length:i}
-
-/* ---------- Cijfers en favorieten ---------- */
-function cijfersVan(id){const uit={};D.cijfers.forEach(c=>{if(c.receptId===id&&MENSEN.indexOf(c.persoon)!==-1)uit[c.persoon]=c});return uit}
-function isFavoriet(id){const c=cijfersVan(id);return MENSEN.every(m=>c[m]&&Number(c[m].cijfer)>=7)}
-function cijferRegel(id,midden){
-const c=cijfersVan(id);
-const gegeven=MENSEN.filter(m=>c[m]);
-if(!gegeven.length)return null;
-const regel=el("div",{class:"cijfers"+(midden?" midden":"")});
-gegeven.forEach((m,n)=>{if(n)regel.appendChild(document.createTextNode(" · "));regel.appendChild(el("span",{class:m,title:m+" gaf een "+c[m].cijfer},m.charAt(0)+" "+c[m].cijfer))});
-if(isFavoriet(id))regel.appendChild(el("span",{class:"hart"}," ♥"));
-const nog=MENSEN.filter(m=>!c[m]);
-if(nog.length===1)regel.appendChild(el("span",{class:"wacht"},"  wacht op "+nog[0]));
-return regel;
-}
-
-/* ---------- Weekmenu-hulpjes ---------- */
-function weekmenuOp(datum){return D.weekmenu.find(w=>w.datum===datum&&w.receptId)||null}
-function kokTekst(k){return k==="Samen"?"Samen koken":k?k+" kookt":"Nog niemand gekozen"}
-function factorVanPlan(w){const r=IX.recept[w.receptId];return (Number(w.personen)||basisPersonen(r))/basisPersonen(r)}
-function planVoorKoken(id){
-const v=vandaag();
-return D.weekmenu.filter(w=>w.receptId===id&&!w.gekookt&&w.datum<=v).sort((a,b)=>a.datum<b.datum?1:-1)[0]||null;
-}
-
-/* ======================================================================
-   Schermen
-   ====================================================================== */
-function route(){const h=decodeURIComponent(location.hash.replace(/^#/,""));const i=h.indexOf("/");return{v:(i===-1?h:h.slice(0,i))||"vanavond",a:i===-1?"":h.slice(i+1)}}
-function ga(h){if(location.hash==="#"+h)render();else location.hash=h}
-let vorigeRoute="";
-window.addEventListener("hashchange",()=>{if(modalOpen)modalOpen.sluit();render();window.scrollTo(0,0)});
-const SCHERMEN={vanavond:vanavondView,recepten:receptenView,recept:receptView,koken:kookView,weekmenu:weekmenuView,lijst:lijstView,kast:kastView,bewerk:bewerkView,instellingen:instellingenView};
-function render(){
-const r=route();
-const main=$("inhoud");
-if(!ingesteld()){main.innerHTML="";main.appendChild(el("div",{class:"kaart midden"},el("h2",{text:"Bijna klaar"}),el("p",{text:"Plak de web-app-URL van het Recepten-script bovenin dit bestand, bij RECEPTEN_URL."})));return}
-document.body.classList.toggle("koken",r.v==="koken");
-document.body.classList.toggle("met-handjes",r.v==="recept"&&inst.handjes!==false);
-main.innerHTML="";
-(SCHERMEN[r.v]||vanavondView)(main,r.a);
-markeerWaaier(r.v);
-handjesNaRender(r);
-vorigeRoute=r.v+"/"+r.a;
-}
-
-/* ---------- Vanavond (de muur) ---------- */
-const later={};
-function vanavondView(m){
-m.appendChild(el("div",{class:"datum",text:langeDatum(new Date())}));
-m.appendChild(el("h1",{text:"Vanavond"}));
-m.appendChild(ornament());
-// Gisteren (of eerder) gepland maar niet afgevinkt? Even vragen.
-D.weekmenu.filter(w=>w.receptId&&IX.recept[w.receptId]&&!w.gekookt&&w.datum<vandaag()&&w.datum>=plusDagen(vandaag(),-3)&&!later[w.id])
-.sort((a,b)=>a.datum<b.datum?1:-1).slice(0,2).forEach(w=>{
-const r=IX.recept[w.receptId];
-m.appendChild(el("div",{class:"kaart vraag-kaart"},
-el("p",{},"Is de ",el("b",{text:r.titel})," van "+dagNaam(w.datum).toLowerCase()+" gemaakt?"),
-el("button",{type:"button",class:"knop hoofd",onclick:()=>afronden(r.id,factorVanPlan(w),w)},"Ja"),
-el("button",{type:"button",class:"knop",onclick:()=>{w.gekookt="nee";post({action:"weekmenu_status",id:w.id,gekookt:"nee"});render();straksLaden()}},"Nee"),
-el("button",{type:"button",class:"knop",onclick:()=>{later[w.id]=true;render()}},"Later")));
-});
-const w=weekmenuOp(vandaag());
-const r=w&&IX.recept[w.receptId];
-if(r){
-if(w.personen)gekozenPersonen[r.id]=Number(w.personen);
-m.appendChild(el("div",{class:"kaart vanavond-kaart"},el("div",{class:"plakband"}),
-el("span",{class:"chip "+(w.kok||"")},kokTekst(w.kok)),
-el("h2",{text:r.titel}),
-el("div",{class:"meta"},[Number(r.tijd)?r.tijd+" minuten":"",personenVoor(r.id)+" personen"].filter(Boolean).join(" · ")),
-cijferRegel(r.id,true),
-r.letop?el("div",{class:"letop"},el("b",{},"Let op: "),r.letop):null,
-w.gekookt==="ja"?el("p",{class:"uitleg",text:"Al gekookt. Smakelijk!"}):null,
-el("div",{},
-el("button",{type:"button",class:"knop hoofd",onclick:()=>startKoken(r.id)},"Start koken"),
-el("button",{type:"button",class:"knop",onclick:()=>ga("recept/"+r.id)},"Recept"),
-el("button",{type:"button",class:"knop",onclick:()=>planDialoog(vandaag())},"Iets anders"))));
-}else{
-m.appendChild(el("div",{class:"kaart vanavond-kaart"},el("div",{class:"plakband"}),
-el("p",{class:"sub",text:"Nog niets gepland voor vanavond."}),
-el("div",{style:"margin-top:14px"},
-el("button",{type:"button",class:"knop hoofd",onclick:()=>planDialoog(vandaag())},"Kies een recept"),
-el("button",{type:"button",class:"knop",onclick:verrasMe},"Verras me"))));
-}
-m.appendChild(el("h2",{text:"Komende dagen"}));
-const strook=el("div",{class:"strook"});
-for(let d=1;d<=3;d++)strook.appendChild(dagRij(plusDagen(vandaag(),d)));
-m.appendChild(strook);
-m.appendChild(el("p",{class:"midden"},el("button",{type:"button",class:"link",onclick:()=>ga("weekmenu")},"Hele week bekijken")));
-// Boodschappen en kast in één regel
-const open=w2=>D.boodschappen.filter(b=>b.winkel===w2&&b.status==="open").length;
-const regel=el("div",{class:"status-regel"},"Boodschappen: ",el("a",{href:"#lijst",onclick:()=>{lijstWinkel="Lidl"}},"Lidl "+open("Lidl"))," · ",el("a",{href:"#lijst",onclick:()=>{lijstWinkel="AH"}},"AH "+open("AH")));
-m.appendChild(regel);
-const o=actiefOnderweg();
-if(o)m.appendChild(el("div",{class:"onderweg",text:o.persoon+" is onderweg naar de "+o.winkel}));
-const geteld=D.producten.map(p=>leesTijd(p.laatstGeteld)).filter(Boolean).sort((a,b)=>a-b)[0];
-if(geteld&&Date.now()-geteld>42*864e5)m.appendChild(el("p",{class:"uitleg midden"},"De kast is al een tijdje niet geteld. ",el("a",{href:"#kast"},"Even tellen?")));
-}
-function verrasMe(){
-const fav=D.recepten.filter(r=>isFavoriet(r.id));
-const pool=fav.length?fav:D.recepten;
-if(!pool.length){melding("Er zijn nog geen recepten.");return}
-const r=pool[Math.floor(Math.random()*pool.length)];
-planDialoog(vandaag(),r.id);
-}
-
-/* ---------- Alle recepten ---------- */
-let receptFilter="alle",receptZoek="",receptTag="";
-function receptenView(m){
-m.appendChild(el("div",{class:"datum",text:D.recepten.length+" recepten"}));
-m.appendChild(el("h1",{text:"Recepten"}));
-m.appendChild(ornament());
-const zoek=el("input",{type:"search",placeholder:"Zoek een recept of ingrediënt…",value:receptZoek,"aria-label":"Zoeken"});
-zoek.addEventListener("input",()=>{receptZoek=zoek.value;tekenRaster()});
-m.appendChild(el("div",{class:"zoekbalk"},zoek));
-const seg=el("div",{class:"segmented filters"});
-[["alle","Alle"],["fav","♥ Favorieten"],["snel","Snel"]].forEach(([k,label])=>seg.appendChild(el("button",{type:"button",class:receptFilter===k?"active":"",onclick:()=>{receptFilter=k;render()}},label)));
-m.appendChild(seg);
-const tags={};D.recepten.forEach(r=>String(r.tags||"").split(",").map(t=>t.trim().toLowerCase()).filter(Boolean).forEach(t=>{tags[t]=(tags[t]||0)+1}));
-const tagRij=el("div",{style:"margin-top:10px"});
-Object.keys(tags).sort().forEach(t=>tagRij.appendChild(el("span",{class:"chip knopchip"+(receptTag===t?" active":""),onclick:()=>{receptTag=receptTag===t?"":t;render()}},t)));
-m.appendChild(tagRij);
-const raster=el("div",{class:"raster"});
-m.appendChild(raster);
-function tekenRaster(){
-raster.innerHTML="";
-const z=receptZoek.trim().toLowerCase();
-D.recepten.filter(r=>{
-if(receptFilter==="fav"&&!isFavoriet(r.id))return false;
-if(receptFilter==="snel"&&!(Number(r.tijd)>0&&Number(r.tijd)<=30))return false;
-if(receptTag&&String(r.tags||"").toLowerCase().split(",").map(t=>t.trim()).indexOf(receptTag)===-1)return false;
-if(z&&r.titel.toLowerCase().indexOf(z)===-1&&!(IX.ingr[r.id]||[]).some(i=>i.naam.toLowerCase().indexOf(z)!==-1))return false;
-return true;
-}).sort((a,b)=>(isFavoriet(b.id)-isFavoriet(a.id))||a.titel.localeCompare(b.titel,"nl")).forEach((r,n)=>{
-const draai=((n*37)%7-3)*.35;
-raster.appendChild(el("div",{class:"kaart receptkaart",style:"--draai:"+draai+"deg",onclick:()=>ga("recept/"+r.id)},
-el("div",{class:"plakband"}),
-el("h3",{text:r.titel}),
-el("div",{class:"meta",text:[Number(r.tijd)?r.tijd+" min":"",basisPersonen(r)+" pers.",String(r.tags||"").split(",").slice(0,2).join(",").trim()].filter(Boolean).join(" · ")}),
-cijferRegel(r.id)));
-});
-raster.appendChild(el("div",{class:"nieuw-kaart",onclick:()=>ga("bewerk/nieuw")},el("span",{text:"+"}),"Nieuw recept"));
-}
-tekenRaster();
-}
-
-/* ---------- Eén recept ---------- */
-function receptView(m,id){
-const r=IX.recept[id];
-if(!r){m.appendChild(el("p",{class:"sub",text:"Dit recept bestaat niet (meer)."}));return}
-const f=factorVoor(id);
-const tags=String(r.tags||"").split(",").map(t=>t.trim()).filter(Boolean);
-m.appendChild(el("div",{class:"datum",text:tags.join(" · ")}));
-m.appendChild(el("h1",{text:r.titel}));
-m.appendChild(el("p",{class:"sub",text:[Number(r.tijd)?r.tijd+" minuten":"",r.bron].filter(Boolean).join(" · ")}));
-const c=cijferRegel(id,true);if(c)m.appendChild(c);
-m.appendChild(ornament());
-const p=personenVoor(id);
-m.appendChild(el("div",{class:"personen"},
-el("button",{type:"button","aria-label":"Minder personen",onclick:()=>{if(p>1){gekozenPersonen[id]=p-1;render()}}},"–"),
-el("span",{text:p+(p===1?" persoon":" personen")}),
-el("button",{type:"button","aria-label":"Meer personen",onclick:()=>{if(p<20){gekozenPersonen[id]=p+1;render()}}},"+")));
-if(/bakken|taart|cake|brood/i.test(r.tags||"")&&(f>1.5||f<.67))m.appendChild(el("div",{class:"letop"},el("b",{},"Let op: "),"bij bakken schalen de bakvorm en de baktijd niet vanzelf mee."));
-if(r.letop)m.appendChild(el("div",{class:"letop"},el("b",{},"Let op: "),r.letop));
-const res=reserveringen();
-const links=el("div"),rechts=el("div");
-links.appendChild(el("h2",{text:"Ingrediënten"}));
-let groep=null;
-(IX.ingr[id]||[]).forEach((i,n)=>{
-if(i.groep&&i.groep!==groep){groep=i.groep;links.appendChild(el("div",{class:"groep-kop",text:i.groep}))}
-const s=schaal(i,f);
-const prod=IX.product[i.productId];
-const ht=hoeveelheidTekst(s,i.eenheid);
-let bel=(ht?ht+" ":"")+i.naam+(i.eenheid==="naar smaak"?" naar smaak":"");
-if(prod)bel+=" · "+kastTekst(prod,res);
-const weinig=prod&&prod.soort!=="niveau"&&(Number(prod.aantal)||0)<Math.ceil(deelVan(i,f,prod)-1e-9);
-links.appendChild(el("div",{class:"ingr","data-i":n,"data-bel":bel},
-el("span",{class:"h",text:ht}),i.naam+(i.eenheid==="naar smaak"?" naar smaak":""),
-i.notitie?el("span",{class:"noot",text:", "+i.notitie}):null,
-prod?el("span",{class:"kast"+(weinig?" weinig":""),text:kastTekst(prod,res)}):null));
-});
-rechts.appendChild(el("h2",{text:"Bereiding"}));
-const bw=leesJSON(BLADWIJZER_KEY,{})[id];
-(IX.stap[id]||[]).forEach(s=>{
-rechts.appendChild(el("div",{class:"stap"+(String(bw)===String(s.nr)?" bladwijzer":""),"data-nr":s.nr},
-el("span",{class:"nr",text:s.nr}),s.tekst,
-s.timer?el("span",{class:"stap-timer",text:" ⏱ "+s.timer+" min"}):null,
-s.letop?el("span",{class:"stap-letop",text:"Let op: "+s.letop}):null));
-});
-m.appendChild(el("div",{class:"kolommen"},links,rechts));
-const plan=D.weekmenu.filter(w=>w.receptId===id&&w.datum>=vandaag()).map(w=>dagNaam(w.datum).toLowerCase());
-m.appendChild(el("div",{class:"acties"},
-plan.length?el("p",{class:"uitleg",text:"Gepland voor "+plan.join(" en ")+"."}):null,
-el("button",{type:"button",class:"knop hoofd",onclick:()=>startKoken(id)},"Start koken"),
-el("button",{type:"button",class:"knop",onclick:()=>lijstDialoog([{receptId:id,f:f}])},"Op de lijst"),
-el("button",{type:"button",class:"knop",onclick:()=>planDialoog(null,id)},"In het weekmenu"),
-el("button",{type:"button",class:"knop",onclick:()=>cijferDialoog(id,false)},"Cijfer geven"),
-el("button",{type:"button",class:"knop",onclick:()=>{concept=null;ga("bewerk/"+id)}},"Aanpassen")));
-}
-
-/* ---------- Koken ---------- */
-let kook={id:"",stap:0};
-function startKoken(id){ontgrendelGeluid();kook={id:id,stap:0};ga("koken/"+id)}
-function stapIngredienten(id,s,f){
-const tekst=" "+s.tekst.toLowerCase()+" ";
-return (IX.ingr[id]||[]).filter(i=>String(i.naam).toLowerCase().replace(/\(.*?\)/g," ").split(/[^a-zà-ÿ]+/).some(w=>w.length>=4&&["naar","smaak","gemalen","blik","rode","witte","verse"].indexOf(w)===-1&&tekst.indexOf(w)!==-1))
-.map(i=>{const sc=schaal(i,f);return{h:hoeveelheidTekst(sc,i.eenheid),naam:i.naam+(i.eenheid==="naar smaak"?" naar smaak":"")}});
-}
-function kookView(m,id){
-const r=IX.recept[id];
-if(!r){m.appendChild(el("p",{class:"sub",text:"Dit recept bestaat niet (meer)."}));return}
-if(kook.id!==id)kook={id:id,stap:0};
-const st=IX.stap[id]||[];
-const n=st.length,i=Math.max(0,Math.min(kook.stap,n));
-const f=factorVoor(id);
-m.appendChild(el("div",{class:"kook-kop"},
-el("button",{type:"button",class:"knop klein",onclick:()=>ga("recept/"+id)},"← Recept"),
-el("div",{class:"titel",text:r.titel+" · "+personenVoor(id)+" pers."}),
-el("button",{type:"button",class:"knop klein",onclick:()=>{kook.stap=n;render()}},"Klaar")));
-const balk=el("div",{class:"kook-voortgang"});
-for(let k=0;k<n;k++)balk.appendChild(el("i",{class:k<i?"gedaan":k===i?"nu":""}));
-m.appendChild(balk);
-const vlak=el("div",{class:"kook-vlak"});
-const naar=d=>{kook.stap=Math.max(0,Math.min(n,kook.stap+d));render();window.scrollTo(0,0)};
-vlak.appendChild(el("div",{class:"kook-zone links",onclick:()=>naar(-1),"aria-label":"Vorige stap"}));
-vlak.appendChild(el("div",{class:"kook-zone rechts",onclick:()=>naar(1),"aria-label":"Volgende stap"}));
-const inhoud=el("div",{class:"kook-inhoud"});
-if(i<n){
-const s=st[i];
-if(i===0&&r.letop)inhoud.appendChild(el("div",{class:"letop"},el("b",{},"Vooraf: "),r.letop));
-inhoud.appendChild(el("div",{class:"kook-nr",text:"Stap "+(i+1)+" van "+n}));
-if(s.letop)inhoud.appendChild(el("div",{class:"letop"},el("b",{},"Let op: "),s.letop));
-inhoud.appendChild(el("div",{class:"kook-stap",text:s.tekst}));
-const ingr=stapIngredienten(id,s,f);
-if(ingr.length)inhoud.appendChild(el("div",{class:"kook-ingr"},ingr.map(x=>el("div",{},x.h?el("b",{text:x.h+" "}):null,x.naam))));
-if(s.timer)inhoud.appendChild(el("button",{type:"button",class:"knop hoofd",onclick:e=>{e.stopPropagation();startTimer(r.titel.split(" ").slice(0,2).join(" ")+" · stap "+(i+1),Number(s.timer))}},"⏱ Timer "+getal(Number(s.timer))+" min"));
-const volgende=st[i+1];
-if(volgende&&volgende.letop)inhoud.appendChild(el("div",{class:"letop vooruit"},el("b",{},"Straks bij stap "+(i+2)+": "),volgende.letop));
-inhoud.appendChild(el("div",{class:"kook-hint"},el("span",{text:i>0?"← tik links: vorige":""}),el("span",{text:"tik rechts: volgende →"})));
-}else{
-inhoud.appendChild(el("div",{class:"midden",style:"padding-top:6vh"},
-el("div",{class:"kook-stap",text:"Klaar! Eet smakelijk."}),
-el("button",{type:"button",class:"knop hoofd",onclick:()=>afronden(id,f,planVoorKoken(id))},"Afronden"),
-el("button",{type:"button",class:"knop",onclick:()=>naar(-1)},"Terug naar de laatste stap")));
-}
-vlak.appendChild(inhoud);
-m.appendChild(vlak);
-}
-
-// Na het koken: voorraad bijwerken, als gekookt markeren, en een cijfer.
-function afronden(id,f,plan){
-const r=IX.recept[id];if(!r)return;
-const rijen=[];
-(IX.ingr[id]||[]).forEach(i=>{
-const p=IX.product[i.productId];if(!p)return;
-let x=rijen.find(y=>y.p===p);
-if(!x){x={p:p,deel:0};rijen.push(x)}
-x.deel+=deelVan(i,f,p);
-});
-const verder=()=>{
-if(plan){plan.gekookt="ja";post({action:"weekmenu_status",id:plan.id,gekookt:"ja"})}
-cijferDialoog(id,!!(plan&&plan.kok==="Samen"));
-straksLaden(2500);
+// Elk tabblad met zijn kolommen. De kolomnamen in rij 1 zijn precies deze woorden.
+const TABELLEN = {
+  Recepten: ['id', 'titel', 'personen', 'tijd', 'tags', 'bron', 'letop', 'toegevoegdDoor', 'toegevoegdOp', 'versie', 'gewijzigdOp', 'gewijzigdDoor'],
+  Ingredienten: ['receptId', 'volgorde', 'groep', 'hoeveelheid', 'eenheid', 'naam', 'notitie', 'schalen', 'productId', 'afdeling', 'winkel'],
+  Stappen: ['receptId', 'nr', 'tekst', 'timer', 'letop'],
+  Weekmenu: ['id', 'datum', 'receptId', 'kok', 'personen', 'gekookt', 'opLijst'],
+  Boodschappen: ['id', 'naam', 'hoeveelheid', 'eenheid', 'winkel', 'afdeling', 'receptId', 'productId', 'toegevoegdDoor', 'toegevoegdOp', 'status', 'gekochtDoor', 'gekochtOp'],
+  Producten: ['id', 'naam', 'synoniemen', 'soort', 'verpakking', 'inhoud', 'eenheid', 'winkel', 'afdeling', 'minimum', 'aantal', 'niveau', 'laatstGeteld'],
+  Voorraadlog: ['datum', 'persoon', 'productId', 'product', 'wijziging', 'reden', 'nieuw'],
+  Cijfers: ['receptId', 'persoon', 'cijfer', 'datum', 'samen'],
+  Geschiedenis: ['receptId', 'versie', 'gewijzigdDoor', 'datum', 'oud']
 };
-if(!rijen.length){verder();return}
-const lijst=el("div");
-lijst.appendChild(el("p",{class:"uitleg",text:"Wat is er uit de kast gebruikt? Klopt iets niet, vink het dan uit."}));
-rijen.forEach(x=>{
-const p=x.p;
-if(p.soort==="niveau"){
-x.niveau=p.niveau||"vol";
-const seg=el("div",{class:"segmented niveaus"});
-const teken=()=>{seg.innerHTML="";NIVEAUS.forEach(nv=>seg.appendChild(el("button",{type:"button",class:x.niveau===nv?"active":"",onclick:()=>{x.niveau=nv;teken()}},nv)))};
-teken();
-lijst.appendChild(el("div",{class:"keus"},el("div",{class:"tekst2"},p.naam,el("small",{text:"hoe vol is het nog?"})),seg));
-return;
-}
-const a=Number(p.aantal)||0;
-x.n=x.deel>=.5?Math.max(1,Math.round(x.deel)):1;
-x.aan=x.deel>=.5&&a>0;
-const cb=el("input",{type:"checkbox"});cb.checked=x.aan;cb.addEventListener("change",()=>{x.aan=cb.checked});
-const uitleg=a===0?"Er stond er geen in de kast.":x.deel<.5?"Een deel gebruikt. Is hij nu op? Vink dan aan. ("+a+" → "+Math.max(0,a-x.n)+")":"In de kast: "+a+" → "+Math.max(0,a-x.n);
-lijst.appendChild(el("label",{class:"keus"},cb,el("div",{class:"tekst2"},x.n+" "+meervoud(p.verpakking,x.n)+" "+p.naam,el("small",{text:uitleg}))));
-});
-const m=modal("Uit de voorraad gebruikt?",lijst,[
-["Overslaan",()=>{m.sluit();verder()}],
-["Bijwerken",()=>{
-const wz=[];
-rijen.forEach(x=>{if(x.p.soort==="niveau"){if(x.niveau!==x.p.niveau)wz.push({productId:x.p.id,niveau:x.niveau})}else if(x.aan)wz.push({productId:x.p.id,delta:-x.n})});
-if(wz.length){post({action:"voorraad",persoon:eigenaar(),reden:"gekookt",wijzigingen:wz});pasVoorraadLokaalAan(wz)}
-m.sluit();verder();
-},"hoofd"]],{vast:true});
-}
-function pasVoorraadLokaalAan(wz){
-wz.forEach(w=>{const p=IX.product[w.productId];if(!p)return;if(w.niveau)p.niveau=w.niveau;else if(w.aantal!==undefined)p.aantal=String(w.aantal);else p.aantal=String(Math.max(0,(Number(p.aantal)||0)+w.delta))});
+const PERSONEN = ['Sanne', 'Ramon'];
+const NIVEAUS = ['vol', 'half', 'bijna op', 'op'];
+
+
+// ---------- Lezen (GET, als JSONP) ----------
+
+function doGet(e) {
+  const p = (e && e.parameter) || {};
+  if (!p.action) return tekst(verbindingstest());
+  const callback = String(p.callback || '');
+  if (!/^[a-zA-Z_$][0-9a-zA-Z_$]*$/.test(callback)) return tekst('Ongeldige callback.');
+  try {
+    if (!geldigeCode(p.token)) return jsonp(callback, { success: false, error: 'Ongeldige toegangscode.' });
+    if (p.action === 'alles') return jsonp(callback, alles());
+    if (p.action === 'geschiedenis') return jsonp(callback, geschiedenisVan(String(p.id || '')));
+    return jsonp(callback, { success: false, error: 'Onbekende actie.' });
+  } catch (err) {
+    return jsonp(callback, { success: false, error: err.message });
+  }
 }
 
-function cijferDialoog(id,samen){
-const r=IX.recept[id];if(!r)return;
-const gekozen={};
-const body=el("div");
-const huidig=cijfersVan(id);
-const volgorde=eigenaar()?[eigenaar()].concat(MENSEN.filter(x=>x!==eigenaar())):MENSEN;
-volgorde.forEach(p=>{
-const rij=el("div",{class:"cijfer-rij"},el("div",{class:"wie "+p,text:p+(huidig[p]?" (vorige keer: "+huidig[p].cijfer+")":"")}));
-const knoppen=el("div",{class:"cijferknoppen"});
-for(let c=1;c<=10;c++){
-const b=el("button",{type:"button",onclick:()=>{gekozen[p]=gekozen[p]===c?undefined:c;knoppen.querySelectorAll("button").forEach((x,k)=>x.classList.toggle("active",gekozen[p]===k+1))}},String(c));
-knoppen.appendChild(b);
-}
-rij.appendChild(knoppen);
-body.appendChild(rij);
-});
-const samenBox=el("input",{type:"checkbox"});samenBox.checked=!!samen;
-body.appendChild(el("label",{class:"keus"},samenBox,el("div",{class:"tekst2",text:"Samen gekookt"})));
-body.appendChild(el("p",{class:"uitleg",text:"Allebei een 7 of hoger? Dan wordt het een favoriet. Het laatste cijfer telt."}));
-const m=modal("Hoe was de "+r.titel.toLowerCase()+"?",body,[
-["Later",()=>m.sluit()],
-["Bewaren",()=>{
-const gegeven=MENSEN.filter(p=>gekozen[p]);
-gegeven.forEach(p=>{
-post({action:"cijfer",receptId:id,cijfer:gekozen[p],persoon:p,samen:samenBox.checked?"ja":""});
-D.cijfers.push({receptId:id,persoon:p,cijfer:String(gekozen[p]),datum:"",samen:samenBox.checked?"ja":""});
-});
-m.sluit();
-if(samenBox.checked)hartjes();
-if(gegeven.length)melding(isFavoriet(id)?"Bewaard. En het is een favoriet! ♥":"Bewaard.");
-render();straksLaden(2500);
-},"hoofd"]]);
-}
-function hartjes(){
-if(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches)return;
-for(let k=0;k<14;k++){
-const h=el("span",{class:"hartje",text:"♥",style:"left:"+(8+Math.random()*84)+"vw;-webkit-animation-delay:"+(k*0.12)+"s;animation-delay:"+(k*0.12)+"s;font-size:"+(18+Math.random()*18)+"px;color:"+(k%2?"#b88a54":"#7895a3")});
-document.body.appendChild(h);
-setTimeout(()=>h.remove(),4800);
-}
-melding("Samen gekookt ♥");
+function alles() {
+  const props = PropertiesService.getScriptProperties();
+  let onderweg = null;
+  try { onderweg = JSON.parse(props.getProperty('ONDERWEG') || 'null'); } catch (e) {}
+  return {
+    success: true,
+    versie: VERSIE,
+    nu: Date.now(),
+    recepten: lees('Recepten'),
+    ingredienten: lees('Ingredienten'),
+    stappen: lees('Stappen'),
+    weekmenu: lees('Weekmenu'),
+    boodschappen: lees('Boodschappen').filter(b => b.status !== 'weg'),
+    producten: lees('Producten'),
+    cijfers: lees('Cijfers'),
+    onderweg: onderweg
+  };
 }
 
-/* ---------- Timers ---------- */
-let timers=leesJSON(TIMERS_KEY,[]),geluid=null,laatstePiep=0;
-function ontgrendelGeluid(){
-try{
-if(!geluid){const AC=window.AudioContext||window.webkitAudioContext;if(AC)geluid=new AC()}
-if(!geluid)return;
-if(geluid.state==="suspended")geluid.resume();
-const o=geluid.createOscillator(),g=geluid.createGain();g.gain.value=0.0001;o.connect(g);g.connect(geluid.destination);o.start();o.stop(geluid.currentTime+0.05);
-}catch(e){}
-}
-document.addEventListener("pointerdown",function eersteTik(){ontgrendelGeluid();document.removeEventListener("pointerdown",eersteTik)},true);
-function piep(){
-if(!geluid)return;
-try{[0,.35,.7].forEach(t=>{const o=geluid.createOscillator(),g=geluid.createGain(),s=geluid.currentTime+t;o.frequency.value=880;g.gain.setValueAtTime(0.0001,s);g.gain.exponentialRampToValueAtTime(0.4,s+0.02);g.gain.exponentialRampToValueAtTime(0.0001,s+0.3);o.connect(g);g.connect(geluid.destination);o.start(s);o.stop(s+0.32)})}catch(e){}
-}
-function startTimer(label,min){
-ontgrendelGeluid();
-timers.push({id:nieuwId("t"),label:label,eind:Date.now()+min*60000,klaar:false});
-bewaarJSON(TIMERS_KEY,timers);tekenTimers();
-melding("Timer loopt: "+getal(min)+" min");
-}
-function tekenTimers(){
-const s=$("timerStrook");
-s.innerHTML="";
-s.hidden=!timers.length;
-timers.forEach(t=>{
-const rest=Math.max(0,Math.round((t.eind-Date.now())/1000));
-const tijd=Math.floor(rest/60)+":"+String(rest%60).padStart(2,"0");
-s.appendChild(el("button",{type:"button",class:"timer"+(t.klaar?" klaar":""),onclick:()=>timerKnop(t)},t.label+" · "+(t.klaar?"klaar!":tijd)));
-});
-}
-function timerKnop(t){
-if(t.klaar){timers=timers.filter(x=>x!==t);bewaarJSON(TIMERS_KEY,timers);tekenTimers();return}
-const m=modal(t.label,null,[
-["Stoppen",()=>{timers=timers.filter(x=>x!==t);bewaarJSON(TIMERS_KEY,timers);tekenTimers();m.sluit()}],
-["+1 min",()=>{t.eind+=60000;bewaarJSON(TIMERS_KEY,timers);tekenTimers();m.sluit()}],
-["Laten lopen",()=>m.sluit(),"hoofd"]]);
-}
-setInterval(()=>{
-if(!timers.length)return;
-const nu=Date.now();let veranderd=false;
-timers.forEach(t=>{if(!t.klaar&&nu>=t.eind){t.klaar=true;veranderd=true}});
-if(veranderd)bewaarJSON(TIMERS_KEY,timers);
-if(timers.some(t=>t.klaar)&&nu-laatstePiep>4000){piep();laatstePiep=nu}
-tekenTimers();
-},1000);
-
-/* ---------- Weekmenu ---------- */
-function weekmenuView(m){
-m.appendChild(el("div",{class:"datum",text:korteDatum(vandaag())+" – "+korteDatum(plusDagen(vandaag(),6))}));
-m.appendChild(el("h1",{text:"Weekmenu"}));
-m.appendChild(ornament());
-for(let d=0;d<7;d++)m.appendChild(dagRij(plusDagen(vandaag(),d)));
-const teDoen=D.weekmenu.filter(w=>w.receptId&&IX.recept[w.receptId]&&!w.gekookt&&!w.opLijst&&w.datum>=vandaag()&&w.datum<=plusDagen(vandaag(),6));
-m.appendChild(el("div",{class:"acties"},
-el("button",{type:"button",class:"knop hoofd",disabled:!teDoen.length,onclick:()=>lijstDialoog(teDoen.map(w=>({receptId:w.receptId,f:factorVanPlan(w),weekId:w.id})),{weekIds:teDoen.map(w=>w.id)})},teDoen.length?"Alles op de lijst ("+teDoen.length+" "+(teDoen.length===1?"dag":"dagen")+")":"Alles staat al op de lijst"),
-el("p",{class:"uitleg",text:"Tik op een dag om te plannen. De kleur laat zien wie er kookt."})));
-}
-function dagRij(datum){
-const w=weekmenuOp(datum);
-const r=w&&IX.recept[w.receptId];
-return el("div",{class:"dag "+(r&&w.kok?w.kok:"")+(datum===vandaag()?" vandaag":""),onclick:()=>planDialoog(datum)},
-el("div",{class:"naam"},el("b",{text:dagNaam(datum)}),korteDatum(datum)),
-el("div",{class:"wat"},r?r.titel:el("span",{class:"leeg",text:"niets gepland"}),
-r?el("div",{class:"meta",text:[kokTekst(w.kok),w.personen+" pers.",w.gekookt==="ja"?"gekookt":w.opLijst?"op de lijst":""].filter(Boolean).join(" · ")}):null));
-}
-function planDialoog(datum,receptId){
-const bestaand=datum?weekmenuOp(datum):null;
-const keuze={datum:datum||vandaag(),receptId:receptId||(bestaand&&bestaand.receptId)||"",kok:(bestaand&&bestaand.kok)||eigenaar()||"",personen:Number(bestaand&&bestaand.personen)||0};
-const body=el("div");
-if(!datum){
-const dk=el("div",{class:"dagkeuze"});
-const tekenDagen=()=>{dk.innerHTML="";for(let d=0;d<7;d++){const s=plusDagen(vandaag(),d);const bezet=weekmenuOp(s);dk.appendChild(el("button",{type:"button",class:keuze.datum===s?"active":"",onclick:()=>{keuze.datum=s;tekenDagen()}},dagNaam(s)+(bezet?" •":"")))}};
-tekenDagen();
-body.appendChild(el("div",{class:"veld"},el("span",{text:"Welke dag? (• = er staat al iets)"}),dk));
-}
-const zoek=el("input",{type:"search",class:"tekst",placeholder:"Zoek een recept…"});
-const lijst=el("div",{class:"kies-lijst"});
-const tekenLijst=()=>{
-lijst.innerHTML="";
-const z=zoek.value.trim().toLowerCase();
-D.recepten.filter(r=>!z||r.titel.toLowerCase().indexOf(z)!==-1).sort((a,b)=>(isFavoriet(b.id)-isFavoriet(a.id))||a.titel.localeCompare(b.titel,"nl")).forEach(r=>{
-lijst.appendChild(el("button",{type:"button",class:"kies-item"+(keuze.receptId===r.id?" active":""),onclick:()=>{keuze.receptId=r.id;if(!keuze.personen)keuze.personen=basisPersonen(r);tekenLijst();tekenPersonen()}},r.titel+(isFavoriet(r.id)?" ♥":"")));
-});
-};
-zoek.addEventListener("input",tekenLijst);
-body.appendChild(el("div",{class:"veld"},el("span",{text:"Wat eten we?"}),zoek,lijst));
-const koks=el("div",{class:"persoonkeuze"});
-const tekenKoks=()=>{koks.innerHTML="";KOKS.forEach(k=>koks.appendChild(el("button",{type:"button",class:k+(keuze.kok===k?" active":""),onclick:()=>{keuze.kok=keuze.kok===k?"":k;tekenKoks()}},k)))};
-tekenKoks();
-body.appendChild(el("div",{class:"veld"},el("span",{text:"Wie kookt?"}),koks));
-const pers=el("div",{class:"personen"});
-const tekenPersonen=()=>{
-const r=IX.recept[keuze.receptId];
-if(!keuze.personen)keuze.personen=r?basisPersonen(r):2;
-pers.innerHTML="";
-pers.appendChild(el("button",{type:"button",onclick:()=>{if(keuze.personen>1){keuze.personen--;tekenPersonen()}}},"–"));
-pers.appendChild(el("span",{text:keuze.personen+" personen"}));
-pers.appendChild(el("button",{type:"button",onclick:()=>{if(keuze.personen<20){keuze.personen++;tekenPersonen()}}},"+"));
-};
-tekenLijst();tekenPersonen();
-body.appendChild(pers);
-const m=modal(datum?dagNaam(datum)+" "+korteDatum(datum):"In het weekmenu",body,[
-bestaand?["Weghalen",()=>{post({action:"weekmenu_weg",id:bestaand.id});D.weekmenu=D.weekmenu.filter(w=>w!==bestaand);m.sluit();render();straksLaden()}]:null,
-["Annuleren",()=>m.sluit()],
-["Opslaan",()=>{
-if(!keuze.receptId){melding("Kies eerst een recept.");return}
-const oud=weekmenuOp(keuze.datum);
-const id=oud?oud.id:nieuwId("w");
-post({action:"weekmenu_zet",id:id,datum:keuze.datum,receptId:keuze.receptId,kok:keuze.kok,personen:keuze.personen});
-D.weekmenu=D.weekmenu.filter(w=>w.datum!==keuze.datum).concat([{id:id,datum:keuze.datum,receptId:keuze.receptId,kok:keuze.kok,personen:String(keuze.personen),gekookt:"",opLijst:""}]);
-m.sluit();
-melding(IX.recept[keuze.receptId].titel+" staat op "+dagNaam(keuze.datum).toLowerCase()+".","Ook op de lijst",()=>lijstDialoog([{receptId:keuze.receptId,f:keuze.personen/basisPersonen(IX.recept[keuze.receptId]),weekId:id}],{weekIds:[id]}));
-render();straksLaden();
-},"hoofd"]]);
+function geschiedenisVan(id) {
+  const lijst = lees('Geschiedenis').filter(g => g.receptId === id)
+    .map(g => ({ versie: Number(g.versie), gewijzigdDoor: g.gewijzigdDoor, datum: g.datum }))
+    .sort((a, b) => b.versie - a.versie);
+  return { success: true, geschiedenis: lijst };
 }
 
-/* ---------- Op de boodschappenlijst ---------- */
-// bronnen: [{receptId, f, weekId?}]. Rekent met de kast en met wat al gepland is.
-function lijstDialoog(bronnen,opties){
-opties=opties||{};
-const res=reserveringen(bronnen.map(b=>b.weekId).filter(Boolean));
-const prod={},vers={};
-bronnen.forEach(b=>{
-(IX.ingr[b.receptId]||[]).forEach(i=>{
-const p=IX.product[i.productId];
-if(p){const x=prod[p.id]=prod[p.id]||{p:p,som:0,receptId:b.receptId};x.som+=deelVan(i,b.f,p);return}
-const s=schaal(i,b.f);
-const k=i.naam.toLowerCase()+"|"+(s.e||"");
-const x=vers[k]=vers[k]||{naam:i.naam,e:s.e,h:0,leeg:s.h===null,eenheid:i.eenheid,afdeling:i.afdeling||raadAfdeling(i.naam),winkel:i.winkel,receptId:b.receptId};
-if(s.h!==null)x.h+=s.h;
-});
-});
-const opLijst=(pid,naam)=>D.boodschappen.find(b=>b.status==="open"&&(pid?b.productId===pid:b.naam.toLowerCase()===naam.toLowerCase()));
-const rijen=[];
-Object.keys(prod).forEach(k=>{
-const x=prod[k],p=x.p;
-let aan,aantal,tekst,noot;
-if(p.soort==="niveau"){aan=p.niveau==="op";aantal=1;tekst=p.naam;noot="in de kast: "+(p.niveau||"?")}
-else{
-const nodig=Math.max(1,Math.ceil(x.som-1e-9));
-const vrij=Math.max(0,(Number(p.aantal)||0)-(res[p.id]?res[p.id].aantal:0));
-const tekort=Math.max(0,nodig-vrij);
-aan=tekort>0;aantal=tekort||nodig;
-tekst=aantal+" "+meervoud(p.verpakking,aantal)+" "+p.naam;
-noot=(Number(p.aantal)||0)+" in de kast"+(res[p.id]?", "+res[p.id].aantal+" al gepland":"")+(aan?"":": genoeg");
-}
-if(opLijst(p.id)){aan=false;noot+=" · staat al op de lijst"}
-rijen.push({aan:aan,tekst:tekst,noot:noot,item:{naam:p.naam,hoeveelheid:aantal,eenheid:p.verpakking,winkel:p.winkel||"Lidl",afdeling:p.afdeling,productId:p.id,receptId:x.receptId}});
-});
-Object.keys(vers).forEach(k=>{
-const x=vers[k];
-const meestal=x.eenheid==="naar smaak"||x.eenheid==="snufje"||((x.eenheid==="tl"||x.eenheid==="el")&&x.afdeling==="Sauzen & kruiden");
-const al=opLijst("",x.naam);
-const h=x.leeg?"":(x.eenheid==="st"||x.eenheid===""?getal(x.h):getal(x.h)+" "+meervoud(x.e,x.h));
-rijen.push({aan:!meestal&&!al,tekst:(h?h+" ":"")+x.naam,noot:meestal?"meestal in huis: vink aan als het op is":al?"staat al op de lijst":"",item:{naam:x.naam,hoeveelheid:x.leeg?"":x.h,eenheid:x.eenheid==="naar smaak"?"":x.e,winkel:x.winkel||"Lidl",afdeling:x.afdeling,receptId:x.receptId}});
-});
-rijen.sort((a,b)=>afdelingIndex(a.item.afdeling)-afdelingIndex(b.item.afdeling));
-const body=el("div");
-body.appendChild(el("p",{class:"uitleg",text:"Aangevinkt gaat op de lijst. Wat er nog is, vink je uit. Tik op Lidl/AH om van winkel te wisselen."}));
-rijen.forEach(rj=>{
-const cb=el("input",{type:"checkbox"});cb.checked=rj.aan;cb.addEventListener("change",()=>{rj.aan=cb.checked});
-const wk=el("button",{type:"button",class:"mini",onclick:e=>{e.preventDefault();rj.item.winkel=rj.item.winkel==="AH"?"Lidl":"AH";wk.textContent=rj.item.winkel}},rj.item.winkel);
-body.appendChild(el("label",{class:"keus"},cb,el("div",{class:"tekst2"},rj.tekst,rj.noot?el("small",{text:rj.noot}):null),wk));
-});
-const m=modal("Op de boodschappenlijst",body,[
-["Annuleren",()=>m.sluit()],
-["Op de lijst",()=>{
-const items=rijen.filter(r=>r.aan).map(r=>r.item);
-m.sluit();
-if(!items.length){melding("Er hoeft niets op de lijst.");return}
-wie(persoon=>{
-post({action:"lijst_toevoegen",persoon:persoon,items:items});
-items.forEach(it=>D.boodschappen.push(Object.assign({id:nieuwId("tmp"),status:"open",toegevoegdDoor:persoon,gekochtDoor:"",gekochtOp:""},it,{hoeveelheid:String(it.hoeveelheid)})));
-(opties.weekIds||[]).forEach(id=>{post({action:"weekmenu_status",id:id,opLijst:"ja"});const w=D.weekmenu.find(x=>x.id===id);if(w)w.opLijst="ja"});
-melding(items.length+(items.length===1?" ding":" dingen")+" op de lijst gezet.","Bekijken",()=>ga("lijst"));
-render();straksLaden(2000);
-},"Wie zet het op de lijst?");
-},"hoofd"]]);
+
+// ---------- Opslaan (POST) ----------
+
+function doPost(e) {
+  try {
+    const d = (e && e.parameter) || {};
+    if (!geldigeCode(d.token)) throw new Error('Ongeldige toegangscode.');
+    const actie = String(d.action || '');
+    const persoon = PERSONEN.includes(d.persoon) ? d.persoon : '';
+    const acties = {
+      recept_opslaan: () => receptOpslaan(JSON.parse(d.recept || '{}'), persoon, d.basisVersie),
+      recept_terugzetten: () => receptTerugzetten(String(d.id || ''), Number(d.versie), persoon),
+      weekmenu_zet: () => weekmenuZet(d),
+      weekmenu_weg: () => verwijderRijen('Weekmenu', r => r.id === d.id),
+      weekmenu_status: () => werkBij('Weekmenu', r => r.id === d.id, pick(d, ['gekookt', 'opLijst'])),
+      lijst_toevoegen: () => lijstToevoegen(JSON.parse(d.items || '[]'), persoon),
+      lijst_zet: () => lijstZet(d, persoon),
+      lijst_klaar: () => lijstKlaar(String(d.winkel || ''), JSON.parse(d.inKast || '[]'), persoon),
+      voorraad: () => voorraadWijzig(JSON.parse(d.wijzigingen || '[]'), String(d.reden || 'aangepast'), persoon),
+      product_opslaan: () => productOpslaan(JSON.parse(d.product || '{}'), persoon),
+      cijfer: () => cijferGeven(d, persoon),
+      onderweg: () => onderwegZet(String(d.winkel || ''), persoon)
+    };
+    if (!acties[actie]) throw new Error('Onbekende actie.');
+    const uit = metSlot(acties[actie]);
+    return json(Object.assign({ success: true }, uit || {}));
+  } catch (err) {
+    console.error(err);
+    return json({ success: false, error: err.message });
+  }
 }
 
-/* ---------- Boodschappen ---------- */
-let lijstWinkel="Lidl";
-function actiefOnderweg(){const o=D.onderweg;return o&&o.winkel&&Date.now()-Number(o.sinds||0)<4*36e5?o:null}
-function lijstView(m){
-const open=w=>D.boodschappen.filter(b=>b.winkel===w&&b.status!=="weg").length;
-m.appendChild(el("div",{class:"datum",text:"Boodschappen"}));
-m.appendChild(el("h1",{text:lijstWinkel==="AH"?"Albert Heijn":"Lidl"}));
-m.appendChild(ornament());
-const tabs=el("div",{class:"segmented"});
-["Lidl","AH"].forEach(w=>tabs.appendChild(el("button",{type:"button",class:lijstWinkel===w?"active":"",onclick:()=>{lijstWinkel=w;render()}},w+" ("+open(w)+")")));
-m.appendChild(tabs);
-const o=actiefOnderweg();
-if(o)m.appendChild(el("div",{class:"onderweg",text:o.persoon+" is onderweg naar de "+o.winkel+" (sinds "+new Date(Number(o.sinds)).toTimeString().slice(0,5)+")"}));
-const invoer=el("input",{type:"text",placeholder:"Iets toevoegen, bijv. 2 citroenen",autocomplete:"off","aria-label":"Toevoegen"});
-const voegToe=()=>{
-const t=invoer.value.trim();if(!t)return;
-const g=t.match(/^(\d+(?:[.,]\d+)?)\s*(g|kg|ml|l|el|tl|st|blik|blikken|pak|pakken|pot|potten|zak|zakken|fles|flessen)?\s+(.+)$/i);
-let naam=t,h="",e="";
-if(g){h=Number(g[1].replace(",","."));e=(g[2]||"").toLowerCase().replace(/(ken|ten|sen)$/,"").replace(/^blik$/,"blik");naam=g[3]}
-const p=productBijNaam(naam);
-const item={naam:p?p.naam:naam,hoeveelheid:h||(p?1:""),eenheid:e||(p?p.verpakking:""),winkel:lijstWinkel,afdeling:p?p.afdeling:raadAfdeling(naam),productId:p?p.id:""};
-invoer.value="";
-wie(persoon=>{
-post({action:"lijst_toevoegen",persoon:persoon,items:[item]});
-D.boodschappen.push(Object.assign({id:nieuwId("tmp"),status:"open",toegevoegdDoor:persoon,receptId:""},item,{hoeveelheid:String(item.hoeveelheid)}));
-render();straksLaden();
-});
-};
-invoer.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();voegToe()}});
-m.appendChild(el("div",{class:"toevoegen"},invoer,el("button",{type:"button",class:"knop hoofd",onclick:voegToe},"+")));
-const items=D.boodschappen.filter(b=>b.winkel===lijstWinkel&&b.status!=="weg")
-.sort((a,b)=>(afdelingIndex(a.afdeling)-afdelingIndex(b.afdeling))||a.naam.localeCompare(b.naam,"nl"));
-if(!items.length)m.appendChild(el("p",{class:"sub",style:"margin-top:24px",text:"Niets op de lijst voor de "+lijstWinkel+"."}));
-let afd=null;
-items.forEach(b=>{
-if(b.afdeling!==afd){afd=b.afdeling;m.appendChild(el("div",{class:"afdeling",text:afd||"Overig"}))}
-m.appendChild(itemRij(b));
-});
-const gekocht=items.filter(b=>b.status==="gekocht").length;
-const ik=eigenaar();
-const knoppen=el("div",{class:"acties"});
-if(gekocht)knoppen.appendChild(el("button",{type:"button",class:"knop hoofd",onclick:klaarMetWinkel},"Klaar met de "+lijstWinkel+" ("+gekocht+" gekocht)"));
-if(o&&o.winkel===lijstWinkel)knoppen.appendChild(el("button",{type:"button",class:"knop",onclick:()=>{post({action:"onderweg",winkel:"",persoon:ik});D.onderweg=null;render();straksLaden()}},"Niet meer onderweg"));
-else knoppen.appendChild(el("button",{type:"button",class:"knop",onclick:()=>wie(p=>{post({action:"onderweg",winkel:lijstWinkel,persoon:p});D.onderweg={persoon:p,winkel:lijstWinkel,sinds:Date.now()};render();straksLaden()},"Wie gaat er?")},"Ik ga naar de "+lijstWinkel));
-m.appendChild(knoppen);
-}
-function itemRij(b){
-const waar=[];
-if(b.toegevoegdDoor==="Voorraad")waar.push("aanvullen: (bijna) op");
-String(b.receptId||"").split(",").filter(Boolean).forEach(id=>{if(IX.recept[id])waar.push("voor "+IX.recept[id].titel.toLowerCase())});
-const h=b.hoeveelheid&&Number(b.hoeveelheid)?getal(Number(b.hoeveelheid))+(b.eenheid&&b.eenheid!=="st"?" "+meervoud(b.eenheid,b.hoeveelheid):"")+" ":"";
-const wissel=()=>{
-const nieuw=b.status==="gekocht"?"open":"gekocht";
-b.status=nieuw;
-post({action:"lijst_zet",id:b.id,status:nieuw,persoon:eigenaar()||(actiefOnderweg()?actiefOnderweg().persoon:"")});
-render();
-};
-return el("div",{class:"item"+(b.status==="gekocht"?" gekocht":"")},
-el("button",{type:"button",class:"vink","aria-label":"Afvinken",onclick:wissel}),
-el("div",{class:"wat",onclick:wissel},h+b.naam,el("span",{class:"waarom"},el("span",{class:"stip "+(b.toegevoegdDoor||"")}),waar.join(" · ")||(b.toegevoegdDoor?"door "+b.toegevoegdDoor:""))),
-el("button",{type:"button",class:"mini",onclick:()=>{b.winkel=b.winkel==="AH"?"Lidl":"AH";post({action:"lijst_zet",id:b.id,winkel:b.winkel});melding(b.naam+" staat nu op de "+b.winkel+"-lijst.");render()}},"→ "+(b.winkel==="AH"?"Lidl":"AH")),
-el("button",{type:"button",class:"mini","aria-label":"Van de lijst halen",onclick:()=>{b.status="weg";post({action:"lijst_zet",id:b.id,status:"weg"});melding(b.naam+" is van de lijst.","Ongedaan",()=>{b.status="open";post({action:"lijst_zet",id:b.id,status:"open"});render()});render()}},"×"));
-}
-function klaarMetWinkel(){
-const gekocht=D.boodschappen.filter(b=>b.winkel===lijstWinkel&&b.status==="gekocht");
-const kast=gekocht.filter(b=>b.productId&&IX.product[b.productId]);
-const body=el("div");
-const inKast={};
-if(kast.length){
-body.appendChild(el("p",{class:"uitleg",text:"Deze houdbare dingen gaan de kast in:"}));
-kast.forEach(b=>{inKast[b.id]=true;const cb=el("input",{type:"checkbox"});cb.checked=true;cb.addEventListener("change",()=>{inKast[b.id]=cb.checked});body.appendChild(el("label",{class:"keus"},cb,el("div",{class:"tekst2"},(b.hoeveelheid?getal(Number(b.hoeveelheid))+" "+b.eenheid+" ":"")+b.naam,el("small",{text:"Nu: "+kastTekst(IX.product[b.productId])}))))});
-}
-body.appendChild(el("p",{class:"uitleg",text:"Alles wat is afgevinkt, gaat van de lijst ("+gekocht.length+")."}));
-const m=modal("Klaar met de "+lijstWinkel,body,[
-["Annuleren",()=>m.sluit()],
-["Klaar",()=>{
-const ids=Object.keys(inKast).filter(k=>inKast[k]);
-wie(persoon=>{
-post({action:"lijst_klaar",winkel:lijstWinkel,inKast:ids,persoon:persoon});
-const wz=[];
-kast.forEach(b=>{if(!inKast[b.id])return;const p=IX.product[b.productId];if(p.soort==="niveau")wz.push({productId:p.id,niveau:"vol"});else wz.push({productId:p.id,delta:b.eenheid===p.verpakking||!b.eenheid?(Number(b.hoeveelheid)||1):1})});
-pasVoorraadLokaalAan(wz);
-gekocht.forEach(b=>{b.status="weg"});
-if(actiefOnderweg()&&D.onderweg.winkel===lijstWinkel)D.onderweg=null;
-melding("Klaar! "+(ids.length?ids.length+(ids.length===1?" ding staat":" dingen staan")+" in de kast.":""));
-render();straksLaden(2200);
-});
-m.sluit();
-},"hoofd"]]);
+
+// ---------- Recepten ----------
+
+function receptOpslaan(r, persoon, basisVersie) {
+  const titel = String(r.titel || '').trim();
+  if (!titel) throw new Error('Een recept heeft een titel nodig.');
+  if (!Array.isArray(r.ingredienten) || !r.ingredienten.length) throw new Error('Minstens één ingrediënt.');
+  if (!Array.isArray(r.stappen) || !r.stappen.length) throw new Error('Minstens één stap.');
+  const id = /^r[a-z0-9]{6,24}$/.test(String(r.id || '')) ? String(r.id) : nieuwId('r');
+  const recepten = lees('Recepten');
+  const bestaand = recepten.find(x => x.id === id);
+  const nu = nuTekst();
+  let versie = 1;
+  if (bestaand) {
+    const huidig = Number(bestaand.versie) || 1;
+    if (String(basisVersie) !== String(huidig)) {
+      throw new Error('Conflict: dit recept is intussen aangepast (versie ' + huidig + ').');
+    }
+    bewaarInGeschiedenis(id, bestaand, persoon);
+    versie = huidig + 1;
+  }
+  const rij = {
+    id: id, titel: titel,
+    personen: String(Math.max(1, Math.min(20, Number(r.personen) || 2))),
+    tijd: String(Math.max(0, Number(r.tijd) || 0)),
+    tags: String(r.tags || ''), bron: String(r.bron || ''), letop: String(r.letop || ''),
+    toegevoegdDoor: bestaand ? bestaand.toegevoegdDoor : persoon,
+    toegevoegdOp: bestaand ? bestaand.toegevoegdOp : nu,
+    versie: String(versie), gewijzigdOp: nu, gewijzigdDoor: persoon
+  };
+  if (bestaand) werkBij('Recepten', x => x.id === id, rij);
+  else voegToe('Recepten', [rij]);
+  vervangDelen(id, r.ingredienten, r.stappen);
+  return { id: id, versie: versie };
 }
 
-/* ---------- Kast ---------- */
-let kastTimer=null,laatsteKast=null;
-function kastView(m){
-const geteld=D.producten.map(p=>leesTijd(p.laatstGeteld)).filter(Boolean).sort((a,b)=>a-b)[0];
-m.appendChild(el("div",{class:"datum",text:geteld?"laatst geteld: "+geteld.toLocaleDateString("nl-NL",{day:"numeric",month:"long"}):"de voorraadkast"}));
-m.appendChild(el("h1",{text:"Kast"}));
-m.appendChild(ornament());
-m.appendChild(el("p",{class:"uitleg midden",text:"Pak je iets: tik −. Zet je iets terug of in de kast: tik +. Rood = onder het minimum; dat komt vanzelf op de lijst."}));
-const res=reserveringen();
-D.producten.slice().sort((a,b)=>(afdelingIndex(a.afdeling)-afdelingIndex(b.afdeling))||a.naam.localeCompare(b.naam,"nl")).forEach(p=>m.appendChild(productRij(p,res)));
-m.appendChild(el("div",{class:"acties"},
-el("button",{type:"button",class:"knop",onclick:()=>productDialoog(null)},"+ Nieuw product"),
-el("button",{type:"button",class:"knop hoofd",onclick:allesGeteld},"Alles geteld ✓")));
-}
-function productRij(p,res){
-const naam=el("div",{class:"naam",onclick:()=>productDialoog(p)},p.naam,el("small",{text:(p.soort==="niveau"?p.verpakking:p.verpakking+(Number(p.inhoud)?" "+p.inhoud+" "+p.eenheid:""))+(res[p.id]?" · "+res[p.id].aantal+" gepland ("+res[p.id].voor.join(", ").toLowerCase()+")":"")+" · "+p.winkel}));
-if(p.soort==="niveau"){
-const seg=el("div",{class:"segmented niveaus"});
-NIVEAUS.forEach(nv=>seg.appendChild(el("button",{type:"button",class:p.niveau===nv?"active":"",onclick:()=>{const oud=p.niveau;if(oud===nv)return;p.niveau=nv;post({action:"voorraad",persoon:eigenaar(),reden:"kast",wijzigingen:[{productId:p.id,niveau:nv}]});melding(p.naam+": "+nv,"Ongedaan",()=>{p.niveau=oud;post({action:"voorraad",persoon:eigenaar(),reden:"ongedaan",wijzigingen:[{productId:p.id,niveau:oud}]});render()});render();straksLaden(2500)}},nv)));
-return el("div",{class:"product"+(p.niveau==="bijna op"||p.niveau==="op"?" laag":"")},naam,seg);
-}
-const a=Number(p.aantal)||0;
-const getalEl=el("span",{class:"aantal",text:String(a)});
-const rij=el("div",{class:"product"+((Number(p.minimum)||0)>a?" laag":"")},naam,
-el("div",{class:"teller"},
-el("button",{type:"button","aria-label":p.naam+" min één",onclick:()=>kastWijzig(p,-1,getalEl,rij)},"−"),
-getalEl,
-el("button",{type:"button","aria-label":p.naam+" plus één",onclick:()=>kastWijzig(p,1,getalEl,rij)},"+")));
-return rij;
-}
-// Tikken worden even verzameld (1,2 s) en dan in één keer opgeslagen.
-function kastWijzig(p,d,getalEl,rij){
-const oud=Number(p.aantal)||0;
-const nieuw=Math.max(0,oud+d);
-if(nieuw===oud)return;
-p.aantal=String(nieuw);
-if(getalEl)getalEl.textContent=String(nieuw);
-if(rij)rij.classList.toggle("laag",(Number(p.minimum)||0)>nieuw);
-kastWachtrij[p.id]=(kastWachtrij[p.id]||0)+(nieuw-oud);
-laatsteKast={p:p,van:oud,naar:nieuw};
-clearTimeout(kastTimer);
-kastTimer=setTimeout(kastOpslaan,1200);
-}
-function kastOpslaan(){
-const wz=Object.keys(kastWachtrij).filter(k=>kastWachtrij[k]).map(k=>({productId:k,delta:kastWachtrij[k]}));
-kastWachtrij={};
-if(!wz.length)return;
-post({action:"voorraad",persoon:eigenaar(),reden:"kast",wijzigingen:wz});
-const l=laatsteKast;
-if(l)melding(l.p.naam+": nu "+l.p.aantal+" "+meervoud(l.p.verpakking,l.p.aantal),"Ongedaan",()=>{const nu=Number(l.p.aantal)||0;l.p.aantal=String(l.van);post({action:"voorraad",persoon:eigenaar(),reden:"ongedaan",wijzigingen:[{productId:l.p.id,delta:l.van-nu}]});render();straksLaden(2500)});
-straksLaden(2500);
-}
-function allesGeteld(){
-clearTimeout(kastTimer);kastOpslaan();
-const wz=D.producten.map(p=>p.soort==="niveau"?{productId:p.id,niveau:p.niveau||"vol"}:{productId:p.id,aantal:Number(p.aantal)||0});
-const nu=new Date();const stempel=String(nu.getDate()).padStart(2,"0")+"-"+String(nu.getMonth()+1).padStart(2,"0")+"-"+nu.getFullYear()+" "+String(nu.getHours()).padStart(2,"0")+":"+String(nu.getMinutes()).padStart(2,"0");
-setTimeout(()=>post({action:"voorraad",persoon:eigenaar(),reden:"geteld",wijzigingen:wz}),300);
-D.producten.forEach(p=>{p.laatstGeteld=stempel});
-melding("Geteld. Dank je!");render();straksLaden(3000);
-}
-function productDialoog(p){
-const nieuw=!p;
-const w=Object.assign({naam:"",soort:"telbaar",verpakking:"",inhoud:"",eenheid:"",winkel:"Lidl",afdeling:"Conserven",minimum:"1",aantal:"1",niveau:"vol",synoniemen:""},p||{});
-const body=el("div");
-const veld=(label,node)=>el("label",{class:"veld"},el("span",{text:label}),node);
-const inp=(k,attrs)=>{const i=el("input",Object.assign({class:"tekst",value:w[k]||""},attrs||{}));i.addEventListener("input",()=>{w[k]=i.value});return i};
-const sel=(k,opties)=>{const s=el("select",{class:"tekst"});opties.forEach(o=>{const op=el("option",{value:o[0]},o[1]);if(String(w[k])===o[0])op.selected=true;s.appendChild(op)});s.addEventListener("change",()=>{w[k]=s.value;if(k==="soort")tekenSoort()});return s};
-body.appendChild(veld("Naam",inp("naam",{placeholder:"bijv. Kikkererwten"})));
-body.appendChild(veld("Andere namen (met komma's, zodat recepten het herkennen)",inp("synoniemen",{placeholder:"bijv. kikkererwt, garbanzo"})));
-body.appendChild(veld("Soort",sel("soort",[["telbaar","Telbaar (blikken, pakken, potten)"],["niveau","Niveau (vol / half / bijna op)"]])));
-body.appendChild(veld("Verpakking",inp("verpakking",{placeholder:"blik, pak, pot, zak, fles…"})));
-const inhoudRij=el("div",{style:"display:grid;grid-template-columns:1fr 1fr;grid-gap:8px;gap:8px"},veld("Inhoud",inp("inhoud",{inputmode:"decimal",placeholder:"bijv. 400"})),veld("Eenheid",sel("eenheid",[["","—"],["g","gram"],["ml","ml"],["st","stuks"]])));
-body.appendChild(inhoudRij);
-body.appendChild(veld("Winkel",sel("winkel",[["Lidl","Lidl"],["AH","Albert Heijn"]])));
-body.appendChild(veld("Afdeling",sel("afdeling",AFDELINGEN.map(a=>[a,a]))));
-const minRij=veld("Minimum in de kast (0 = nooit vanzelf op de lijst)",inp("minimum",{inputmode:"numeric"}));
-body.appendChild(minRij);
-const aantalRij=nieuw?veld("Hoeveel staan er nu?",inp("aantal",{inputmode:"numeric"})):null;
-if(aantalRij)body.appendChild(aantalRij);
-const tekenSoort=()=>{const n=w.soort==="niveau";inhoudRij.hidden=n;minRij.hidden=n;if(aantalRij)aantalRij.hidden=n};
-tekenSoort();
-const m=modal(nieuw?"Nieuw product":p.naam,body,[
-["Annuleren",()=>m.sluit()],
-["Bewaren",()=>{
-if(!String(w.naam).trim()){melding("Geef het product een naam.");return}
-if(nieuw&&productBijNaam(w.naam)){melding("Dit product bestaat al.");return}
-const pr={id:nieuw?"":p.id,naam:w.naam.trim(),synoniemen:w.synoniemen,soort:w.soort,verpakking:w.verpakking||"stuk",inhoud:w.inhoud,eenheid:w.eenheid,winkel:w.winkel,afdeling:w.afdeling,minimum:w.minimum,aantal:w.aantal,niveau:w.niveau};
-post({action:"product_opslaan",persoon:eigenaar(),product:pr});
-if(nieuw)D.producten.push(Object.assign({id:nieuwId("ptmp"),laatstGeteld:""},pr));else Object.assign(p,pr);
-indexeer();m.sluit();melding("Bewaard.");render();straksLaden(2500);
-},"hoofd"]]);
+function vervangDelen(id, ingredienten, stappen) {
+  const ingr = ingredienten.map((i, n) => ({
+    receptId: id, volgorde: String(n + 1), groep: String(i.groep || ''),
+    hoeveelheid: i.hoeveelheid === '' || i.hoeveelheid === null || i.hoeveelheid === undefined ? '' : String(Number(i.hoeveelheid) || 0),
+    eenheid: String(i.eenheid || ''), naam: String(i.naam || '').trim(), notitie: String(i.notitie || ''),
+    schalen: i.schalen === 'nee' ? 'nee' : 'ja', productId: String(i.productId || ''),
+    afdeling: String(i.afdeling || ''), winkel: String(i.winkel || '')
+  })).filter(i => i.naam);
+  const st = stappen.map((s, n) => ({
+    receptId: id, nr: String(n + 1), tekst: String(s.tekst || '').trim(),
+    timer: s.timer ? String(Number(s.timer) || '') : '', letop: String(s.letop || '')
+  })).filter(s => s.tekst);
+  schrijfAlles('Ingredienten', lees('Ingredienten').filter(i => i.receptId !== id).concat(ingr));
+  schrijfAlles('Stappen', lees('Stappen').filter(s => s.receptId !== id).concat(st));
 }
 
-/* ---------- Recept toevoegen of aanpassen ---------- */
-let concept=null;
-function leegIngr(){return{hoeveelheid:"",eenheid:"",naam:"",notitie:"",groep:"",schalen:"ja",productId:"",afdeling:"",winkel:""}}
-function receptAlsConcept(id){
-const r=IX.recept[id];
-if(!r)return{_id:"nieuw",id:"",versie:"",titel:"",personen:2,tijd:"",tags:"",bron:"",letop:"",ingredienten:[leegIngr(),leegIngr(),leegIngr()],stappen:[{tekst:"",timer:"",letop:""},{tekst:"",timer:"",letop:""}]};
-return{_id:id,id:r.id,versie:r.versie,titel:r.titel,personen:r.personen,tijd:r.tijd,tags:r.tags,bron:r.bron,letop:r.letop,
-ingredienten:(IX.ingr[id]||[]).map(i=>Object.assign({},i)),stappen:(IX.stap[id]||[]).map(s=>Object.assign({},s))};
-}
-function bewerkView(m,id){
-if(!concept||concept._id!==id){concept=receptAlsConcept(id);concept._orig=JSON.stringify(schoon(concept))}
-const c=concept;
-m.appendChild(el("div",{class:"datum",text:c.id?"Versie "+c.versie:"Nieuw recept"}));
-m.appendChild(el("h1",{text:c.id?"Aanpassen":"Nieuw recept"}));
-m.appendChild(ornament());
-const veld=(label,node)=>el("label",{class:"veld"},el("span",{text:label}),node);
-const inp=(k,attrs,tag)=>{const i=el(tag||"input",Object.assign({class:"tekst"},attrs||{}));i.value=c[k]===undefined?"":c[k];i.addEventListener("input",()=>{c[k]=i.value});return i};
-const blok1=el("div",{class:"bewerk-blok"});
-blok1.appendChild(veld("Titel",inp("titel",{placeholder:"bijv. Linzensoep"})));
-blok1.appendChild(el("div",{style:"display:grid;grid-template-columns:1fr 1fr;grid-gap:10px;gap:10px"},veld("Voor hoeveel personen",inp("personen",{inputmode:"numeric"})),veld("Tijd (minuten)",inp("tijd",{inputmode:"numeric"}))));
-blok1.appendChild(veld("Tags (met komma's)",inp("tags",{placeholder:"vega, soep, snel"})));
-blok1.appendChild(veld("Bron (boek, website…)",inp("bron",{placeholder:"optioneel"})));
-blok1.appendChild(veld("Let op (wat kan er misgaan?)",inp("letop",{placeholder:"bijv. niet laten koken, anders schift het"},"textarea")));
-m.appendChild(blok1);
-m.appendChild(el("h2",{text:"Ingrediënten"}));
-m.appendChild(el("p",{class:"uitleg",text:"Hoeveelheid · eenheid · naam. Kies een naam uit de lijst om het aan de kast te koppelen."}));
-const dl=el("datalist",{id:"productNamen"});
-D.producten.forEach(p=>dl.appendChild(el("option",{value:p.naam})));
-m.appendChild(dl);
-const ingrLijst=el("div");
-m.appendChild(ingrLijst);
-const tekenIngr=()=>{
-ingrLijst.innerHTML="";
-c.ingredienten.forEach((i,n)=>{
-const h=el("input",{class:"tekst",inputmode:"decimal",placeholder:"aantal","aria-label":"Hoeveelheid"});h.value=i.hoeveelheid;h.addEventListener("input",()=>{i.hoeveelheid=h.value});
-const e=el("select",{class:"tekst","aria-label":"Eenheid"});EENHEDEN.forEach(x=>{const o=el("option",{value:x},x||"—");if(x===i.eenheid)o.selected=true;e.appendChild(o)});e.addEventListener("change",()=>{i.eenheid=e.value});
-const koppeling=el("div",{class:"koppeling"});
-const toonKoppeling=()=>{const p=productBijNaam(i.naam);koppeling.textContent=p?"↔ gekoppeld aan de kast: "+p.naam+" ("+p.verpakking+")":""};
-const nm=el("input",{class:"tekst",list:"productNamen",placeholder:"naam","aria-label":"Naam"});nm.value=i.naam;nm.addEventListener("input",()=>{i.naam=nm.value;toonKoppeling()});
-const nt=el("input",{class:"tekst",placeholder:"notitie (bijv. gesnipperd)"});nt.value=i.notitie||"";nt.addEventListener("input",()=>{i.notitie=nt.value});
-const gr=el("input",{class:"tekst",placeholder:"groep (optioneel)"});gr.value=i.groep||"";gr.addEventListener("input",()=>{i.groep=gr.value});
-const sc=el("input",{type:"checkbox"});sc.checked=i.schalen!=="nee";sc.addEventListener("change",()=>{i.schalen=sc.checked?"ja":"nee"});
-toonKoppeling();
-ingrLijst.appendChild(el("div",{class:"ingr-rij"},h,e,nm,
-el("button",{type:"button",class:"weg-knop","aria-label":"Weghalen",onclick:()=>{c.ingredienten.splice(n,1);tekenIngr()}},"×"),
-el("div",{class:"extra"},nt,gr,el("label",{class:"mee"},sc," schaalt mee")),koppeling));
-});
-};
-tekenIngr();
-m.appendChild(el("button",{type:"button",class:"toevoeg-knop",onclick:()=>{c.ingredienten.push(leegIngr());tekenIngr()}},"+ Ingrediënt"));
-m.appendChild(el("h2",{text:"Bereiding"}));
-const stapLijst=el("div");
-m.appendChild(stapLijst);
-const tekenStappen=()=>{
-stapLijst.innerHTML="";
-c.stappen.forEach((s,n)=>{
-const t=el("textarea",{class:"tekst",placeholder:"Stap "+(n+1)});t.value=s.tekst||"";t.addEventListener("input",()=>{s.tekst=t.value});
-const tm=el("input",{class:"tekst",inputmode:"decimal",placeholder:"timer (min)"});tm.value=s.timer||"";tm.addEventListener("input",()=>{s.timer=tm.value});
-const lo=el("input",{class:"tekst",placeholder:"let op bij deze stap (optioneel)"});lo.value=s.letop||"";lo.addEventListener("input",()=>{s.letop=lo.value});
-stapLijst.appendChild(el("div",{class:"stap-rij"},el("div",{},t,el("div",{class:"extra",style:"margin-top:6px"},tm,lo)),
-el("button",{type:"button",class:"weg-knop","aria-label":"Stap weghalen",onclick:()=>{c.stappen.splice(n,1);tekenStappen()}},"×")));
-});
-};
-tekenStappen();
-m.appendChild(el("button",{type:"button",class:"toevoeg-knop",onclick:()=>{c.stappen.push({tekst:"",timer:"",letop:""});tekenStappen()}},"+ Stap"));
-m.appendChild(el("div",{class:"acties"},
-el("button",{type:"button",class:"knop",onclick:()=>{const terug=c.id?"recept/"+c.id:"recepten";concept=null;ga(terug)}},"Annuleren"),
-c.id?el("button",{type:"button",class:"knop",onclick:()=>eerdereVersies(c.id)},"Eerdere versies"):null,
-el("button",{type:"button",class:"knop hoofd",onclick:bewaarConcept},"Opslaan…")));
-}
-function schoon(c){
-return{titel:String(c.titel||"").trim(),personen:String(Number(c.personen)||2),tijd:String(Number(c.tijd)||0),tags:String(c.tags||"").trim(),bron:String(c.bron||"").trim(),letop:String(c.letop||"").trim(),
-ingredienten:c.ingredienten.filter(i=>String(i.naam||"").trim()).map(i=>{
-const p=productBijNaam(i.naam);
-const h=String(i.hoeveelheid===undefined?"":i.hoeveelheid).replace(",",".").trim();
-return{hoeveelheid:h,eenheid:i.eenheid||"",naam:String(i.naam).trim(),notitie:String(i.notitie||"").trim(),groep:String(i.groep||"").trim(),schalen:i.schalen==="nee"?"nee":"ja",productId:p?p.id:"",afdeling:p?p.afdeling:(i.afdeling||raadAfdeling(i.naam)),winkel:i.winkel||""};
-}),
-stappen:c.stappen.filter(s=>String(s.tekst||"").trim()).map(s=>({tekst:String(s.tekst).trim(),timer:String(s.timer||"").replace(",",".").trim(),letop:String(s.letop||"").trim()}))};
-}
-function verschillen(oud,nieuw){
-const uit=[];
-[["titel","Titel"],["personen","Personen"],["tijd","Tijd"],["tags","Tags"],["bron","Bron"],["letop","Let op"]].forEach(([k,l])=>{if(oud[k]!==nieuw[k])uit.push(l+": "+(oud[k]||"(leeg)")+" → "+(nieuw[k]||"(leeg)"))});
-const besch=i=>[i.hoeveelheid,i.eenheid].filter(Boolean).join(" ")+(i.notitie?", "+i.notitie:"");
-const oudI={},nieuwI={};oud.ingredienten.forEach(i=>{oudI[i.naam.toLowerCase()]=i});nieuw.ingredienten.forEach(i=>{nieuwI[i.naam.toLowerCase()]=i});
-Object.keys(nieuwI).forEach(k=>{const n=nieuwI[k],o=oudI[k];if(!o)uit.push("Nieuw ingrediënt: "+n.naam+" ("+besch(n)+")");else if(besch(o)!==besch(n)||o.schalen!==n.schalen||o.groep!==n.groep)uit.push(n.naam+": "+besch(o)+" → "+besch(n))});
-Object.keys(oudI).forEach(k=>{if(!nieuwI[k])uit.push("Weg: "+oudI[k].naam)});
-const max=Math.max(oud.stappen.length,nieuw.stappen.length);
-for(let k=0;k<max;k++){const o=oud.stappen[k],n=nieuw.stappen[k];if(!o)uit.push("Stap "+(k+1)+" toegevoegd");else if(!n)uit.push("Stap "+(k+1)+" weggehaald");else if(JSON.stringify(o)!==JSON.stringify(n))uit.push("Stap "+(k+1)+" aangepast")}
-return uit;
-}
-function bewaarConcept(){
-const c=concept;
-const n=schoon(c);
-const fouten=[];
-if(!n.titel)fouten.push("Geef het recept een titel.");
-if(!n.ingredienten.length)fouten.push("Voeg minstens één ingrediënt toe.");
-n.ingredienten.forEach(i=>{
-if(i.hoeveelheid&&isNaN(Number(i.hoeveelheid)))fouten.push("De hoeveelheid bij ‘"+i.naam+"’ is geen getal.");
-if(!i.hoeveelheid&&i.eenheid&&ZONDER_GETAL.indexOf(i.eenheid)===-1)fouten.push("Vul een hoeveelheid in bij ‘"+i.naam+"’, of kies ‘naar smaak’.");
-});
-if(!n.stappen.length)fouten.push("Voeg minstens één stap toe.");
-n.stappen.forEach((s,k)=>{if(s.timer&&!(Number(s.timer)>0))fouten.push("De timer bij stap "+(k+1)+" is geen getal.")});
-if(c.id&&D.recepten.some(r=>r.id!==c.id&&r.titel.toLowerCase()===n.titel.toLowerCase()))fouten.push("Er is al een ander recept met deze titel.");
-if(!c.id&&D.recepten.some(r=>r.titel.toLowerCase()===n.titel.toLowerCase()))fouten.push("Er is al een recept met deze titel.");
-if(fouten.length){const m=modal("Nog even nakijken",el("ul",{},fouten.map(f=>el("li",{text:f}))),[["Oké",()=>m.sluit(),"hoofd"]]);return}
-const lijst=c.id?verschillen(JSON.parse(c._orig),n):["Nieuw recept: "+n.titel,n.ingredienten.length+(n.ingredienten.length===1?" ingrediënt, ":" ingrediënten, ")+n.stappen.length+(n.stappen.length===1?" stap":" stappen")];
-if(c.id&&!lijst.length){melding("Er is niets veranderd.");return}
-const m=modal("Opslaan?",el("div",{},el("p",{class:"uitleg",text:"Dit verandert er:"}),el("ul",{},lijst.map(t=>el("li",{text:t}))),c.id?el("p",{class:"uitleg",text:"De vorige versie blijft bewaard bij ‘Eerdere versies’."}):null),[
-["Terug",()=>m.sluit()],
-["Opslaan",()=>{m.sluit();wie(p=>slaOp(n,p,false),"Wie past het recept aan?")},"hoofd"]]);
-}
-async function slaOp(n,persoon,overschrijven){
-const c=concept;
-melding("Even controleren…",null,null,20000);
-if(c.id){
-try{const d=await jsonp({action:"alles"});D=d;indexeer()}catch(e){melding("Geen verbinding. Probeer het zo nog eens.");return}
-const nu=IX.recept[c.id];
-if(nu&&String(nu.versie)!==String(c.versie)&&!overschrijven){
-const m=modal("Intussen aangepast",el("p",{text:(nu.gewijzigdDoor||"Iemand")+" heeft dit recept om "+(nu.gewijzigdOp||"?")+" ook aangepast. Jouw wijzigingen staan nog in het formulier. Wil je de andere versie bekijken, of jouw versie toch opslaan?"}),[
-["Terug naar het formulier",()=>m.sluit()],
-["Toch opslaan",()=>{m.sluit();c.versie=nu.versie;slaOp(n,persoon,true)},"hoofd"]],{vast:true});
-return;
-}
-}
-const id=c.id||nieuwId("r");
-const verwacht=c.id?Number(c.versie)+1:1;
-melding("Recept wordt opgeslagen…",null,null,20000);
-await post({action:"recept_opslaan",persoon:persoon,basisVersie:c.versie||"",recept:Object.assign({id:id},n)});
-for(let poging=0;poging<6;poging++){
-await wacht(1500);
-try{
-const d=await jsonp({action:"alles"});
-const r=d.recepten.find(x=>x.id===id);
-if(r&&Number(r.versie)===verwacht){D=d;indexeer();concept=null;melding("Opgeslagen.");ga("recept/"+id);return}
-}catch(e){}
-}
-melding("Het recept is niet aangekomen. Je wijzigingen staan nog in het formulier: probeer het nog eens.");
-}
-async function eerdereVersies(id){
-let lijst=[];
-try{lijst=(await jsonp({action:"geschiedenis",id:id})).geschiedenis||[]}catch(e){melding("Geen verbinding.");return}
-const body=el("div");
-if(!lijst.length)body.appendChild(el("p",{class:"uitleg",text:"Er zijn nog geen eerdere versies."}));
-lijst.forEach(g=>body.appendChild(el("div",{class:"keus"},el("div",{class:"tekst2"},"Versie "+g.versie,el("small",{text:"vervangen op "+g.datum+(g.gewijzigdDoor?" door "+g.gewijzigdDoor:"")})),
-el("button",{type:"button",class:"knop klein",onclick:()=>{m.sluit();wie(p=>terugzetten(id,g.versie,p),"Wie zet het terug?")}},"Terugzetten"))));
-const m=modal("Eerdere versies",body,[["Sluiten",()=>m.sluit()]]);
-}
-async function terugzetten(id,versie,persoon){
-const r=IX.recept[id];
-const verwacht=Number(r.versie)+1;
-melding("Versie "+versie+" wordt teruggezet…",null,null,20000);
-await post({action:"recept_terugzetten",id:id,versie:versie,persoon:persoon});
-for(let poging=0;poging<6;poging++){
-await wacht(1500);
-try{const d=await jsonp({action:"alles"});const x=d.recepten.find(y=>y.id===id);if(x&&Number(x.versie)>=verwacht){D=d;indexeer();concept=null;melding("Teruggezet.");ga("recept/"+id);return}}catch(e){}
-}
-melding("Terugzetten is niet gelukt. Probeer het nog eens.");
+function bewaarInGeschiedenis(id, recept, persoon) {
+  const oud = {
+    recept: recept,
+    ingredienten: lees('Ingredienten').filter(i => i.receptId === id),
+    stappen: lees('Stappen').filter(s => s.receptId === id)
+  };
+  voegToe('Geschiedenis', [{ receptId: id, versie: String(recept.versie || 1), gewijzigdDoor: persoon, datum: nuTekst(), oud: JSON.stringify(oud) }]);
 }
 
-/* ---------- Instellingen ---------- */
-function instellingenView(m){
-m.appendChild(el("div",{class:"datum",text:"Versie "+APP_VERSION+(D.versie?" · script "+D.versie:"")}));
-m.appendChild(el("h1",{text:"Instellingen"}));
-m.appendChild(ornament());
-const blok=(label,node,uitleg)=>el("div",{class:"instelling"},el("div",{class:"label",text:label}),node,uitleg?el("p",{class:"uitleg",text:uitleg}):null);
-const seg=(opties,huidig,bij)=>{const s=el("div",{class:"segmented"});opties.forEach(([w,l])=>s.appendChild(el("button",{type:"button",class:String(huidig)===String(w)?"active":"",onclick:()=>{bij(w);render()}},l)));return s};
-m.appendChild(blok("Van wie is dit apparaat?",seg([["Ramon","Ramon"],["Sanne","Sanne"],["","Gedeeld"]],eigenaar(),zetEigenaar),"Geldt ook voor de gedichten. Op de muur-iPad: Gedeeld. Dan vraagt de app bij elke actie wie je bent."));
-const schuif=el("input",{type:"range",min:"85",max:"130",step:"5",value:String(Math.round((inst.schaal||1)*100))});
-schuif.addEventListener("input",()=>{inst.schaal=Number(schuif.value)/100;bewaarInst();pasSchaalToe()});
-m.appendChild(blok("Tekstgrootte",schuif));
-m.appendChild(blok("Handjes bij een recept",seg([[true,"Aan"],[false,"Uit"]],inst.handjes!==false,v=>{inst.handjes=v;bewaarInst()})));
-m.appendChild(blok("Knoppen vervagen na",seg([[30,"30 sec"],[60,"1 min"],[0,"Nooit"]],inst.idle,v=>{inst.idle=Number(v);bewaarInst();herstartIdle()}),"Niet tijdens het koken."));
-const kastUrl=location.href.split("#")[0].split("?")[0]+"?kast";
-m.appendChild(blok("Link voor de kast (QR-sticker)",el("p",{style:"word-break:break-all;margin:0"},el("a",{href:kastUrl},kastUrl))));
-m.appendChild(blok("Onderhoud",el("div",{},
-el("button",{type:"button",class:"knop",onclick:()=>vraagCode()},"Toegangscode wijzigen"),
-el("button",{type:"button",class:"knop",onclick:async()=>{try{const reg=navigator.serviceWorker&&await navigator.serviceWorker.getRegistration();if(reg)await reg.update()}catch(e){}location.reload()}},"Nu bijwerken"),
-el("a",{class:"knop",href:"../"},"Naar de gedichten"))));
+function receptTerugzetten(id, versie, persoon) {
+  const g = lees('Geschiedenis').find(x => x.receptId === id && Number(x.versie) === versie);
+  if (!g) throw new Error('Deze versie bestaat niet.');
+  const oud = JSON.parse(g.oud);
+  const huidig = lees('Recepten').find(x => x.id === id);
+  const r = Object.assign({}, oud.recept, { id: id, ingredienten: oud.ingredienten, stappen: oud.stappen });
+  return receptOpslaan(r, persoon, huidig ? huidig.versie : '');
 }
 
-/* ======================================================================
-   Hamsa-waaier
-   ====================================================================== */
-const ICOON={
-vanavond:'<path d="M5 13a7 7 0 0 0 14 0Z"/><path d="M3 13h18"/><path d="M9 6c0 1.5 1 1.5 1 3M13 5c0 1.5 1 1.5 1 3"/>',
-recepten:'<path d="M6 4h10a2 2 0 0 1 2 2v14H8a2 2 0 0 1-2-2Z"/><path d="M6 18a2 2 0 0 1 2-2h10"/><path d="M10 8h5M10 11h4"/>',
-weekmenu:'<rect x="4" y="5" width="16" height="15" rx="1.5"/><path d="M4 9.5h16M9 3v4M15 3v4"/><path d="M8 13h2M12 13h2M8 16h2"/>',
-lijst:'<path d="M5 7h1M5 12h1M5 17h1"/><path d="M9 7h10M9 12h10M9 17h7"/>',
-kast:'<rect x="5" y="3.5" width="14" height="17" rx="1"/><path d="M5 9.5h14M5 15h14"/><path d="M8 6.5h2.5M13 12h2.5M8 17.5h3"/>',
-handjes:'<path d="M12 4v8M9 6v7M15 6v7M6.5 11l2.5 4.5c1 2 2.2 3 4 3h0c2.6 0 4.5-2 4.5-4.5V8"/>',
-instellingen:'<circle cx="12" cy="12" r="3.1"/><path d="M12 3v2.2M12 18.8V21M3 12h2.2M18.8 12H21M5.6 5.6l1.6 1.6M16.8 16.8l1.6 1.6M5.6 18.4l1.6-1.6M16.8 7.2l1.6-1.6"/>',
-gedichten:'<path d="M12 6.6C10 5.1 7 4.6 3.8 5v13.2c3.2-.4 6.2.1 8.2 1.6 2-1.5 5-2 8.2-1.6V5c-3.2-.4-6.2.1-8.2 1.6Z"/><path d="M12 6.6v13.2"/>'
-};
-const WAAIER=[["instellingen","Instellingen"],["kast","Kast"],["weekmenu","Week"],["vanavond","Vanavond"],["recepten","Recepten"],["lijst","Lijst"],["handjes","Handjes"],["gedichten","Gedichten"]];
-const fanKnoppen=WAAIER.map(([k,label])=>{
-const b=el("button",{type:"button",class:"fan-knop","data-kort":label,"data-doel":k,"aria-label":label});
-b.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+ICOON[k]+'</svg>';
-b.addEventListener("click",()=>{
-sluitWaaier();
-if(k==="gedichten"){location.href="../";return}
-if(k==="handjes"){handenNaarHuis(true);if(route().v!=="recept")melding("De handjes zijn er bij een recept.");return}
-ga(k);
-});
-document.body.appendChild(b);
-return b;
-});
-function plaatsWaaier(){
-const smal=window.innerWidth<=600,r=smal?138:162,n=fanKnoppen.length;
-fanKnoppen.forEach((b,i)=>{
-const hoek=(170-(160/(n-1))*i)*Math.PI/180;
-b.style.setProperty("--fx",Math.round(Math.cos(hoek)*r)+"px");
-b.style.setProperty("--fy",Math.round(-Math.sin(hoek)*r*.92-6)+"px");
-b.style.setProperty("--fd",(Math.abs(i-(n-1)/2)*28)+"ms");
-});
-}
-function markeerWaaier(v){fanKnoppen.forEach(b=>b.classList.toggle("huidig",b.dataset.doel===v||(v==="recept"&&b.dataset.doel==="recepten")))}
-function sluitWaaier(){document.body.classList.remove("fan-open");$("parapluKnop").setAttribute("aria-expanded","false")}
-plaatsWaaier();window.addEventListener("resize",plaatsWaaier);
-$("parapluKnop").appendChild(buildHamsaIcon());
-$("parapluKnop").addEventListener("click",e=>{e.stopPropagation();plaatsWaaier();const open=!document.body.classList.contains("fan-open");document.body.classList.toggle("fan-open",open);$("parapluKnop").setAttribute("aria-expanded",open?"true":"false")});
-$("parapluScherm").addEventListener("click",sluitWaaier);
 
-/* ======================================================================
-   Handjes: de hamsa vergroot, de linker vinger is je bladwijzer,
-   de rechter vinger vertelt wat er van een ingrediënt in huis is.
-   ====================================================================== */
-const HANDEN=[{id:"handHamsa",soort:"hamsa",label:"Hamsa-hand: sleep over een stap om hem te vergroten"},{id:"handRegel",soort:"regel",label:"Wijzende vinger: leg hem bij een stap als bladwijzer"},{id:"handWoord",soort:"woord",label:"Wijzende vinger: wijs een ingrediënt aan"}];
-HANDEN.forEach(h=>{
-h.el=el("button",{type:"button",class:"hand",id:h.id,"aria-label":h.label});
-h.el.appendChild(h.soort==="hamsa"?buildHamsaIcon():buildFingerIcon(h.soort==="regel"?1:-1));
-document.body.appendChild(h.el);
-h.op=false;h.doel=null;h.sleep=null;
-h.el.addEventListener("pointerdown",e=>handPak(h,e));
-h.el.addEventListener("pointermove",e=>handBeweeg(h,e));
-h.el.addEventListener("pointerup",e=>handLos(h,e));
-h.el.addEventListener("pointercancel",e=>handLos(h,e));
-});
-let bel=null;
-function handMidden(h){const r=h.el.getBoundingClientRect();return{x:r.left+r.width/2,y:r.top+r.height/2,w:r.width,h:r.height}}
-function handPak(h,e){
-if(e.button!==undefined&&e.button!==0)return;
-e.preventDefault();
-const c=handMidden(h);
-h.sleep={sx:e.clientX,sy:e.clientY,dx:e.clientX-c.x,dy:e.clientY-c.y,bewogen:false};
-// Los van het papier: weer vast op het scherm, op dezelfde plek.
-h.el.classList.remove("op-papier");
-h.el.style.transition="none";h.el.style.transform="";
-zetHandScherm(h,c.x,c.y);
-h.el.classList.add("vast");
-try{h.el.setPointerCapture(e.pointerId)}catch(x){}
-}
-function zetHandScherm(h,x,y){const w=h.el.offsetWidth,hh=h.el.offsetHeight;h.el.style.left=(x-w/2)+"px";h.el.style.top=(y-hh/2)+"px";h.el.style.right="auto"}
-function handBeweeg(h,e){
-if(!h.sleep)return;
-e.preventDefault();
-if(!h.sleep.bewogen&&Math.hypot(e.clientX-h.sleep.sx,e.clientY-h.sleep.sy)>8)h.sleep.bewogen=true;
-if(!h.sleep.bewogen)return;
-zetHandScherm(h,e.clientX-h.sleep.dx,e.clientY-h.sleep.dy);
-richtHand(h);
-}
-function handLos(h,e){
-if(!h.sleep)return;
-const s=h.sleep;h.sleep=null;
-h.el.classList.remove("vast");
-if(!s.bewogen){if(h.op)handNaarHuis(h,true);else{h.el.style.left="";h.el.style.top="";h.el.style.right="";melding(h.label+".")}return}
-const c=handMidden(h);
-const thuis=handThuis(h);
-if(Math.hypot(c.x-thuis.x,c.y-thuis.y)<90){handNaarHuis(h,true);return}
-legHandNeer(h,c.x+window.scrollX,c.y+window.scrollY);
-}
-// Neergelegd: vast aan het papier, scrollt mee.
-function legHandNeer(h,docX,docY){
-const w=h.el.offsetWidth,hh=h.el.offsetHeight;
-h.el.classList.add("op-papier");
-h.el.style.left=(docX-w/2)+"px";h.el.style.top=(docY-hh/2)+"px";h.el.style.right="auto";
-h.op=true;
-richtHand(h);
-if(h.soort==="regel"){
-const bw=leesJSON(BLADWIJZER_KEY,{});
-const id=route().a;
-if(h.doel){bw[id]=h.doel.dataset.nr;document.querySelectorAll(".stap.bladwijzer").forEach(x=>x.classList.remove("bladwijzer"));h.doel.classList.add("bladwijzer")}
-else delete bw[id];
-bewaarJSON(BLADWIJZER_KEY,bw);
-}
-}
-function handThuis(h){
-const st={l:h.el.style.left,t:h.el.style.top,r:h.el.style.right,o:h.el.classList.contains("op-papier")};
-h.el.classList.remove("op-papier");h.el.style.left="";h.el.style.top="";h.el.style.right="";
-const c=handMidden(h);
-if(st.o)h.el.classList.add("op-papier");
-h.el.style.left=st.l;h.el.style.top=st.t;h.el.style.right=st.r;
-return c;
-}
-function handNaarHuis(h,animeer){
-if(h===true||h===false){HANDEN.forEach(x=>handNaarHuis(x,h));return}
-const van=handMidden(h);
-if(h.doel){h.doel.classList.remove("vergroot","aangewezen");h.doel=null}
-if(h.soort==="woord"&&bel){bel.remove();bel=null}
-if(h.soort==="regel"&&h.op){const bw=leesJSON(BLADWIJZER_KEY,{});delete bw[route().a];bewaarJSON(BLADWIJZER_KEY,bw);document.querySelectorAll(".stap.bladwijzer").forEach(x=>x.classList.remove("bladwijzer"))}
-h.op=false;
-h.el.classList.remove("op-papier","vast");
-h.el.style.left="";h.el.style.top="";h.el.style.right="";
-if(!animeer||!h.el.offsetWidth){h.el.style.transition="";h.el.style.transform="";return}
-const naar=handMidden(h);
-h.el.style.transition="none";
-h.el.style.transform="translate("+(van.x-naar.x)+"px,"+(van.y-naar.y)+"px)";
-void h.el.offsetWidth;
-h.el.style.transition="transform 520ms cubic-bezier(.3,1.25,.5,1)";
-h.el.style.transform="";
-}
-// Wat wijst het handje aan?
-function richtHand(h){
-const c=handMidden(h);
-let x=c.x,y=c.y;
-if(h.soort==="regel"){x+=c.w*.4;y-=c.h*.21}
-if(h.soort==="woord"){x-=c.w*.4;y-=c.h*.21}
-let doel=null;
-const stapel=document.elementsFromPoint?document.elementsFromPoint(x,y):[];
-for(let k=0;k<stapel.length;k++){
-const n=stapel[k];
-if(n.closest&&n.closest(".hand"))continue;
-const z=n.closest&&n.closest(h.soort==="hamsa"?".stap,.ingr":h.soort==="regel"?".stap":".ingr");
-if(z){doel=z;break}
-}
-if(doel!==h.doel){
-if(h.doel)h.doel.classList.remove("vergroot","aangewezen");
-h.doel=doel;
-if(doel)doel.classList.add(h.soort==="hamsa"?"vergroot":"aangewezen");
-}
-if(h.soort==="woord"){
-if(bel){bel.remove();bel=null}
-if(doel&&doel.dataset.bel){
-const r=doel.getBoundingClientRect();
-bel=el("div",{class:"bel",text:doel.dataset.bel});
-document.body.appendChild(bel);
-bel.style.left=Math.max(8,Math.min(window.innerWidth-bel.offsetWidth-8,r.left+window.scrollX))+"px";
-bel.style.top=(r.top+window.scrollY-bel.offsetHeight-8)+"px";
-}
-}
-}
-function handjesNaRender(r){
-const sleutel=r.v+"/"+r.a;
-if(sleutel!==vorigeRoute||r.v!=="recept"){
-HANDEN.forEach(h=>handNaarHuis(h,false));
-if(r.v==="recept"&&inst.handjes!==false){
-const nr=leesJSON(BLADWIJZER_KEY,{})[r.a];
-if(nr)requestAnimationFrame(()=>{
-const stap=document.querySelector('.stap[data-nr="'+nr+'"]');
-const h=HANDEN[1];
-if(!stap||!h.el.offsetWidth)return;
-const s=stap.getBoundingClientRect();
-legHandNeer(h,s.left+window.scrollX+4,s.top+window.scrollY+h.el.offsetHeight*.55);
-});
-}
-return;
-}
-// Zelfde recept opnieuw getekend: neergelegde handjes kijken opnieuw wat ze aanwijzen.
-requestAnimationFrame(()=>HANDEN.forEach(h=>{if(h.op){h.doel=null;richtHand(h)}}));
+// ---------- Weekmenu ----------
+
+function weekmenuZet(d) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(d.datum || ''))) throw new Error('Ongeldige datum.');
+  const rij = {
+    id: /^w[a-z0-9]{6,24}$/.test(String(d.id || '')) ? d.id : nieuwId('w'),
+    datum: d.datum, receptId: String(d.receptId || ''),
+    kok: ['Sanne', 'Ramon', 'Samen'].includes(d.kok) ? d.kok : '',
+    personen: String(Math.max(1, Math.min(20, Number(d.personen) || 2))),
+    gekookt: '', opLijst: ''
+  };
+  // Eén gerecht per dag: een bestaande planning op die dag wordt vervangen.
+  const rest = lees('Weekmenu').filter(w => w.datum !== rij.datum && w.id !== rij.id);
+  schrijfAlles('Weekmenu', rest.concat([rij]));
+  return { id: rij.id };
 }
 
-/* ======================================================================
-   Vervagen, bijwerken, starten
-   ====================================================================== */
-let idleTimer=null,slikTot=0;
-function herstartIdle(){clearTimeout(idleTimer);if(inst.idle>0)idleTimer=setTimeout(()=>{if(route().v==="koken"||modalOpen||document.body.classList.contains("fan-open")){herstartIdle();return}document.body.classList.add("controls-idle")},inst.idle*1000)}
-document.addEventListener("pointerdown",e=>{
-if(document.body.classList.contains("controls-idle")){
-document.body.classList.remove("controls-idle");
-if(e.target.closest&&e.target.closest(".paraplu,.hand")){e.preventDefault();e.stopPropagation();slikTot=Date.now()+700}
+
+// ---------- Boodschappen ----------
+
+function lijstToevoegen(items, persoon) {
+  const lijst = lees('Boodschappen');
+  const nieuw = [];
+  let gewijzigd = false;
+  items.forEach(it => {
+    const naam = String(it.naam || '').trim();
+    if (!naam) return;
+    const winkel = it.winkel === 'AH' ? 'AH' : 'Lidl';
+    const hoeveelheid = Number(it.hoeveelheid) || 0;
+    const eenheid = String(it.eenheid || '');
+    const zelfde = b => b.status === 'open' && b.winkel === winkel && b.eenheid === eenheid &&
+      (it.productId ? b.productId === it.productId : b.naam.toLowerCase() === naam.toLowerCase());
+    const bestaand = lijst.find(zelfde) || nieuw.find(zelfde);
+    if (bestaand) {
+      bestaand.hoeveelheid = String(rond((Number(bestaand.hoeveelheid) || 0) + hoeveelheid));
+      if (it.receptId && bestaand.receptId.split(',').indexOf(it.receptId) === -1) {
+        bestaand.receptId = bestaand.receptId ? bestaand.receptId + ',' + it.receptId : it.receptId;
+      }
+      gewijzigd = true;
+      return;
+    }
+    nieuw.push({
+      id: nieuwId('b'), naam: naam, hoeveelheid: hoeveelheid ? String(rond(hoeveelheid)) : '', eenheid: eenheid,
+      winkel: winkel, afdeling: String(it.afdeling || 'Overig'), receptId: String(it.receptId || ''),
+      productId: String(it.productId || ''), toegevoegdDoor: persoon || String(it.door || ''),
+      toegevoegdOp: String(Date.now()), status: 'open', gekochtDoor: '', gekochtOp: ''
+    });
+  });
+  if (gewijzigd) schrijfAlles('Boodschappen', lijst.concat(nieuw));
+  else if (nieuw.length) voegToe('Boodschappen', nieuw);
+  return { toegevoegd: nieuw.length };
 }
-herstartIdle();
-},true);
-document.addEventListener("click",e=>{if(Date.now()<slikTot){e.preventDefault();e.stopPropagation();slikTot=0}},true);
-herstartIdle();
 
-// Nieuwe versie op GitHub? Dan vanzelf herladen, maar nooit midden in iets.
-let herladenNodig=false;
-async function controleerVersie(){
-if(location.protocol!=="https:")return;
-try{
-const r=await fetch("index.html?versie="+Date.now(),{cache:"no-store"});
-if(!r.ok)return;
-const m=(await r.text()).match(/const APP_VERSION="([^"]+)"/);
-if(m&&m[1]!==APP_VERSION)herladenNodig=true;
-}catch(e){}
+function lijstZet(d, persoon) {
+  const w = {};
+  if (d.status === 'open' || d.status === 'gekocht' || d.status === 'weg') {
+    w.status = d.status;
+    w.gekochtDoor = d.status === 'gekocht' ? persoon : '';
+    w.gekochtOp = d.status === 'gekocht' ? String(Date.now()) : '';
+  }
+  if (d.winkel === 'Lidl' || d.winkel === 'AH') w.winkel = d.winkel;
+  if (d.hoeveelheid !== undefined && d.hoeveelheid !== '') w.hoeveelheid = String(Number(d.hoeveelheid) || 0);
+  werkBij('Boodschappen', b => b.id === d.id, w);
 }
-// Eén hartslag: verversen (vaker als iemand onderweg is) en zo nodig herladen.
-setInterval(()=>{
-if(document.visibilityState==="hidden")return;
-const snel=actiefOnderweg()||route().v==="lijst";
-if(Date.now()-laatsteLaad>(snel?20000:60000))laad();
-if(herladenNodig&&!bezig()&&route().v!=="koken")location.reload();
-},5000);
-setInterval(controleerVersie,30*60000);
-document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&Date.now()-laatsteLaad>15000)laad()});
-window.addEventListener("online",()=>laad());
 
-if("serviceWorker" in navigator&&location.protocol==="https:"){navigator.serviceWorker.register("../sw.js").catch(()=>{})}
+// Klaar met boodschappen: het gekochte gaat van de lijst, en wat aangevinkt is gaat de kast in.
+function lijstKlaar(winkel, inKast, persoon) {
+  const lijst = lees('Boodschappen');
+  const producten = lees('Producten');
+  const wijzigingen = [];
+  lijst.forEach(b => {
+    if (b.winkel !== winkel || b.status !== 'gekocht') return;
+    b.status = 'weg';
+    if (inKast.indexOf(b.id) !== -1 && b.productId) {
+      const p = producten.find(x => x.id === b.productId);
+      if (!p) return;
+      if (p.soort === 'niveau') wijzigingen.push({ productId: p.id, niveau: 'vol' });
+      else {
+        const n = (b.eenheid === p.verpakking || !b.eenheid) ? (Number(b.hoeveelheid) || 1) : 1;
+        wijzigingen.push({ productId: p.id, delta: n });
+      }
+    }
+  });
+  schrijfAlles('Boodschappen', lijst);
+  if (wijzigingen.length) voorraadWijzig(wijzigingen, 'gekocht', persoon);
+  const props = PropertiesService.getScriptProperties();
+  try {
+    const o = JSON.parse(props.getProperty('ONDERWEG') || 'null');
+    if (o && o.winkel === winkel) props.deleteProperty('ONDERWEG');
+  } catch (e) {}
+  return { inKast: wijzigingen.length };
+}
 
-(function start(){
-if(/[?&]kast\b/.test(location.search)&&!location.hash)history.replaceState(null,"",location.pathname+location.search+"#kast");
-const c=leesJSON(CACHE_KEY,null);
-if(c&&c.data){D=c.data;indexeer()}
-tekenTimers();
-render();
-laad();
-controleerVersie();
-})();
-</script>
-</body>
-</html>
+function onderwegZet(winkel, persoon) {
+  const props = PropertiesService.getScriptProperties();
+  if (!winkel) { props.deleteProperty('ONDERWEG'); return {}; }
+  if (winkel !== 'Lidl' && winkel !== 'AH') throw new Error('Onbekende winkel.');
+  props.setProperty('ONDERWEG', JSON.stringify({ persoon: persoon, winkel: winkel, sinds: Date.now() }));
+  return {};
+}
+
+
+// ---------- Voorraad ----------
+
+// wijzigingen: [{productId, delta}] of [{productId, aantal}] (tellen) of [{productId, niveau}]
+function voorraadWijzig(wijzigingen, reden, persoon) {
+  const producten = lees('Producten');
+  const log = [];
+  wijzigingen.forEach(w => {
+    const p = producten.find(x => x.id === w.productId);
+    if (!p) return;
+    if (p.soort === 'niveau') {
+      if (NIVEAUS.indexOf(w.niveau) === -1 || w.niveau === p.niveau) return;
+      log.push({ datum: nuTekst(), persoon: persoon, productId: p.id, product: p.naam, wijziging: p.niveau + ' → ' + w.niveau, reden: reden, nieuw: w.niveau });
+      p.niveau = w.niveau;
+    } else {
+      const oud = Number(p.aantal) || 0;
+      let nieuw = w.aantal !== undefined ? Number(w.aantal) : oud + Number(w.delta || 0);
+      if (!isFinite(nieuw)) return;
+      nieuw = Math.max(0, Math.min(999, Math.round(nieuw)));
+      if (nieuw === oud) return;
+      log.push({ datum: nuTekst(), persoon: persoon, productId: p.id, product: p.naam, wijziging: String(nieuw - oud), reden: reden, nieuw: String(nieuw) });
+      p.aantal = String(nieuw);
+    }
+    if (reden === 'geteld') p.laatstGeteld = nuTekst();
+  });
+  if (reden === 'geteld') {
+    // Ook ongewijzigde producten zijn nu geteld.
+    wijzigingen.forEach(w => { const p = producten.find(x => x.id === w.productId); if (p) p.laatstGeteld = nuTekst(); });
+  }
+  schrijfAlles('Producten', producten);
+  if (log.length) voegToe('Voorraadlog', log);
+  aanvullen(producten);
+  return { gewijzigd: log.length };
+}
+
+// Onder het minimum (of bijna op)? Dan komt het op de lijst van de vaste winkel, als het er nog niet op staat.
+function aanvullen(producten) {
+  producten = producten || lees('Producten');
+  const lijst = lees('Boodschappen');
+  const items = [];
+  let opgeruimd = false;
+  producten.forEach(p => {
+    let tekort = 0;
+    if (p.soort === 'niveau') tekort = (p.niveau === 'bijna op' || p.niveau === 'op') ? 1 : 0;
+    else {
+      const min = Number(p.minimum) || 0;
+      const aantal = Number(p.aantal) || 0;
+      tekort = min > 0 && aantal < min ? min - aantal : 0;
+    }
+    // Automatisch toegevoegd, maar intussen weer genoeg in de kast? Dan van de lijst.
+    if (!tekort) {
+      lijst.forEach(b => {
+        if (b.productId === p.id && b.status === 'open' && b.toegevoegdDoor === 'Voorraad') { b.status = 'weg'; opgeruimd = true; }
+      });
+      return;
+    }
+    const staatErOp = lijst.some(b => b.productId === p.id && (b.status === 'open' || b.status === 'gekocht'));
+    if (staatErOp) return;
+    if (tekort > 0) items.push({ naam: p.naam, hoeveelheid: tekort, eenheid: p.verpakking, winkel: p.winkel, afdeling: p.afdeling, productId: p.id, door: 'Voorraad' });
+  });
+  if (opgeruimd) schrijfAlles('Boodschappen', lijst);
+  if (items.length) lijstToevoegen(items, '');
+}
+
+function productOpslaan(p, persoon) {
+  const naam = String(p.naam || '').trim();
+  if (!naam) throw new Error('Een product heeft een naam nodig.');
+  const producten = lees('Producten');
+  if (!p.id && producten.some(x => x.naam.toLowerCase() === naam.toLowerCase())) throw new Error('Dit product bestaat al.');
+  const rij = {
+    id: /^p[a-z0-9]{6,24}$/.test(String(p.id || '')) ? p.id : nieuwId('p'),
+    naam: naam, synoniemen: String(p.synoniemen || ''),
+    soort: p.soort === 'niveau' ? 'niveau' : 'telbaar',
+    verpakking: String(p.verpakking || 'stuk'), inhoud: p.inhoud ? String(Number(p.inhoud) || '') : '',
+    eenheid: ['g', 'ml', 'st'].includes(p.eenheid) ? p.eenheid : '',
+    winkel: p.winkel === 'AH' ? 'AH' : 'Lidl', afdeling: String(p.afdeling || 'Overig'),
+    minimum: String(Math.max(0, Number(p.minimum) || 0)),
+    aantal: String(Math.max(0, Math.round(Number(p.aantal) || 0))),
+    niveau: NIVEAUS.indexOf(p.niveau) !== -1 ? p.niveau : (p.soort === 'niveau' ? 'vol' : ''),
+    laatstGeteld: nuTekst()
+  };
+  const bestaand = producten.find(x => x.id === rij.id);
+  if (bestaand) {
+    delete rij.aantal; delete rij.niveau; delete rij.laatstGeteld; // voorraad gaat via voorraadWijzig
+    Object.assign(bestaand, rij);
+  } else {
+    producten.push(rij);
+    voegToe('Voorraadlog', [{ datum: nuTekst(), persoon: persoon, productId: rij.id, product: rij.naam, wijziging: 'nieuw: ' + (rij.soort === 'niveau' ? rij.niveau : rij.aantal), reden: 'nieuw product', nieuw: rij.soort === 'niveau' ? rij.niveau : rij.aantal }]);
+  }
+  schrijfAlles('Producten', producten);
+  aanvullen(producten);
+  return { id: rij.id };
+}
+
+
+// ---------- Cijfers ----------
+
+function cijferGeven(d, persoon) {
+  if (!persoon) throw new Error('Kies Sanne of Ramon.');
+  const c = Math.round(Number(d.cijfer));
+  if (!(c >= 1 && c <= 10)) throw new Error('Een cijfer is 1 t/m 10.');
+  voegToe('Cijfers', [{ receptId: String(d.receptId || ''), persoon: persoon, cijfer: String(c), datum: nuTekst(), samen: d.samen === 'ja' ? 'ja' : '' }]);
+}
+
+
+// ---------- Installeren (één keer uitvoeren) ----------
+
+function installeer() {
+  Object.keys(TABELLEN).forEach(blad);
+  if (lees('Producten').length || lees('Recepten').length) {
+    Logger.log('Er staan al gegevens in: installeer() heeft niets toegevoegd.');
+    return;
+  }
+  const P = (naam, soort, verpakking, inhoud, eenheid, winkel, afdeling, minimum, aantal, synoniemen) =>
+    ({ id: 'p' + (naam.toLowerCase().replace(/[^a-z]/g, '').slice(0, 14) + '000000').slice(0, Math.max(6, Math.min(14, naam.replace(/[^a-z]/gi, '').length))), naam, synoniemen: synoniemen || '', soort, verpakking, inhoud: inhoud ? String(inhoud) : '', eenheid, winkel, afdeling, minimum: String(minimum), aantal: soort === 'niveau' ? '' : String(aantal), niveau: soort === 'niveau' ? aantal : '', laatstGeteld: nuTekst() });
+  const producten = [
+    P('Havermelk', 'telbaar', 'pak', 1000, 'ml', 'Lidl', 'Plantaardig', 2, 4, 'haverdrink'),
+    P('Amandelmelk', 'telbaar', 'pak', 1000, 'ml', 'Lidl', 'Plantaardig', 1, 1, 'amandeldrink'),
+    P('Amandelen (ongebrand)', 'telbaar', 'zak', 200, 'g', 'Lidl', 'Noten & zaden', 1, 1, 'amandelen'),
+    P('Tomatenpuree', 'telbaar', 'blikje', 70, 'g', 'Lidl', 'Conserven', 1, 2),
+    P('Balsamico glaze', 'telbaar', 'fles', 250, 'ml', 'AH', 'Sauzen & kruiden', 0, 1, 'balsamicoglaze'),
+    P('Tomaten in blik', 'telbaar', 'blik', 400, 'g', 'Lidl', 'Conserven', 4, 10, 'bliktomaat,tomatenblokjes,gepelde tomaten'),
+    P('Currypasta', 'telbaar', 'pot', 110, 'g', 'AH', 'Wereldkeuken', 1, 1, 'rode currypasta'),
+    P('Pils', 'telbaar', 'flesje', 300, 'ml', 'Lidl', 'Dranken', 0, 4, 'bier'),
+    P('Augurken', 'telbaar', 'pot', 0, '', 'Lidl', 'Conserven', 0, 1, 'augurk'),
+    P('Kokosmelk', 'telbaar', 'blik', 400, 'ml', 'Lidl', 'Wereldkeuken', 1, 0, 'cocosmelk'),
+    P('Koffie', 'telbaar', 'pak', 500, 'g', 'Lidl', 'Koffie & thee', 1, 1),
+    P('Basmatirijst', 'telbaar', 'zak', 1000, 'g', 'Lidl', 'Pasta & rijst', 1, 0, 'basmati,rijst'),
+    P('Olijfolie', 'niveau', 'fles', 0, '', 'Lidl', 'Sauzen & kruiden', 0, 'vol', 'olie'),
+    P('Zout', 'niveau', 'pak', 0, '', 'Lidl', 'Sauzen & kruiden', 0, 'vol', 'zeezout'),
+    P('Zwarte peper', 'niveau', 'molen', 0, '', 'Lidl', 'Sauzen & kruiden', 0, 'vol', 'peper')
+  ];
+  schrijfAlles('Producten', producten);
+  const pid = naam => producten.find(p => p.naam === naam).id;
+  voorbeeldRecepten(pid).forEach(r => receptOpslaan(r, '', ''));
+  aanvullen();
+  Logger.log('Klaar: tabbladen, ' + producten.length + ' producten en 4 proefrecepten aangemaakt.');
+}
+
+function voorbeeldRecepten(pid) {
+  const I = (hoeveelheid, eenheid, naam, extra) => Object.assign({ hoeveelheid: hoeveelheid, eenheid: eenheid, naam: naam, schalen: 'ja' }, extra || {});
+  const G = 'Groente & fruit';
+  return [
+    {
+      titel: 'Rode curry met kikkererwten', personen: 2, tijd: 35, tags: 'vega, curry, wereldkeuken',
+      letop: 'Laat de kokosmelk zachtjes pruttelen en niet hard koken: dan kan hij schiften (korrelig worden). Currypasta brandt snel aan: blijf roeren.',
+      ingredienten: [
+        I(1, 'el', 'olijfolie', { productId: pid('Olijfolie'), afdeling: 'Sauzen & kruiden' }),
+        I(2, 'el', 'rode currypasta', { productId: pid('Currypasta'), afdeling: 'Wereldkeuken' }),
+        I(1, 'st', 'ui', { afdeling: G, notitie: 'gesnipperd' }),
+        I(2, 'teen', 'knoflook', { afdeling: G, notitie: 'fijngehakt' }),
+        I(400, 'ml', 'kokosmelk', { productId: pid('Kokosmelk'), afdeling: 'Wereldkeuken' }),
+        I(1, 'blik', 'kikkererwten', { afdeling: 'Conserven', notitie: 'uitgelekt' }),
+        I(200, 'g', 'spinazie', { afdeling: G }),
+        I(1, 'st', 'limoen', { afdeling: G }),
+        I(150, 'g', 'basmatirijst', { productId: pid('Basmatirijst'), afdeling: 'Pasta & rijst' })
+      ],
+      stappen: [
+        { tekst: 'Snipper de ui en hak de knoflook fijn. Laat de kikkererwten uitlekken.' },
+        { tekst: 'Kook de basmatirijst volgens de verpakking.', timer: 12 },
+        { tekst: 'Verhit de olie in een hapjespan en bak de ui zacht en glazig.', timer: 4 },
+        { tekst: 'Voeg de currypasta en knoflook toe en bak al roerend tot het geurt.', timer: 2, letop: 'Blijf roeren: currypasta brandt snel aan en wordt dan bitter.' },
+        { tekst: 'Schenk de kokosmelk erbij, voeg de kikkererwten toe en laat zachtjes pruttelen.', timer: 10, letop: 'Zacht laten pruttelen, niet hard koken: anders kan de kokosmelk schiften.' },
+        { tekst: 'Roer de spinazie erdoor tot hij geslonken is. Breng op smaak met limoensap en zout. Serveer met de rijst.' }
+      ]
+    },
+    {
+      titel: 'Tomatensoep met basilicum', personen: 4, tijd: 40, tags: 'vega, soep',
+      letop: 'Hete soep pureren: vul een blender hooguit half en laat het dopje los, anders spuit hij eruit. Een staafmixer is veiliger.',
+      ingredienten: [
+        I(1, 'el', 'olijfolie', { productId: pid('Olijfolie'), afdeling: 'Sauzen & kruiden' }),
+        I(2, 'st', 'ui', { afdeling: G }),
+        I(2, 'teen', 'knoflook', { afdeling: G }),
+        I(1, 'el', 'tomatenpuree', { productId: pid('Tomatenpuree'), afdeling: 'Conserven' }),
+        I(800, 'g', 'tomaten in blik', { productId: pid('Tomaten in blik'), afdeling: 'Conserven' }),
+        I(750, 'ml', 'groentebouillon', { afdeling: 'Sauzen & kruiden', notitie: 'van 1½ blokje' }),
+        I(1, 'tl', 'suiker', { afdeling: 'Ontbijt' }),
+        I(1, 'bos', 'basilicum', { afdeling: G }),
+        I('', 'naar smaak', 'zout en peper', { productId: pid('Zout'), schalen: 'nee', afdeling: 'Sauzen & kruiden' })
+      ],
+      stappen: [
+        { tekst: 'Snipper de uien en hak de knoflook. Fruit ze zacht in de olie.', timer: 5 },
+        { tekst: 'Bak de tomatenpuree een minuutje mee.', timer: 1 },
+        { tekst: 'Voeg de tomaten, bouillon en suiker toe en laat zachtjes koken.', timer: 20 },
+        { tekst: 'Voeg de basilicum toe en pureer de soep glad.', letop: 'Blender hooguit half vullen en dopje los, of gebruik een staafmixer.' },
+        { tekst: 'Breng op smaak met zout en peper.' }
+      ]
+    },
+    {
+      titel: 'Pasta pomodoro', personen: 2, tijd: 25, tags: 'vega, pasta, snel',
+      letop: 'Knoflook op laag vuur: wordt hij bruin, dan wordt de saus bitter.',
+      ingredienten: [
+        I(200, 'g', 'spaghetti', { afdeling: 'Pasta & rijst' }),
+        I(3, 'el', 'olijfolie', { productId: pid('Olijfolie'), afdeling: 'Sauzen & kruiden' }),
+        I(2, 'teen', 'knoflook', { afdeling: G, notitie: 'in plakjes' }),
+        I(400, 'g', 'tomaten in blik', { productId: pid('Tomaten in blik'), afdeling: 'Conserven' }),
+        I(1, 'snufje', 'chilivlokken', { schalen: 'nee', afdeling: 'Sauzen & kruiden' }),
+        I(4, 'takje', 'basilicum', { afdeling: G }),
+        I(30, 'g', 'Parmezaanse kaas', { afdeling: 'Kaas', notitie: 'of een vegan alternatief' }),
+        I('', 'naar smaak', 'zout', { productId: pid('Zout'), schalen: 'nee', afdeling: 'Sauzen & kruiden' })
+      ],
+      stappen: [
+        { tekst: 'Breng ruim water met flink zout aan de kook en kook de spaghetti volgens de verpakking.', timer: 10 },
+        { tekst: 'Verwarm de olie zachtjes en bak de knoflook kort.', timer: 2, letop: 'Laag vuur: bruine knoflook maakt de saus bitter. Liever iets te vroeg de tomaten erbij.' },
+        { tekst: 'Voeg de tomaten en chilivlokken toe, plet de tomaten en laat inkoken.', timer: 10 },
+        { tekst: 'Bewaar een kopje pastawater. Giet de pasta af en meng met de saus en een scheutje pastawater. Basilicum en kaas erover.' }
+      ]
+    },
+    {
+      titel: 'Shakshuka', personen: 2, tijd: 30, tags: 'vega, eieren, ontbijt',
+      letop: 'Te dunne saus? Dan lopen de eieren weg: eerst goed laten inkoken. Haal de pan van het vuur zodra het eiwit net gestold is, de dooiers garen nog door.',
+      ingredienten: [
+        I(1, 'el', 'olijfolie', { productId: pid('Olijfolie'), afdeling: 'Sauzen & kruiden' }),
+        I(1, 'st', 'ui', { afdeling: G }),
+        I(1, 'st', 'rode paprika', { afdeling: G }),
+        I(2, 'teen', 'knoflook', { afdeling: G }),
+        I(1, 'tl', 'komijn (gemalen)', { afdeling: 'Sauzen & kruiden' }),
+        I(1, 'tl', 'paprikapoeder', { afdeling: 'Sauzen & kruiden' }),
+        I(400, 'g', 'tomaten in blik', { productId: pid('Tomaten in blik'), afdeling: 'Conserven' }),
+        I(4, 'st', 'eieren', { afdeling: 'Zuivel & eieren' }),
+        I(2, 'takje', 'peterselie', { afdeling: G }),
+        I(1, 'st', 'brood', { afdeling: 'Brood', notitie: 'om te dippen' })
+      ],
+      stappen: [
+        { tekst: 'Snipper de ui, snijd de paprika in reepjes en bak ze zacht in de olie.', timer: 8 },
+        { tekst: 'Voeg knoflook, komijn en paprikapoeder toe en bak kort mee.', timer: 1, letop: 'Specerijen kort bakken: ze branden snel.' },
+        { tekst: 'Voeg de tomaten toe en laat inkoken tot een dikke saus.', timer: 10, letop: 'Echt laten inkoken: in een dunne saus lopen de eieren weg.' },
+        { tekst: 'Maak kuiltjes, breek de eieren erin, deksel erop en laat op laag vuur garen.', timer: 7, letop: 'Van het vuur zodra het eiwit net gestold is: de dooier gaart nog door.' },
+        { tekst: 'Strooi de peterselie erover en serveer met brood.' }
+      ]
+    }
+  ];
+}
+
+
+// ---------- Hulpfuncties voor de tabbladen ----------
+
+function ss() { return SpreadsheetApp.getActiveSpreadsheet(); }
+
+function blad(naam) {
+  let s = ss().getSheetByName(naam);
+  if (!s) {
+    s = ss().insertSheet(naam);
+    s.getRange(1, 1, 1, TABELLEN[naam].length).setValues([TABELLEN[naam]]).setFontWeight('bold');
+    s.setFrozenRows(1);
+  }
+  return s;
+}
+
+function lees(naam) {
+  const s = blad(naam);
+  const velden = TABELLEN[naam];
+  const last = s.getLastRow();
+  if (last < 2) return [];
+  return s.getRange(2, 1, last - 1, velden.length).getValues()
+    .map(rij => { const o = {}; velden.forEach((v, i) => { o[v] = alsTekst(rij[i]); }); return o; })
+    .filter(o => Object.keys(o).some(k => o[k] !== ''));
+}
+
+function naarRij(naam, o) {
+  return TABELLEN[naam].map(v => {
+    const w = o[v] === undefined || o[v] === null ? '' : String(o[v]);
+    return w.charAt(0) === '=' ? "'" + w : w;
+  });
+}
+
+function voegToe(naam, objs) {
+  if (!objs.length) return;
+  const s = blad(naam);
+  const r = s.getRange(s.getLastRow() + 1, 1, objs.length, TABELLEN[naam].length);
+  r.setNumberFormat('@');
+  r.setValues(objs.map(o => naarRij(naam, o)));
+}
+
+function schrijfAlles(naam, objs) {
+  const s = blad(naam);
+  const breed = TABELLEN[naam].length;
+  const last = s.getLastRow();
+  if (last >= 2) s.getRange(2, 1, last - 1, breed).clearContent();
+  if (!objs.length) return;
+  const r = s.getRange(2, 1, objs.length, breed);
+  r.setNumberFormat('@');
+  r.setValues(objs.map(o => naarRij(naam, o)));
+}
+
+function werkBij(naam, wie, wijzigingen) {
+  const rijen = lees(naam);
+  const r = rijen.find(wie);
+  if (!r) throw new Error('Niet gevonden.');
+  Object.assign(r, wijzigingen);
+  schrijfAlles(naam, rijen);
+}
+
+function verwijderRijen(naam, wie) {
+  schrijfAlles(naam, lees(naam).filter(r => !wie(r)));
+}
+
+function pick(o, sleutels) {
+  const uit = {};
+  sleutels.forEach(k => { if (o[k] !== undefined) uit[k] = String(o[k]); });
+  return uit;
+}
+
+function alsTekst(v) {
+  if (v instanceof Date) {
+    const uren = v.getHours() + v.getMinutes();
+    return Utilities.formatDate(v, Session.getScriptTimeZone(), uren ? 'dd-MM-yyyy HH:mm' : 'yyyy-MM-dd');
+  }
+  return v === null || v === undefined ? '' : String(v);
+}
+
+function nuTekst() { return Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'dd-MM-yyyy HH:mm'); }
+function nieuwId(prefix) { return prefix + Utilities.getUuid().replace(/-/g, '').slice(0, 11); }
+function rond(n) { return Math.round(n * 100) / 100; }
+
+let slotVast = false;
+function metSlot(fn) {
+  if (slotVast) return fn();
+  const lock = LockService.getScriptLock();
+  lock.waitLock(20000);
+  slotVast = true;
+  try { const uit = fn(); SpreadsheetApp.flush(); return uit; }
+  finally { slotVast = false; lock.releaseLock(); }
+}
+
+function geldigeCode(token) {
+  const code = PropertiesService.getScriptProperties().getProperty('SECRET_TOKEN');
+  return !!code && String(token || '').trim() === code;
+}
+
+function verbindingstest() {
+  const code = PropertiesService.getScriptProperties().getProperty('SECRET_TOKEN');
+  const namen = ss().getSheets().map(s => s.getName());
+  const ontbreekt = Object.keys(TABELLEN).filter(n => namen.indexOf(n) === -1);
+  return 'Recepten-script versie ' + VERSIE +
+    '\nSpreadsheet: ' + ss().getName() +
+    '\nToegangscode: ' + (code ? 'ingesteld' : 'ONTBREEKT (zet SECRET_TOKEN bij de scripteigenschappen)') +
+    '\nTabbladen: ' + (ontbreekt.length ? 'ONTBREKEN: ' + ontbreekt.join(', ') + ' (voer installeer() uit)' : 'allemaal aanwezig') +
+    (code && !ontbreekt.length ? '\nVERBINDING OK' : '');
+}
+
+function tekst(t) { return ContentService.createTextOutput(t).setMimeType(ContentService.MimeType.TEXT); }
+function json(d) { return ContentService.createTextOutput(JSON.stringify(d)).setMimeType(ContentService.MimeType.JSON); }
+function jsonp(cb, d) { return ContentService.createTextOutput(cb + '(' + JSON.stringify(d) + ');').setMimeType(ContentService.MimeType.JAVASCRIPT); }
