@@ -13,7 +13,7 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=2">
 <link rel="manifest" href="manifest.webmanifest?v=2">
 <title>Recepten</title>
-<!-- Recepten, versie 1.0.7 – zusje van de Gedichten. Gemaakt voor de iPad aan de muur (Safari 14) en jullie telefoons. -->
+<!-- Recepten, versie 1.1 – zusje van de Gedichten. Gemaakt voor de iPad aan de muur (Safari 14) en jullie telefoons. -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Caveat:wght@400;500;600&display=swap" rel="stylesheet" crossorigin="anonymous" media="print" onload="this.media='all'"><noscript><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Caveat:wght@400;500;600&display=swap" rel="stylesheet"></noscript>
@@ -239,6 +239,17 @@ select.tekst{-webkit-appearance:menulist;appearance:menulist}
 input[type=range]{width:100%}
 
 
+/* Erbij: jus, saus, bijgerecht */
+.erbij-rij{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;margin:12px 0 4px}
+.erbij-label{margin:0 8px 4px 0;color:var(--zacht);font-style:italic;font-size:17px}
+.erbij-chip{display:inline-flex;align-items:center;padding:0 2px;background:var(--accent-zacht);border-color:rgba(181,101,74,.35);color:var(--inkt)}
+.erbij-chip button{border:0;background:none;font-size:16px;padding:7px 6px;cursor:pointer;color:inherit;font-family:inherit}
+.erbij-chip .ster{color:var(--accent);font-size:18px}
+.erbij-chip .weg{color:#8a6845;font-size:18px}
+.chip.knopchip{font-family:inherit;font-size:15px;padding:6px 12px}
+.kook-tabs{margin:0 auto 14px;max-width:860px}
+.kook-tabs button small{display:block;font-size:12px;color:var(--zacht);font-weight:400}
+
 /* Vaste thuisknop linksonder, op elke pagina */
 .thuis-knop{position:fixed;left:calc(14px + env(safe-area-inset-left));bottom:calc(14px + env(safe-area-inset-bottom));z-index:10004;width:52px;height:52px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(151,133,108,.38);border-radius:50%;padding:0;background:rgba(247,244,237,.96);color:var(--accent);box-shadow:0 2px 10px rgba(55,45,32,.12);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:opacity 500ms cubic-bezier(.4,0,.2,1),visibility 0s}
 .thuis-knop svg{width:25px;height:25px;display:block}
@@ -389,7 +400,7 @@ svg.innerHTML=`
 return svg;
 }
 
-const APP_VERSION="1.0.7";
+const APP_VERSION="1.1";
 // Plak hier de web-app-URL van het Recepten Apps Script (eindigt op /exec):
 const RECEPTEN_URL="https://script.google.com/macros/s/AKfycbxDoDzE2EqPLyzmtx573RPd7PWPYOGITEXFY9zDIcUCjJuRsmNN4Ba7uvyI1Bb1Iz9niA/exec";
 
@@ -643,13 +654,16 @@ const res={},v=vandaag();
 D.weekmenu.forEach(w=>{
 if(!w.receptId||w.gekookt||w.datum<v||(behalve&&behalve.indexOf(w.id)!==-1))return;
 const r=IX.recept[w.receptId];if(!r)return;
-const f=(Number(w.personen)||basisPersonen(r))/basisPersonen(r);
-(IX.ingr[w.receptId]||[]).forEach(i=>{
+const fh=(Number(w.personen)||basisPersonen(r))/basisPersonen(r);
+[w.receptId].concat(erbijVan(w.receptId,w)).forEach(rid=>{
+const f=rid===w.receptId?fh:erbijFactor(w.receptId,fh,rid);
+(IX.ingr[rid]||[]).forEach(i=>{
 const p=IX.product[i.productId];
 if(!p||p.soort==="niveau")return;
 const x=res[p.id]=res[p.id]||{som:0,voor:[]};
 x.som+=deelVan(i,f,p);
 if(x.voor.indexOf(r.titel)===-1)x.voor.push(r.titel);
+});
 });
 });
 Object.keys(res).forEach(k=>{res[k].aantal=Math.ceil(res[k].som-1e-9)});
@@ -695,6 +709,70 @@ if(isFavoriet(id))regel.appendChild(el("span",{class:"hart"}," ♥"));
 const nog=MENSEN.filter(m=>!c[m]);
 if(nog.length===1)regel.appendChild(el("span",{class:"wacht"},"  wacht op "+nog[0]));
 return regel;
+}
+
+/* ---------- Erbij: gekoppelde recepten (jus, saus, bijgerecht) ---------- */
+function tagsVan(r){return String(r&&r.tags||"").toLowerCase().split(",").map(t=>t.trim()).filter(Boolean)}
+function isErbijRecept(r){const t=tagsVan(r);return t.indexOf("saus")!==-1||t.indexOf("bijgerecht")!==-1}
+function lijstIds(t){return String(t||"").split(",").map(x=>x.trim()).filter(x=>x&&IX.recept[x])}
+function planVandaagVoor(rid){return D.weekmenu.find(w=>w.datum===vandaag()&&w.receptId===rid)||null}
+// Bij een planning: wat er die dag bij hoort ("-" = bewust niets), anders wat bij het recept onthouden is.
+function erbijVan(rid,plan){if(plan&&plan.erbij)return plan.erbij==="-"?[]:lijstIds(plan.erbij);return lijstIds(IX.recept[rid]&&IX.recept[rid].erbij)}
+const erbijNu={};
+function huidigErbij(rid){const p=planVandaagVoor(rid);if(p)return erbijVan(rid,p);return erbijNu[rid]?erbijNu[rid].filter(x=>IX.recept[x]):erbijVan(rid,null)}
+function zetErbij(rid,lijst){
+const p=planVandaagVoor(rid);
+if(p){p.erbij=lijst.length?lijst.join(","):"-";post({action:"weekmenu_erbij",id:p.id,erbij:p.erbij})}
+else erbijNu[rid]=lijst;
+}
+function onthoudErbij(rid,sid,aan){
+const r=IX.recept[rid];
+const l=lijstIds(r.erbij).filter(x=>x!==sid);
+if(aan)l.push(sid);
+r.erbij=l.join(",");
+post({action:"recept_erbij",id:rid,erbij:r.erbij});
+}
+function erbijFactor(rid,f,sid){return f*basisPersonen(IX.recept[rid])/basisPersonen(IX.recept[sid])}
+function bronnenMetErbij(rid,f,plan){
+const b=[{receptId:rid,f:f,weekId:plan?plan.id:undefined}];
+(plan?erbijVan(rid,plan):huidigErbij(rid)).forEach(sid=>b.push({receptId:sid,f:erbijFactor(rid,f,sid)}));
+return b;
+}
+function erbijRij(rid){
+const rec=IX.recept[rid];
+const lijst=huidigErbij(rid),vast=lijstIds(rec.erbij);
+const rij=el("div",{class:"erbij-rij"},el("span",{class:"erbij-label",text:"Erbij:"}));
+lijst.forEach(sid=>{
+const s=IX.recept[sid],altijd=vast.indexOf(sid)!==-1;
+rij.appendChild(el("span",{class:"chip erbij-chip"},
+el("button",{type:"button",class:"ster","aria-label":altijd?"Altijd bij dit recept (tik om alleen nu)":"Alleen nu (tik om altijd)",onclick:()=>{onthoudErbij(rid,sid,!altijd);melding(altijd?s.titel+" hoort niet meer vast bij "+rec.titel+".":s.titel+" hoort nu altijd bij "+rec.titel+". ★");render();straksLaden(2500)}},altijd?"★":"☆"),
+el("button",{type:"button",onclick:()=>ga("recept/"+sid)},s.titel),
+el("button",{type:"button",class:"weg","aria-label":"Weghalen",onclick:()=>{zetErbij(rid,lijst.filter(x=>x!==sid));render();straksLaden(2500)}},"×")));
+});
+rij.appendChild(el("button",{type:"button",class:"chip knopchip",onclick:()=>erbijKiezer(rid,"saus")},"+ Saus"));
+rij.appendChild(el("button",{type:"button",class:"chip knopchip",onclick:()=>erbijKiezer(rid,"bijgerecht")},"+ Bijgerecht"));
+return rij;
+}
+function erbijKiezer(rid,soort){
+let filter=soort;
+const huidig=huidigErbij(rid);
+const zoek=el("input",{type:"search",class:"tekst",placeholder:"Zoek…"});
+const lijst=el("div",{class:"kies-lijst"});
+const seg=el("div",{class:"segmented",style:"margin-bottom:8px"});
+const tekenSeg=()=>{seg.innerHTML="";[["saus","Sauzen"],["bijgerecht","Bijgerechten"],["alle","Alle recepten"]].forEach(([k,l])=>seg.appendChild(el("button",{type:"button",class:filter===k?"active":"",onclick:()=>{filter=k;tekenSeg();teken()}},l)))};
+const teken=()=>{
+lijst.innerHTML="";
+const z=zoek.value.trim().toLowerCase();
+const kand=D.recepten.filter(r=>r.id!==rid&&(filter==="alle"||tagsVan(r).indexOf(filter)!==-1)&&(!z||r.titel.toLowerCase().indexOf(z)!==-1)).sort((a,b)=>a.titel.localeCompare(b.titel,"nl"));
+if(!kand.length)lijst.appendChild(el("p",{class:"uitleg",style:"padding:8px 12px",text:filter==="alle"?"Geen recepten gevonden.":"Nog geen recepten met de tag ‘"+filter+"’. Plak er een (met die tag), of kies ‘Alle recepten’."}));
+kand.forEach(r=>lijst.appendChild(el("button",{type:"button",class:"kies-item"+(huidig.indexOf(r.id)!==-1?" active":""),onclick:()=>{
+if(huidig.indexOf(r.id)===-1){zetErbij(rid,huidig.concat([r.id]));melding(r.titel+" erbij. Tik op ☆ om het altijd bij dit recept te zetten.")}
+m.sluit();render();straksLaden(2500);
+}},r.titel)));
+};
+zoek.addEventListener("input",teken);
+tekenSeg();teken();
+const m=modal(soort==="saus"?"Saus erbij":"Bijgerecht erbij",el("div",{},seg,zoek,lijst),[["⎘ Nieuwe plakken",()=>{m.sluit();plakDialoog()}],["Sluiten",()=>m.sluit(),"hoofd"]]);
 }
 
 /* ---------- Weekmenu-hulpjes ---------- */
@@ -752,12 +830,13 @@ m.appendChild(el("div",{class:"kaart vanavond-kaart"},el("div",{class:"plakband"
 el("span",{class:"chip "+(w.kok||"")},kokTekst(w.kok)),
 el("h2",{text:r.titel}),
 el("div",{class:"meta"},[Number(r.tijd)?r.tijd+" minuten":"",personenVoor(r.id)+" personen"].filter(Boolean).join(" · ")),
+erbijRij(r.id),
 cijferRegel(r.id,true),
 r.letop?el("div",{class:"letop"},el("b",{},"Let op: "),r.letop):null,
 w.gekookt==="ja"?el("p",{class:"uitleg",text:"Al gekookt. Smakelijk!"}):null,
 el("div",{},
 el("button",{type:"button",class:"knop hoofd",onclick:()=>startKoken(r.id)},"Start koken"),
-el("button",{type:"button",class:"knop",onclick:()=>lijstDialoog([{receptId:r.id,f:factorVanPlan(w),weekId:w.id}],{weekIds:[w.id]})},w.opLijst?"Op de lijst ✓":"Op de lijst"),
+el("button",{type:"button",class:"knop",onclick:()=>lijstDialoog(bronnenMetErbij(r.id,factorVanPlan(w),w),{weekIds:[w.id],hoofd:r.id})},w.opLijst?"Op de lijst ✓":"Op de lijst"),
 el("button",{type:"button",class:"knop",onclick:()=>ga("recept/"+r.id)},"Recept"),
 el("button",{type:"button",class:"knop",onclick:()=>planDialoog(vandaag())},"Iets anders"))));
 }else{
@@ -846,6 +925,7 @@ m.appendChild(el("div",{class:"personen"},
 el("button",{type:"button","aria-label":"Minder personen",onclick:()=>{if(p>1){gekozenPersonen[id]=p-1;render()}}},"–"),
 el("span",{text:p+(p===1?" persoon":" personen")}),
 el("button",{type:"button","aria-label":"Meer personen",onclick:()=>{if(p<20){gekozenPersonen[id]=p+1;render()}}},"+")));
+if(!isErbijRecept(r))m.appendChild(erbijRij(id));
 if(/bakken|taart|cake|brood/i.test(r.tags||"")&&(f>1.5||f<.67))m.appendChild(el("div",{class:"letop"},el("b",{},"Let op: "),"bij bakken schalen de bakvorm en de baktijd niet vanzelf mee."));
 if(r.letop)m.appendChild(el("div",{class:"letop"},el("b",{},"Let op: "),r.letop));
 const res=reserveringen();
@@ -878,36 +958,50 @@ const plan=D.weekmenu.filter(w=>w.receptId===id&&w.datum>=vandaag()).map(w=>dagN
 m.appendChild(el("div",{class:"acties"},
 plan.length?el("p",{class:"uitleg",text:"Gepland voor "+plan.join(" en ")+"."}):null,
 el("button",{type:"button",class:"knop hoofd",onclick:()=>startKoken(id)},"Start koken"),
-el("button",{type:"button",class:"knop",onclick:()=>lijstDialoog([{receptId:id,f:f}])},"Op de lijst"),
+el("button",{type:"button",class:"knop",onclick:()=>lijstDialoog(bronnenMetErbij(id,f,null),{hoofd:id})},"Op de lijst"),
 el("button",{type:"button",class:"knop",onclick:()=>planDialoog(null,id)},"In het weekmenu"),
 el("button",{type:"button",class:"knop",onclick:()=>cijferDialoog(id,false)},"Cijfer geven"),
 el("button",{type:"button",class:"knop",onclick:()=>{concept=null;ga("bewerk/"+id)}},"Aanpassen")));
 }
 
 /* ---------- Koken ---------- */
-let kook={id:"",stap:0};
-function startKoken(id){ontgrendelGeluid();kook={id:id,stap:0};ga("koken/"+id)}
+let kook={id:"",actief:"",stap:{}};
+function startKoken(id){ontgrendelGeluid();kook={id:id,actief:id,stap:{}};ga("koken/"+id)}
 function stapIngredienten(id,s,f){
 const tekst=" "+s.tekst.toLowerCase()+" ";
 return (IX.ingr[id]||[]).filter(i=>String(i.naam).toLowerCase().replace(/\(.*?\)/g," ").split(/[^a-zà-ÿ]+/).some(w=>w.length>=4&&["naar","smaak","gemalen","blik","rode","witte","verse"].indexOf(w)===-1&&tekst.indexOf(w)!==-1))
 .map(i=>{const sc=schaal(i,f);return{h:hoeveelheidTekst(sc,i.eenheid),naam:i.naam+(i.eenheid==="naar smaak"?" naar smaak":"")}});
 }
 function kookView(m,id){
-const r=IX.recept[id];
+let r=IX.recept[id];
 if(!r){m.appendChild(el("p",{class:"sub",text:"Dit recept bestaat niet (meer)."}));return}
-if(kook.id!==id)kook={id:id,stap:0};
-const st=IX.stap[id]||[];
-const n=st.length,i=Math.max(0,Math.min(kook.stap,n));
-const f=factorVoor(id);
+if(kook.id!==id)kook={id:id,actief:id,stap:{}};
+const hoofd=r,fHoofd=factorVoor(id);
+const erbij=huidigErbij(id);
+const alle=[id].concat(erbij);
+if(alle.indexOf(kook.actief)===-1)kook.actief=id;
+const rid=kook.actief;
+r=IX.recept[rid];
+const st=IX.stap[rid]||[];
+const n=st.length,i=Math.max(0,Math.min(kook.stap[rid]||0,n));
+const f=rid===id?fHoofd:erbijFactor(id,fHoofd,rid);
 m.appendChild(el("div",{class:"kook-kop"},
 el("button",{type:"button",class:"knop klein",onclick:()=>ga("recept/"+id)},"← Recept"),
-el("div",{class:"titel",text:r.titel+" · "+personenVoor(id)+" pers."}),
-el("button",{type:"button",class:"knop klein",onclick:()=>{kook.stap=n;render()}},"Klaar")));
+el("div",{class:"titel",text:hoofd.titel+(erbij.length?" + "+erbij.map(x=>IX.recept[x].titel).join(" + "):"")+" · "+personenVoor(id)+" pers."}),
+el("button",{type:"button",class:"knop klein",onclick:()=>{kook.stap[rid]=n;render()}},"Klaar")));
+if(erbij.length){
+const tabs=el("div",{class:"segmented kook-tabs"});
+alle.forEach(x=>{
+const nx=(IX.stap[x]||[]).length,ix=Math.min(kook.stap[x]||0,nx);
+tabs.appendChild(el("button",{type:"button",class:x===rid?"active":"",onclick:()=>{kook.actief=x;render();window.scrollTo(0,0)}},IX.recept[x].titel,el("small",{text:ix>=nx?"klaar ✓":ix?"stap "+(ix+1)+" van "+nx:nx+" stappen"})));
+});
+m.appendChild(tabs);
+}
 const balk=el("div",{class:"kook-voortgang"});
 for(let k=0;k<n;k++)balk.appendChild(el("i",{class:k<i?"gedaan":k===i?"nu":""}));
 m.appendChild(balk);
 const vlak=el("div",{class:"kook-vlak"});
-const naar=d=>{kook.stap=Math.max(0,Math.min(n,kook.stap+d));render();window.scrollTo(0,0)};
+const naar=d=>{kook.stap[rid]=Math.max(0,Math.min(n,(kook.stap[rid]||0)+d));render();window.scrollTo(0,0)};
 vlak.appendChild(el("div",{class:"kook-zone links",onclick:()=>naar(-1),"aria-label":"Vorige stap"}));
 vlak.appendChild(el("div",{class:"kook-zone rechts",onclick:()=>naar(1),"aria-label":"Volgende stap"}));
 const inhoud=el("div",{class:"kook-inhoud"});
@@ -917,35 +1011,48 @@ if(i===0&&r.letop)inhoud.appendChild(el("div",{class:"letop"},el("b",{},"Vooraf:
 inhoud.appendChild(el("div",{class:"kook-nr",text:"Stap "+(i+1)+" van "+n}));
 if(s.letop)inhoud.appendChild(el("div",{class:"letop"},el("b",{},"Let op: "),s.letop));
 inhoud.appendChild(el("div",{class:"kook-stap",text:s.tekst}));
-const ingr=stapIngredienten(id,s,f);
+const ingr=stapIngredienten(rid,s,f);
 if(ingr.length)inhoud.appendChild(el("div",{class:"kook-ingr"},ingr.map(x=>el("div",{},x.h?el("b",{text:x.h+" "}):null,x.naam))));
 if(s.timer)inhoud.appendChild(el("button",{type:"button",class:"knop hoofd",onclick:e=>{e.stopPropagation();startTimer(r.titel.split(" ").slice(0,2).join(" ")+" · stap "+(i+1),Number(s.timer))}},"⏱ Timer "+getal(Number(s.timer))+" min"));
 const volgende=st[i+1];
 if(volgende&&volgende.letop)inhoud.appendChild(el("div",{class:"letop vooruit"},el("b",{},"Straks bij stap "+(i+2)+": "),volgende.letop));
 inhoud.appendChild(el("div",{class:"kook-hint"},el("span",{text:i>0?"← tik links: vorige":""}),el("span",{text:"tik rechts: volgende →"})));
 }else{
+const nogBezig=alle.filter(x=>(kook.stap[x]||0)<(IX.stap[x]||[]).length);
+if(rid!==id){
+inhoud.appendChild(el("div",{class:"midden",style:"padding-top:6vh"},
+el("div",{class:"kook-stap",text:r.titel+" is klaar."}),
+el("button",{type:"button",class:"knop hoofd",onclick:()=>{kook.actief=nogBezig[0]||id;render()}},nogBezig.length?"Verder met "+IX.recept[nogBezig[0]].titel:"Naar "+hoofd.titel),
+el("button",{type:"button",class:"knop",onclick:()=>naar(-1)},"Terug naar de laatste stap")));
+}else{
 inhoud.appendChild(el("div",{class:"midden",style:"padding-top:6vh"},
 el("div",{class:"kook-stap",text:"Klaar! Eet smakelijk."}),
-el("button",{type:"button",class:"knop hoofd",onclick:()=>afronden(id,f,planVoorKoken(id))},"Afronden"),
+nogBezig.length?el("p",{class:"uitleg",text:"Nog bezig: "+nogBezig.map(x=>IX.recept[x].titel).join(", ")+"."}):null,
+el("button",{type:"button",class:"knop hoofd",onclick:()=>afronden(id,fHoofd,planVoorKoken(id),erbij)},"Afronden"),
 el("button",{type:"button",class:"knop",onclick:()=>naar(-1)},"Terug naar de laatste stap")));
+}
 }
 vlak.appendChild(inhoud);
 m.appendChild(vlak);
 }
 
 // Na het koken: voorraad bijwerken, als gekookt markeren, en een cijfer.
-function afronden(id,f,plan){
+function afronden(id,f,plan,erbij){
 const r=IX.recept[id];if(!r)return;
+erbij=erbij||(plan?erbijVan(id,plan):huidigErbij(id));
 const rijen=[];
-(IX.ingr[id]||[]).forEach(i=>{
+[id].concat(erbij).forEach(rid=>{
+const fr=rid===id?f:erbijFactor(id,f,rid);
+(IX.ingr[rid]||[]).forEach(i=>{
 const p=IX.product[i.productId];if(!p)return;
 let x=rijen.find(y=>y.p===p);
 if(!x){x={p:p,deel:0};rijen.push(x)}
-x.deel+=deelVan(i,f,p);
+x.deel+=deelVan(i,fr,p);
+});
 });
 const verder=()=>{
 if(plan){plan.gekookt="ja";post({action:"weekmenu_status",id:plan.id,gekookt:"ja"})}
-cijferDialoog(id,!!(plan&&plan.kok==="Samen"));
+cijferDialoog(id,!!(plan&&plan.kok==="Samen"),erbij);
 straksLaden(2500);
 };
 if(!rijen.length){verder();return}
@@ -981,7 +1088,8 @@ function pasVoorraadLokaalAan(wz){
 wz.forEach(w=>{const p=IX.product[w.productId];if(!p)return;if(w.niveau)p.niveau=w.niveau;else if(w.aantal!==undefined)p.aantal=String(w.aantal);else p.aantal=String(Math.max(0,(Number(p.aantal)||0)+w.delta))});
 }
 
-function cijferDialoog(id,samen){
+function cijferDialoog(id,samen,daarna){
+const volgende=()=>{if(daarna&&daarna.length&&IX.recept[daarna[0]])setTimeout(()=>melding("Ook "+IX.recept[daarna[0]].titel+" een cijfer geven?","Ja",()=>cijferDialoog(daarna[0],samen,daarna.slice(1)),12000),2600)};
 const r=IX.recept[id];if(!r)return;
 const gekozen={};
 const body=el("div");
@@ -1001,7 +1109,7 @@ const samenBox=el("input",{type:"checkbox"});samenBox.checked=!!samen;
 body.appendChild(el("label",{class:"keus"},samenBox,el("div",{class:"tekst2",text:"Samen gekookt"})));
 body.appendChild(el("p",{class:"uitleg",text:"Allebei een 7 of hoger? Dan wordt het een favoriet. Het laatste cijfer telt."}));
 const m=modal("Hoe was de "+r.titel.toLowerCase()+"?",body,[
-["Later",()=>m.sluit()],
+["Later",()=>{m.sluit();volgende()}],
 ["Bewaren",()=>{
 const gegeven=MENSEN.filter(p=>gekozen[p]);
 gegeven.forEach(p=>{
@@ -1012,6 +1120,7 @@ m.sluit();
 if(samenBox.checked)hartjes();
 if(gegeven.length)melding(isFavoriet(id)?"Bewaard. En het is een favoriet! ♥":"Bewaard.");
 render();straksLaden(2500);
+volgende();
 },"hoofd"]]);
 }
 function hartjes(){
@@ -1079,7 +1188,7 @@ m.appendChild(ornament());
 for(let d=0;d<7;d++)m.appendChild(dagRij(plusDagen(vandaag(),d)));
 const teDoen=D.weekmenu.filter(w=>w.receptId&&IX.recept[w.receptId]&&!w.gekookt&&!w.opLijst&&w.datum>=vandaag()&&w.datum<=plusDagen(vandaag(),6));
 m.appendChild(el("div",{class:"acties"},
-el("button",{type:"button",class:"knop hoofd",disabled:!teDoen.length,onclick:()=>lijstDialoog(teDoen.map(w=>({receptId:w.receptId,f:factorVanPlan(w),weekId:w.id})),{weekIds:teDoen.map(w=>w.id)})},teDoen.length?"Alles op de lijst ("+teDoen.length+" "+(teDoen.length===1?"dag":"dagen")+")":"Alles staat al op de lijst"),
+el("button",{type:"button",class:"knop hoofd",disabled:!teDoen.length,onclick:()=>lijstDialoog([].concat.apply([],teDoen.map(w=>bronnenMetErbij(w.receptId,factorVanPlan(w),w))),{weekIds:teDoen.map(w=>w.id)})},teDoen.length?"Alles op de lijst ("+teDoen.length+" "+(teDoen.length===1?"dag":"dagen")+")":"Alles staat al op de lijst"),
 el("p",{class:"uitleg",text:"Tik op een dag om te plannen. De kleur laat zien wie er kookt."})));
 }
 function dagRij(datum){
@@ -1087,7 +1196,7 @@ const w=weekmenuOp(datum);
 const r=w&&IX.recept[w.receptId];
 return el("div",{class:"dag "+(r&&w.kok?w.kok:"")+(datum===vandaag()?" vandaag":""),onclick:()=>planDialoog(datum)},
 el("div",{class:"naam"},el("b",{text:dagNaam(datum)}),korteDatum(datum)),
-el("div",{class:"wat"},r?r.titel:el("span",{class:"leeg",text:"niets gepland"}),
+el("div",{class:"wat"},r?r.titel+erbijVan(r.id,w).map(x=>" + "+IX.recept[x].titel).join(""):el("span",{class:"leeg",text:"niets gepland"}),
 r?el("div",{class:"meta",text:[kokTekst(w.kok),w.personen+" pers.",w.gekookt==="ja"?"gekookt":w.opLijst?"op de lijst":""].filter(Boolean).join(" · ")}):null));
 }
 function planDialoog(datum,receptId){
@@ -1193,7 +1302,7 @@ el("button",{type:"button","data-w":"AH",onclick:()=>zetAlle("AH")},"Alles bij d
 body.appendChild(winkelSeg);
 body.appendChild(el("p",{class:"uitleg",text:"Aangevinkt gaat op de lijst. Wat er nog is, vink je uit. Eén ding ergens anders halen? Tik op het winkelknopje ernaast."}));
 const lijstVak=el("div");
-const enkelRecept=bronnen.length===1;
+const enkelRecept=!!opties.hoofd||bronnen.length===1;
 const rijTekenen=rj=>{
 const cb=el("input",{type:"checkbox"});cb.checked=rj.aan;cb.addEventListener("change",()=>{rj.aan=cb.checked});
 const wk=el("button",{type:"button",class:"mini",onclick:e=>{e.preventDefault();rj.item.winkel=rj.item.winkel==="AH"?"Lidl":"AH";wk.textContent=rj.item.winkel}},rj.item.winkel);
@@ -1229,7 +1338,7 @@ try{localStorage.setItem("recepten_winkel_keuze",alleWinkel)}catch(e){}
 m.sluit();
 if(!items.length&&!onthouden.length){melding("Er hoeft niets op de lijst.");return}
 wie(persoon=>{
-if(onthouden.length)onthoudBijRecept(bronnen[0].receptId,bronnen[0].f,onthouden.map(r=>r.item),persoon);
+if(onthouden.length)onthoudBijRecept(opties.hoofd||bronnen[0].receptId,bronnen[0].f,onthouden.map(r=>r.item),persoon);
 if(!items.length)return;
 post({action:"lijst_toevoegen",persoon:persoon,items:items});
 items.forEach(it=>D.boodschappen.push(Object.assign({id:nieuwId("tmp"),status:"open",toegevoegdDoor:persoon,gekochtDoor:"",gekochtOp:""},it,{hoeveelheid:String(it.hoeveelheid)})));
