@@ -13,7 +13,7 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=2">
 <link rel="manifest" href="manifest.webmanifest?v=2">
 <title>Recepten</title>
-<!-- Recepten, versie 1.0.3 – zusje van de Gedichten. Gemaakt voor de iPad aan de muur (Safari 14) en jullie telefoons. -->
+<!-- Recepten, versie 1.0.5 – zusje van de Gedichten. Gemaakt voor de iPad aan de muur (Safari 14) en jullie telefoons. -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Caveat:wght@400;500;600&display=swap" rel="stylesheet" crossorigin="anonymous" media="print" onload="this.media='all'"><noscript><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Caveat:wght@400;500;600&display=swap" rel="stylesheet"></noscript>
@@ -238,6 +238,16 @@ select.tekst{-webkit-appearance:menulist;appearance:menulist}
 .instelling .label{font-size:18px;margin:0 0 7px}
 input[type=range]{width:100%}
 
+
+/* Vaste thuisknop linksonder, op elke pagina */
+.thuis-knop{position:fixed;left:calc(14px + env(safe-area-inset-left));bottom:calc(14px + env(safe-area-inset-bottom));z-index:10004;width:52px;height:52px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(151,133,108,.38);border-radius:50%;padding:0;background:rgba(247,244,237,.96);color:var(--accent);box-shadow:0 2px 10px rgba(55,45,32,.12);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:opacity 500ms cubic-bezier(.4,0,.2,1),visibility 0s}
+.thuis-knop svg{width:25px;height:25px;display:block}
+.thuis-knop:after{content:"Vanavond";position:absolute;top:100%;left:50%;transform:translateX(-50%);margin-top:2px;white-space:nowrap;font-family:Georgia,serif;font-size:11px;color:#7d7264}
+.thuis-knop:active{background:#e9e1d4}
+.thuis-knop.hier{color:#b3a795;opacity:.55}
+body.controls-idle .thuis-knop{opacity:0;visibility:hidden;pointer-events:none;transition:opacity 500ms cubic-bezier(.4,0,.2,1),visibility 0s linear 500ms}
+@media(max-width:600px){.thuis-knop{width:48px;height:48px;left:calc(10px + env(safe-area-inset-left));bottom:calc(16px + env(safe-area-inset-bottom))}}
+
 /* Hamsa-waaier (zoals bij de gedichten) */
 .paraplu{position:fixed;left:50%;bottom:calc(8px + env(safe-area-inset-bottom));z-index:10004;width:56px;height:56px;margin-left:-28px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(151,133,108,.38);border-radius:50%;padding:0;background:rgba(247,244,237,.96);box-shadow:0 2px 10px rgba(55,45,32,.12);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:opacity 500ms cubic-bezier(.4,0,.2,1),visibility 0s,transform 260ms cubic-bezier(.3,1.4,.5,1)}
 .paraplu .hand-icon{width:34px;height:40px;transition:transform 300ms cubic-bezier(.3,1.4,.5,1)}
@@ -282,6 +292,7 @@ body.met-handjes .hand{display:block}
 <div class="verbinding" id="verbinding" hidden></div>
 <div class="paraplu-scherm" id="parapluScherm" aria-hidden="true"></div>
 <button type="button" class="paraplu" id="parapluKnop" aria-label="Menu" aria-expanded="false"></button>
+<button type="button" class="thuis-knop" id="thuisKnop" aria-label="Naar Vanavond (start)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 11.2 12 4l8.5 7.2"/><path d="M5.8 9.6V20h12.4V9.6"/><path d="M10 20v-5.2h4V20"/></svg></button>
 <div class="modal-backdrop" id="modalBackdrop"><div class="modal" id="modal" role="dialog" aria-modal="true"></div></div>
 <script>
 /* ======================================================================
@@ -378,7 +389,7 @@ svg.innerHTML=`
 return svg;
 }
 
-const APP_VERSION="1.0.3";
+const APP_VERSION="1.0.5";
 // Plak hier de web-app-URL van het Recepten Apps Script (eindigt op /exec):
 const RECEPTEN_URL="https://script.google.com/macros/s/AKfycbxDoDzE2EqPLyzmtx573RPd7PWPYOGITEXFY9zDIcUCjJuRsmNN4Ba7uvyI1Bb1Iz9niA/exec";
 
@@ -711,6 +722,7 @@ document.body.classList.toggle("met-handjes",r.v==="recept"&&inst.handjes!==fals
 main.innerHTML="";
 (SCHERMEN[r.v]||vanavondView)(main,r.a);
 markeerWaaier(r.v);
+$("thuisKnop").classList.toggle("hier",r.v==="vanavond");
 handjesNaRender(r);
 vorigeRoute=r.v+"/"+r.a;
 }
@@ -744,6 +756,7 @@ r.letop?el("div",{class:"letop"},el("b",{},"Let op: "),r.letop):null,
 w.gekookt==="ja"?el("p",{class:"uitleg",text:"Al gekookt. Smakelijk!"}):null,
 el("div",{},
 el("button",{type:"button",class:"knop hoofd",onclick:()=>startKoken(r.id)},"Start koken"),
+el("button",{type:"button",class:"knop",onclick:()=>lijstDialoog([{receptId:r.id,f:factorVanPlan(w),weekId:w.id}],{weekIds:[w.id]})},w.opLijst?"Op de lijst ✓":"Op de lijst"),
 el("button",{type:"button",class:"knop",onclick:()=>ga("recept/"+r.id)},"Recept"),
 el("button",{type:"button",class:"knop",onclick:()=>planDialoog(vandaag())},"Iets anders"))));
 }else{
@@ -1692,6 +1705,7 @@ plaatsWaaier();window.addEventListener("resize",plaatsWaaier);
 $("parapluKnop").appendChild(buildHamsaIcon());
 $("parapluKnop").addEventListener("click",e=>{e.stopPropagation();plaatsWaaier();const open=!document.body.classList.contains("fan-open");document.body.classList.toggle("fan-open",open);$("parapluKnop").setAttribute("aria-expanded",open?"true":"false")});
 $("parapluScherm").addEventListener("click",sluitWaaier);
+$("thuisKnop").addEventListener("click",()=>{sluitWaaier();if(modalOpen)modalOpen.sluit();if(route().v==="vanavond"){window.scrollTo(0,0);render()}else ga("vanavond");window.scrollTo(0,0)});
 
 /* ======================================================================
    Handjes: de hamsa vergroot, de linker vinger is je bladwijzer,
