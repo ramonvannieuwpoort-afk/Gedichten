@@ -13,7 +13,7 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=2">
 <link rel="manifest" href="manifest.webmanifest?v=2">
 <title>Recepten</title>
-<!-- Recepten, versie 1.2 – zusje van de Gedichten. Gemaakt voor de iPad aan de muur (Safari 14) en jullie telefoons. -->
+<!-- Recepten, versie 1.3.1 – zusje van de Gedichten. Gemaakt voor de iPad aan de muur (Safari 14) en jullie telefoons. -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Caveat:wght@400;500;600&display=swap" rel="stylesheet" crossorigin="anonymous" media="print" onload="this.media='all'"><noscript><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Caveat:wght@400;500;600&display=swap" rel="stylesheet"></noscript>
@@ -258,6 +258,13 @@ select.tekst{-webkit-appearance:menulist;appearance:menulist}
 input[type=range]{width:100%}
 
 
+/* Keto-embleem */
+.k-badge{display:inline-block;width:22px;height:22px;margin:0 0 0 7px;border-radius:50%;background:#6f8a4e;color:#fff;font-family:Georgia,serif;font-size:13px;font-weight:600;line-height:22px;text-align:center;vertical-align:middle;font-style:normal}
+.k-badge.optie{background:transparent;border:1.5px solid #6f8a4e;color:#6f8a4e;line-height:19px}
+.k-badge.klein{width:18px;height:18px;font-size:11px;line-height:18px;margin-left:5px}
+.ketorij{display:flex;align-items:center;justify-content:center;margin:6px 0 0;color:#4f6a3a;font-size:18px}
+.ketorij button{width:40px;height:40px;border-radius:50%;border:1px solid rgba(111,138,78,.5);background:#fffdf8;color:#4f6a3a;font-size:22px;line-height:1;cursor:pointer;padding:0;margin:0 10px}
+
 /* Erbij: jus, saus, bijgerecht */
 .erbij-rij{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;margin:12px 0 4px}
 .erbij-label{margin:0 8px 4px 0;color:var(--zacht);font-style:italic;font-size:17px}
@@ -417,7 +424,7 @@ svg.innerHTML=`
 return svg;
 }
 
-const APP_VERSION="1.2";
+const APP_VERSION="1.3.1";
 // Plak hier de web-app-URL van het Recepten Apps Script (eindigt op /exec):
 const RECEPTEN_URL="https://script.google.com/macros/s/AKfycbxDoDzE2EqPLyzmtx573RPd7PWPYOGITEXFY9zDIcUCjJuRsmNN4Ba7uvyI1Bb1Iz9niA/exec";
 
@@ -634,7 +641,10 @@ const HELE_DINGEN=/(^|\s)(ei|eieren|ui|uien|limoen|limoenen|citroen|citroenen|pa
 function basisPersonen(r){return Number(r&&r.personen)||2}
 const gekozenPersonen={};
 function personenVoor(id){return gekozenPersonen[id]||basisPersonen(IX.recept[id])}
-function factorVoor(id){return personenVoor(id)/basisPersonen(IX.recept[id])}
+// Niet iedereen eet evenveel: met z'n tweeën = Sanne + Ramon (standaard 1 + 1½ portie). Gasten tellen als 1.
+function portieGewicht(p){const g=inst.porties||{};const d={Sanne:1,Ramon:1.5};return Number(g[p]||d[p]||1)}
+function portiesVoorPersonen(n){n=Number(n)||0;if(n<2)return n;return MENSEN.reduce((t,p)=>t+portieGewicht(p),0)+(n-2)}
+function factorVoor(id){return portiesVoorPersonen(personenVoor(id))/basisPersonen(IX.recept[id])}
 function schaal(i,f){
 const ruw=Number(String(i.hoeveelheid).replace(",","."));
 if(i.hoeveelheid===""||isNaN(ruw))return{h:null,e:i.eenheid,ben:false};
@@ -683,11 +693,11 @@ const r=IX.recept[w.receptId];if(!r)return;
 const fh=(Number(w.personen)||basisPersonen(r))/basisPersonen(r);
 [w.receptId].concat(erbijVan(w.receptId,w)).forEach(rid=>{
 const f=rid===w.receptId?fh:erbijFactor(w.receptId,fh,rid);
-(IX.ingr[rid]||[]).forEach(i=>{
-const p=IX.product[i.productId];
+effectieveIngredienten(rid,f,ketoPorties(rid,Math.round(f*basisPersonen(IX.recept[rid])))).forEach(e=>{
+const i=e.i,p=IX.product[i.productId];
 if(!p||p.soort==="niveau")return;
 const x=res[p.id]=res[p.id]||{som:0,voor:[]};
-x.som+=deelVan(i,f,p);
+x.som+=deelVan(i,e.f,p);
 if(x.voor.indexOf(r.titel)===-1)x.voor.push(r.titel);
 });
 });
@@ -801,10 +811,69 @@ tekenSeg();teken();
 const m=modal(soort==="saus"?"Saus erbij":"Bijgerecht erbij",el("div",{},seg,zoek,lijst),[["⎘ Nieuwe plakken",()=>{m.sluit();plakDialoog()}],["Sluiten",()=>m.sluit(),"hoofd"]]);
 }
 
+/* ---------- Keto ----------
+   In een recept staat bij een ingrediënt "…; keto: 400 g bloemkoolrijst" of "keto: weglaten".
+   Per maaltijd zijn er keto-porties (standaard: het aantal keto-eters). De app rekent dan
+   het gewone deel en het keto-deel apart uit. */
+function ketoEters(){return Array.isArray(inst.keto)?inst.keto:["Ramon"]}
+function isKeto(r){return tagsVan(r).indexOf("keto")!==-1}
+function isKetoOptie(r){return tagsVan(r).indexOf("keto-optie")!==-1}
+const gekozenKeto={};
+function ketoPorties(rid,personen){
+const r=IX.recept[rid];
+if(!r||!isKetoOptie(r))return 0;
+const p=personen||personenVoor(rid);
+const k=gekozenKeto[rid]!==undefined?gekozenKeto[rid]:ketoEters().length;
+return Math.max(0,Math.min(p,k));
+}
+function splitsKeto(notitie){
+const t=String(notitie||"");
+const m=t.match(/(^|;\s*)keto\s*:\s*(.*)$/i);
+if(!m)return{noot:t,keto:null};
+return{noot:t.slice(0,m.index).replace(/[;,\s]+$/,""),keto:m[2].trim()};
+}
+function ketoAlternatief(i,tekst){
+const t=tekst.split(/,?\s+of\s+/i)[0].trim();
+if(/^weglaten\b/i.test(t))return{weg:true};
+// Alleen een andere hoeveelheid ("40 g") van hetzelfde ingrediënt?
+const kaal=t.match(/^(\d+(?:[.,]\d+)?)\s*([a-zA-Z]+)?$/);
+if(kaal&&(!kaal[2]||EENHEID_WOORDEN[kaal[2].toLowerCase()])){const e=kaal[2]?EENHEID_WOORDEN[kaal[2].toLowerCase()]:i.eenheid;return{vervang:Object.assign({},i,{hoeveelheid:String(leesGetal(kaal[1])),eenheid:e})}}
+const p=leesIngredient(t,i.groep);
+if(p.hoeveelheid==="")return{opmerking:t};
+let naam=p.naam,noot="";
+const k=naam.indexOf(",");if(k!==-1){noot=naam.slice(k+1).trim();naam=naam.slice(0,k).trim()}
+if(!naam)naam=i.naam;
+const prod=productBijNaam(naam);
+return{vervang:Object.assign({},i,{hoeveelheid:p.hoeveelheid,eenheid:p.eenheid,naam:naam,notitie:noot,schalen:"ja",productId:prod?prod.id:(naam.toLowerCase()===String(i.naam).toLowerCase()?i.productId:""),afdeling:prod?prod.afdeling:raadAfdeling(naam)})};
+}
+// De ingrediënten zoals ze vandaag gelden: [{i, f, sleutel, keto, orig}]
+function effectieveIngredienten(rid,f,k){
+const r=IX.recept[rid];
+const p=Math.max(1,f*basisPersonen(r));
+k=Math.max(0,Math.min(k||0,Math.ceil(p)));
+// Het keto-deel weegt zoveel als de porties van de keto-eters (Ramon eet 1½).
+const eters=ketoEters();let kg=0;for(let n=0;n<k;n++)kg+=n<eters.length?portieGewicht(eters[n]):1;
+const deelKeto=Math.min(1,kg/p),deelGewoon=1-deelKeto;
+const uit=[];
+(IX.ingr[rid]||[]).forEach((i,n)=>{
+const sk=splitsKeto(i.notitie);
+const basis=Object.assign({},i,{notitie:sk.noot});
+if(!sk.keto||k===0){uit.push({i:basis,f:f,sleutel:String(n),orig:i.naam});return}
+const alt=ketoAlternatief(basis,sk.keto);
+if(alt.opmerking){uit.push({i:Object.assign({},basis,{notitie:[sk.noot,(deelGewoon>0?"voor de keto-portie: ":"")+alt.opmerking].filter(Boolean).join("; ")}),f:f,sleutel:String(n),orig:i.naam,keto:true});return}
+if(deelGewoon>0)uit.push({i:basis,f:f*deelGewoon,sleutel:String(n),orig:i.naam,gedeeld:!!alt.vervang||!!alt.weg});
+if(alt.vervang)uit.push({i:alt.vervang,f:f*deelKeto,sleutel:n+"k",orig:i.naam,keto:true});
+});
+return uit;
+}
+// Keto-tips ("Keto: …") alleen tonen als er keto gekookt wordt.
+function ketoFilter(t,k){if(k>0)return String(t||"");return String(t||"").replace(/\s*Keto:[\s\S]*$/,"").trim()}
+function kEmbleem(r){if(isKeto(r))return el("span",{class:"k-badge",title:"Keto"},"K");if(isKetoOptie(r))return el("span",{class:"k-badge optie",title:"Kan keto"},"K");return null}
+
 /* ---------- Weekmenu-hulpjes ---------- */
 function weekmenuOp(datum){return D.weekmenu.find(w=>w.datum===datum&&w.receptId)||null}
 function kokTekst(k){return k==="Samen"?"Samen koken":k?k+" kookt":"Nog niemand gekozen"}
-function factorVanPlan(w){const r=IX.recept[w.receptId];return (Number(w.personen)||basisPersonen(r))/basisPersonen(r)}
+function factorVanPlan(w){const r=IX.recept[w.receptId];return portiesVoorPersonen(Number(w.personen)||basisPersonen(r))/basisPersonen(r)}
 function planVoorKoken(id){
 const v=vandaag();
 return D.weekmenu.filter(w=>w.receptId===id&&!w.gekookt&&w.datum<=v).sort((a,b)=>a.datum<b.datum?1:-1)[0]||null;
@@ -854,11 +923,11 @@ if(r){
 if(w.personen)gekozenPersonen[r.id]=Number(w.personen);
 m.appendChild(el("div",{class:"kaart vanavond-kaart"},el("div",{class:"plakband"}),
 el("span",{class:"chip "+(w.kok||"")},kokTekst(w.kok)),
-el("h2",{text:r.titel}),
-el("div",{class:"meta"},[Number(r.tijd)?r.tijd+" minuten":"",personenVoor(r.id)+" personen"].filter(Boolean).join(" · ")),
+el("h2",{},r.titel,kEmbleem(r)),
+el("div",{class:"meta"},[Number(r.tijd)?r.tijd+" minuten":"",personenVoor(r.id)+" personen",ketoPorties(r.id)?ketoPorties(r.id)+" keto":""].filter(Boolean).join(" · ")),
 erbijRij(r.id),
 cijferRegel(r.id,true),
-r.letop?el("div",{class:"letop"},el("b",{},"Let op: "),r.letop):null,
+ketoFilter(r.letop,ketoPorties(r.id))?el("div",{class:"letop"},el("b",{},"Let op: "),ketoFilter(r.letop,ketoPorties(r.id))):null,
 w.gekookt==="ja"?el("p",{class:"uitleg",text:"Al gekookt. Smakelijk!"}):null,
 el("div",{},
 el("button",{type:"button",class:"knop hoofd",onclick:()=>startKoken(r.id)},"Start koken"),
@@ -904,7 +973,7 @@ const zoek=el("input",{type:"search",placeholder:"Zoek een recept of ingrediënt
 zoek.addEventListener("input",()=>{receptZoek=zoek.value;tekenRaster()});
 m.appendChild(el("div",{class:"zoekbalk"},zoek));
 const seg=el("div",{class:"segmented filters"});
-[["alle","Alle"],["fav","♥ Favorieten"],["snel","Snel"]].forEach(([k,label])=>seg.appendChild(el("button",{type:"button",class:receptFilter===k?"active":"",onclick:()=>{receptFilter=k;render()}},label)));
+[["alle","Alle"],["fav","♥ Favorieten"],["snel","Snel"],["keto","Keto"]].forEach(([k,label])=>seg.appendChild(el("button",{type:"button",class:receptFilter===k?"active":"",onclick:()=>{receptFilter=k;render()}},label)));
 m.appendChild(seg);
 const tags={};D.recepten.forEach(r=>String(r.tags||"").split(",").map(t=>t.trim().toLowerCase()).filter(Boolean).forEach(t=>{tags[t]=(tags[t]||0)+1}));
 const tagRij=el("div",{style:"margin-top:10px"});
@@ -918,6 +987,7 @@ const z=receptZoek.trim().toLowerCase();
 D.recepten.filter(r=>{
 if(receptFilter==="fav"&&!isFavoriet(r.id))return false;
 if(receptFilter==="snel"&&!(Number(r.tijd)>0&&Number(r.tijd)<=30))return false;
+if(receptFilter==="keto"&&!isKeto(r)&&!isKetoOptie(r))return false;
 if(receptTag&&String(r.tags||"").toLowerCase().split(",").map(t=>t.trim()).indexOf(receptTag)===-1)return false;
 if(z&&r.titel.toLowerCase().indexOf(z)===-1&&!(IX.ingr[r.id]||[]).some(i=>i.naam.toLowerCase().indexOf(z)!==-1))return false;
 return true;
@@ -925,7 +995,7 @@ return true;
 const draai=((n*37)%7-3)*.35;
 raster.appendChild(el("div",{class:"kaart receptkaart",style:"--draai:"+draai+"deg",onclick:()=>ga("recept/"+r.id)},
 el("div",{class:"plakband"}),
-el("h3",{text:r.titel}),
+el("h3",{},r.titel,kEmbleem(r)),
 el("div",{class:"meta",text:[Number(r.tijd)?r.tijd+" min":"",basisPersonen(r)+" pers.",String(r.tags||"").split(",").slice(0,2).join(",").trim()].filter(Boolean).join(" · ")}),
 cijferRegel(r.id)));
 });
@@ -942,32 +1012,42 @@ if(!r){m.appendChild(el("p",{class:"sub",text:"Dit recept bestaat niet (meer)."}
 const f=factorVoor(id);
 const tags=String(r.tags||"").split(",").map(t=>t.trim()).filter(Boolean);
 m.appendChild(el("div",{class:"datum",text:tags.join(" · ")}));
-m.appendChild(el("h1",{text:r.titel}));
+m.appendChild(el("h1",{},r.titel,kEmbleem(r)));
 m.appendChild(el("p",{class:"sub",text:[Number(r.tijd)?r.tijd+" minuten":"",r.bron].filter(Boolean).join(" · ")}));
 const c=cijferRegel(id,true);if(c)m.appendChild(c);
 m.appendChild(ornament());
 const p=personenVoor(id);
 m.appendChild(el("div",{class:"personen"},
 el("button",{type:"button","aria-label":"Minder personen",onclick:()=>{if(p>1){gekozenPersonen[id]=p-1;render()}}},"–"),
-el("span",{text:p+(p===1?" persoon":" personen")}),
+el("span",{},p+(p===1?" persoon":" personen"),portiesVoorPersonen(p)!==p?el("small",{style:"display:block;font-size:14px;color:#887e70;font-style:italic",text:"= "+getal(portiesVoorPersonen(p))+" porties"}):null),
 el("button",{type:"button","aria-label":"Meer personen",onclick:()=>{if(p<20){gekozenPersonen[id]=p+1;render()}}},"+")));
 if(!isErbijRecept(r))m.appendChild(erbijRij(id));
 if(/bakken|taart|cake|brood/i.test(r.tags||"")&&(f>1.5||f<.67))m.appendChild(el("div",{class:"letop"},el("b",{},"Let op: "),"bij bakken schalen de bakvorm en de baktijd niet vanzelf mee."));
-if(r.letop)m.appendChild(el("div",{class:"letop"},el("b",{},"Let op: "),r.letop));
+const kNu=ketoPorties(id);
+if(isKetoOptie(r)){
+const pp=personenVoor(id);
+m.appendChild(el("div",{class:"ketorij"},el("span",{class:"k-badge optie"},"K"),
+el("button",{type:"button","aria-label":"Minder keto",onclick:()=>{gekozenKeto[id]=Math.max(0,kNu-1);render()}},"–"),
+el("span",{text:kNu===0?"geen keto":kNu+" van "+pp+" keto"}),
+el("button",{type:"button","aria-label":"Meer keto",onclick:()=>{gekozenKeto[id]=Math.min(pp,kNu+1);render()}},"+")));
+}else if(isKeto(r))m.appendChild(el("div",{class:"ketorij"},el("span",{class:"k-badge"},"K"),el("span",{style:"margin-left:8px",text:"keto"})));
+const lo=ketoFilter(r.letop,kNu);
+if(lo)m.appendChild(el("div",{class:"letop"},el("b",{},"Let op: "),lo));
 const res=reserveringen();
 const links=el("div"),rechts=el("div");
 links.appendChild(el("h2",{text:"Ingrediënten"}));
 let groep=null;
-(IX.ingr[id]||[]).forEach((i,n)=>{
+effectieveIngredienten(id,f,kNu).forEach((e,n)=>{
+const i=e.i;
 if(i.groep&&i.groep!==groep){groep=i.groep;links.appendChild(el("div",{class:"groep-kop",text:i.groep}))}
-const s=schaal(i,f);
+const s=schaal(i,e.f);
 const prod=IX.product[i.productId];
 const ht=hoeveelheidTekst(s,i.eenheid);
-let bel=(ht?ht+" ":"")+i.naam+(i.eenheid==="naar smaak"?" naar smaak":"");
+let bel=(ht?ht+" ":"")+i.naam+(i.eenheid==="naar smaak"?" naar smaak":"")+(e.keto?" (keto)":"");
 if(prod)bel+=" · "+kastTekst(prod,res);
-const weinig=prod&&prod.soort!=="niveau"&&(Number(prod.aantal)||0)<Math.ceil(deelVan(i,f,prod)-1e-9);
+const weinig=prod&&prod.soort!=="niveau"&&(Number(prod.aantal)||0)<Math.ceil(deelVan(i,e.f,prod)-1e-9);
 links.appendChild(el("div",{class:"ingr","data-i":n,"data-bel":bel},
-el("span",{class:"h",text:ht}),i.naam+(i.eenheid==="naar smaak"?" naar smaak":""),
+el("span",{class:"h",text:ht}),i.naam+(i.eenheid==="naar smaak"?" naar smaak":""),e.keto?el("span",{class:"k-badge klein"},"K"):null,
 i.notitie?el("span",{class:"noot",text:", "+i.notitie}):null,
 prod?el("span",{class:"kast"+(weinig?" weinig":""),text:kastTekst(prod,res)}):null));
 });
@@ -977,7 +1057,7 @@ const bw=leesJSON(BLADWIJZER_KEY,{})[id];
 rechts.appendChild(el("div",{class:"stap"+(String(bw)===String(s.nr)?" bladwijzer":""),"data-nr":s.nr},
 el("span",{class:"nr",text:s.nr}),s.tekst,
 s.timer?el("span",{class:"stap-timer",text:" ⏱ "+s.timer+" min"}):null,
-s.letop?el("span",{class:"stap-letop",text:"Let op: "+s.letop}):null));
+ketoFilter(s.letop,kNu)?el("span",{class:"stap-letop",text:"Let op: "+ketoFilter(s.letop,kNu)}):null));
 });
 m.appendChild(el("div",{class:"kolommen"},links,rechts));
 const plan=D.weekmenu.filter(w=>w.receptId===id&&w.datum>=vandaag()).map(w=>dagNaam(w.datum).toLowerCase());
@@ -1004,8 +1084,8 @@ bewaarKook();ga("koken/"+id);
 let laatstGescrold="";
 function stapIngredienten(id,s,f){
 const tekst=" "+s.tekst.toLowerCase()+" ";
-return (IX.ingr[id]||[]).filter(i=>String(i.naam).toLowerCase().replace(/\(.*?\)/g," ").split(/[^a-zà-ÿ]+/).some(w=>w.length>=4&&["naar","smaak","gemalen","blik","rode","witte","verse"].indexOf(w)===-1&&tekst.indexOf(w)!==-1))
-.map(i=>{const sc=schaal(i,f);return{h:hoeveelheidTekst(sc,i.eenheid),naam:i.naam+(i.eenheid==="naar smaak"?" naar smaak":"")}});
+return effectieveIngredienten(id,f,ketoPorties(id,Math.round(f*basisPersonen(IX.recept[id])))).filter(e=>String(e.orig).toLowerCase().replace(/\(.*?\)/g," ").split(/[^a-zà-ÿ]+/).some(w=>w.length>=4&&["naar","smaak","gemalen","blik","rode","witte","verse"].indexOf(w)===-1&&tekst.indexOf(w)!==-1))
+.map(e=>{const i=e.i,sc=schaal(i,e.f);return{h:hoeveelheidTekst(sc,i.eenheid),naam:i.naam+(i.eenheid==="naar smaak"?" naar smaak":"")+(e.keto?" (keto)":"")}});
 }
 function kookView(m,id){
 const hoofd=IX.recept[id];
@@ -1025,9 +1105,10 @@ el("button",{type:"button",class:"knop klein",onclick:()=>ga("recept/"+id)},"←
 el("div",{class:"titel",text:personenVoor(id)+" personen"}),
 el("button",{type:"button",class:"knop klein",onclick:()=>afronden(id,fHoofd,planVoorKoken(id),erbij)},"Afronden")));
 m.appendChild(el("h1",{text:hoofd.titel+(erbij.length?" + "+erbij.map(x=>IX.recept[x].titel).join(" + "):"")}));
+if(ketoPorties(id))m.appendChild(el("div",{class:"ketorij"},el("span",{class:"k-badge"},"K"),el("span",{style:"margin-left:8px",text:ketoPorties(id)+" van "+personenVoor(id)+" keto"})));
 // Klaarzetten (alle ingrediënten, met wat ermee moet gebeuren)
 const rijen=[];
-alle.forEach(rid=>(IX.ingr[rid]||[]).forEach((i,n)=>rijen.push({rid:rid,i:i,sleutel:rid+":"+n})));
+alle.forEach(rid=>effectieveIngredienten(rid,fVan(rid),ketoPorties(rid,Math.round(fVan(rid)*basisPersonen(IX.recept[rid])))).forEach(e=>rijen.push({rid:rid,i:e.i,f:e.f,keto:e.keto,sleutel:rid+":"+e.sleutel})));
 const gedaan=rijen.filter(x=>kook.klaar[x.sleutel]).length;
 const kz=el("div",{class:"kaart klaarzet"});
 kz.appendChild(el("button",{type:"button",class:"klaarzet-kop",onclick:()=>{kook.open=!kook.open;bewaarKook();render()}},
@@ -1036,11 +1117,11 @@ if(kook.open){
 let vorige="";
 rijen.forEach(x=>{
 if(erbij.length&&x.rid!==vorige){vorige=x.rid;kz.appendChild(el("div",{class:"groep-kop",text:IX.recept[x.rid].titel}))}
-const i=x.i,sc=schaal(i,fVan(x.rid)),h=hoeveelheidTekst(sc,i.eenheid);
+const i=x.i,sc=schaal(i,x.f),h=hoeveelheidTekst(sc,i.eenheid);
 const aan=!!kook.klaar[x.sleutel];
 kz.appendChild(el("button",{type:"button",class:"ki"+(aan?" af":""),onclick:()=>{kook.klaar[x.sleutel]=!aan;bewaarKook();render()}},
 el("span",{class:"vinkje"}),
-el("span",{class:"ki-tekst"},h?el("b",{text:h+" "}):null,i.naam+(i.eenheid==="naar smaak"?" naar smaak":""),i.notitie?el("span",{class:"ki-noot",text:" · "+i.notitie}):null)));
+el("span",{class:"ki-tekst"},h?el("b",{text:h+" "}):null,i.naam+(i.eenheid==="naar smaak"?" naar smaak":""),x.keto?el("span",{class:"k-badge klein"},"K"):null,i.notitie?el("span",{class:"ki-noot",text:" · "+i.notitie}):null)));
 });
 }
 m.appendChild(kz);
@@ -1048,20 +1129,21 @@ m.appendChild(kz);
 alle.forEach(rid=>{
 const r=IX.recept[rid],st=IX.stap[rid]||[],f=fVan(rid),huidig=iVan(rid),actief=rid===kook.actief;
 if(erbij.length)m.appendChild(el("h2",{class:"kook-sectie",text:r.titel}));
-if(r.letop)m.appendChild(el("div",{class:"letop"},el("b",{},"Vooraf: "),r.letop));
+const kR=ketoPorties(rid,Math.round(f*basisPersonen(r)));
+if(ketoFilter(r.letop,kR))m.appendChild(el("div",{class:"letop"},el("b",{},"Vooraf: "),ketoFilter(r.letop,kR)));
 st.forEach((s,k)=>{
 const isHuidig=k===huidig;
 const blok=el("div",{class:"kstap"+(k<huidig?" gedaan":"")+(isHuidig?" huidig":"")+(isHuidig&&actief?" actief":""),"data-sleutel":rid+":"+k,onclick:()=>{kook.actief=rid;kook.stap[rid]=k;bewaarKook();render()}});
 if(isHuidig&&actief){const w=el("span",{class:"wijzer"});w.appendChild(buildHamsaIcon());blok.appendChild(w)}
 else blok.appendChild(el("span",{class:"nr",text:k<huidig?"✓":String(k+1)}));
 blok.appendChild(el("div",{class:"kstap-tekst",text:s.tekst}));
-if(s.letop&&k>=huidig)blok.appendChild(el("div",{class:"kstap-letop",text:"Let op: "+s.letop}));
+if(ketoFilter(s.letop,kR)&&k>=huidig)blok.appendChild(el("div",{class:"kstap-letop",text:"Let op: "+ketoFilter(s.letop,kR)}));
 if(isHuidig){
 const ingr=stapIngredienten(rid,s,f);
 if(ingr.length)blok.appendChild(el("div",{class:"kook-ingr"},ingr.map(x=>el("div",{},x.h?el("b",{text:x.h+" "}):null,x.naam))));
 if(s.timer)blok.appendChild(el("button",{type:"button",class:"knop hoofd",onclick:e=>{e.stopPropagation();startTimer(r.titel.split(" ").slice(0,2).join(" ")+" · stap "+(k+1),Number(s.timer))}},"⏱ Timer "+getal(Number(s.timer))+" min"));
 const volg=st[k+1];
-if(volg&&volg.letop)blok.appendChild(el("div",{class:"letop vooruit"},el("b",{},"Straks bij stap "+(k+2)+": "),volg.letop));
+if(volg&&ketoFilter(volg.letop,kR))blok.appendChild(el("div",{class:"letop vooruit"},el("b",{},"Straks bij stap "+(k+2)+": "),ketoFilter(volg.letop,kR)));
 }else if(s.timer&&k>huidig)blok.appendChild(el("span",{class:"stap-timer",text:" ⏱ "+getal(Number(s.timer))+" min"}));
 m.appendChild(blok);
 });
@@ -1103,11 +1185,11 @@ erbij=erbij||(plan?erbijVan(id,plan):huidigErbij(id));
 const rijen=[];
 [id].concat(erbij).forEach(rid=>{
 const fr=rid===id?f:erbijFactor(id,f,rid);
-(IX.ingr[rid]||[]).forEach(i=>{
-const p=IX.product[i.productId];if(!p)return;
+effectieveIngredienten(rid,fr,ketoPorties(rid,Math.round(fr*basisPersonen(IX.recept[rid])))).forEach(e=>{
+const i=e.i,p=IX.product[i.productId];if(!p)return;
 let x=rijen.find(y=>y.p===p);
 if(!x){x={p:p,deel:0};rijen.push(x)}
-x.deel+=deelVan(i,fr,p);
+x.deel+=deelVan(i,e.f,p);
 });
 });
 const verder=()=>{
@@ -1305,7 +1387,7 @@ const id=oud?oud.id:nieuwId("w");
 post({action:"weekmenu_zet",id:id,datum:keuze.datum,receptId:keuze.receptId,kok:keuze.kok,personen:keuze.personen});
 D.weekmenu=D.weekmenu.filter(w=>w.datum!==keuze.datum).concat([{id:id,datum:keuze.datum,receptId:keuze.receptId,kok:keuze.kok,personen:String(keuze.personen),gekookt:"",opLijst:""}]);
 m.sluit();
-melding(IX.recept[keuze.receptId].titel+" staat op "+dagNaam(keuze.datum).toLowerCase()+".","Ook op de lijst",()=>lijstDialoog([{receptId:keuze.receptId,f:keuze.personen/basisPersonen(IX.recept[keuze.receptId]),weekId:id}],{weekIds:[id]}));
+melding(IX.recept[keuze.receptId].titel+" staat op "+dagNaam(keuze.datum).toLowerCase()+".","Ook op de lijst",()=>lijstDialoog([{receptId:keuze.receptId,f:portiesVoorPersonen(keuze.personen)/basisPersonen(IX.recept[keuze.receptId]),weekId:id}],{weekIds:[id]}));
 render();straksLaden();
 },"hoofd"]]);
 }
@@ -1317,12 +1399,13 @@ opties=opties||{};
 const res=reserveringen(bronnen.map(b=>b.weekId).filter(Boolean));
 const prod={},vers={};
 bronnen.forEach(b=>{
-(IX.ingr[b.receptId]||[]).forEach(i=>{
-const p=IX.product[i.productId];
-if(p){const x=prod[p.id]=prod[p.id]||{p:p,som:0,receptId:b.receptId};x.som+=deelVan(i,b.f,p);return}
-const s=schaal(i,b.f);
-const k=i.naam.toLowerCase()+"|"+(s.e||"");
-const x=vers[k]=vers[k]||{naam:i.naam,e:s.e,h:0,leeg:s.h===null,eenheid:i.eenheid,afdeling:i.afdeling||raadAfdeling(i.naam),winkel:i.winkel,receptId:b.receptId};
+effectieveIngredienten(b.receptId,b.f,ketoPorties(b.receptId,Math.round(b.f*basisPersonen(IX.recept[b.receptId])))).forEach(e=>{
+const i=e.i,p=IX.product[i.productId];
+if(p){const x=prod[p.id]=prod[p.id]||{p:p,som:0,receptId:b.receptId};x.som+=deelVan(i,e.f,p);return}
+const s=schaal(i,e.f);
+const k=i.naam.toLowerCase().trim().replace(/('s|en|s)$/,"")+"|"+(s.e||"");
+const x=vers[k]=vers[k]||{naam:i.naam,e:s.e,h:0,leeg:s.h===null,eenheid:i.eenheid,afdeling:i.afdeling||raadAfdeling(i.naam),winkel:i.winkel,receptId:b.receptId,keto:e.keto};
+if(x.keto&&!e.keto)x.keto=false;
 if(s.h!==null)x.h+=s.h;
 });
 });
@@ -1348,7 +1431,7 @@ const x=vers[k];
 const meestal=x.eenheid==="naar smaak"||x.eenheid==="snufje"||((x.eenheid==="tl"||x.eenheid==="el")&&x.afdeling==="Sauzen & kruiden");
 const al=opLijst("",x.naam);
 const h=x.leeg?"":(x.eenheid==="st"||x.eenheid===""?getal(x.h):getal(x.h)+" "+meervoud(x.e,x.h));
-rijen.push({aan:!meestal&&!al,tekst:(h?h+" ":"")+x.naam,noot:meestal?"meestal in huis: vink aan als het op is":al?"staat al op de lijst":"",item:{naam:x.naam,hoeveelheid:x.leeg?"":x.h,eenheid:x.eenheid==="naar smaak"?"":x.e,winkel:x.winkel||"Lidl",afdeling:x.afdeling,receptId:x.receptId}});
+rijen.push({aan:!meestal&&!al,tekst:(h?h+" ":"")+x.naam,noot:meestal?"meestal in huis: vink aan als het op is":al?"staat al op de lijst":x.keto?"voor de keto-portie":"",item:{naam:x.naam,hoeveelheid:x.leeg?"":x.h,eenheid:x.eenheid==="naar smaak"?"":x.e,winkel:x.winkel||"Lidl",afdeling:x.afdeling,receptId:x.receptId}});
 });
 rijen.sort((a,b)=>afdelingIndex(a.item.afdeling)-afdelingIndex(b.item.afdeling));
 const body=el("div");
@@ -1954,6 +2037,14 @@ m.appendChild(blok("Van wie is dit apparaat?",seg([["Ramon","Ramon"],["Sanne","S
 const schuif=el("input",{type:"range",min:"85",max:"130",step:"5",value:String(Math.round((inst.schaal||1)*100))});
 schuif.addEventListener("input",()=>{inst.schaal=Number(schuif.value)/100;bewaarInst();pasSchaalToe()});
 m.appendChild(blok("Tekstgrootte",schuif));
+const ketoSeg=el("div",{class:"persoonkeuze"});
+MENSEN.forEach(p=>{const aan=ketoEters().indexOf(p)!==-1;ketoSeg.appendChild(el("button",{type:"button",class:p+(aan?" active":""),onclick:()=>{const l=ketoEters().filter(x=>x!==p);if(!aan)l.push(p);inst.keto=l;bewaarInst();render()}},(aan?"K ✓ ":"")+p))});
+const portieBlok=el("div");
+MENSEN.forEach(p=>{const sg=el("div",{class:"segmented",style:"margin:0 0 8px"});
+[[1,"1×"],[1.25,"1¼×"],[1.5,"1½×"],[1.75,"1¾×"],[2,"2×"]].forEach(([w,l])=>sg.appendChild(el("button",{type:"button",class:portieGewicht(p)===w?"active":"",onclick:()=>{inst.porties=Object.assign({},inst.porties||{});inst.porties[p]=w;bewaarInst();render()}},l)));
+portieBlok.appendChild(el("div",{class:"uitleg",style:"margin:6px 0 4px;font-style:normal",text:p}));portieBlok.appendChild(sg)});
+m.appendChild(blok("Hoeveel eet iedereen?",portieBlok,"Met z’n tweeën rekent de app met deze porties. Gasten tellen als 1."));
+m.appendChild(blok("Wie eet keto?",ketoSeg,"Bij recepten met een keto-optie rekent de app standaard zoveel keto-porties. Per recept aan te passen met – en +."));
 m.appendChild(blok("Handjes bij een recept",seg([[true,"Aan"],[false,"Uit"]],inst.handjes!==false,v=>{inst.handjes=v;bewaarInst()})));
 m.appendChild(blok("Knoppen vervagen na",seg([[30,"30 sec"],[60,"1 min"],[0,"Nooit"]],inst.idle,v=>{inst.idle=Number(v);bewaarInst();herstartIdle()}),"Niet tijdens het koken."));
 const kastUrl=location.href.split("#")[0].split("?")[0]+"?kast";
