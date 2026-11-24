@@ -13,7 +13,7 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=2">
 <link rel="manifest" href="manifest.webmanifest?v=2">
 <title>Recepten</title>
-<!-- Recepten, versie 1.1 – zusje van de Gedichten. Gemaakt voor de iPad aan de muur (Safari 14) en jullie telefoons. -->
+<!-- Recepten, versie 1.1.1 – zusje van de Gedichten. Gemaakt voor de iPad aan de muur (Safari 14) en jullie telefoons. -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Caveat:wght@400;500;600&display=swap" rel="stylesheet" crossorigin="anonymous" media="print" onload="this.media='all'"><noscript><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Caveat:wght@400;500;600&display=swap" rel="stylesheet"></noscript>
@@ -400,7 +400,7 @@ svg.innerHTML=`
 return svg;
 }
 
-const APP_VERSION="1.1";
+const APP_VERSION="1.1.1";
 // Plak hier de web-app-URL van het Recepten Apps Script (eindigt op /exec):
 const RECEPTEN_URL="https://script.google.com/macros/s/AKfycbxDoDzE2EqPLyzmtx573RPd7PWPYOGITEXFY9zDIcUCjJuRsmNN4Ba7uvyI1Bb1Iz9niA/exec";
 
@@ -568,7 +568,16 @@ return !!(a&&(a.tagName==="INPUT"||a.tagName==="TEXTAREA"));
 function wie(cb,vraag){
 const e=eigenaar();
 if(e){cb(e);return}
-const m=modal(vraag||"Wie ben je?",el("div",{class:"persoonkeuze"},MENSEN.map(p=>el("button",{type:"button",class:p,onclick:()=>{m.sluit();cb(p)}},p))),[["Annuleren",()=>m.sluit()]]);
+// Op een telefoon staat "onthouden" alvast aan: die is van één persoon. Op de muur-iPad niet.
+const onthoud=el("input",{type:"checkbox"});onthoud.checked=window.innerWidth<=600;
+const body=el("div",{},
+el("div",{class:"persoonkeuze"},MENSEN.map(p=>el("button",{type:"button",class:p,onclick:()=>{
+m.sluit();
+if(onthoud.checked){zetEigenaar(p);melding("Dit apparaat is nu van "+p+". Je naam wordt niet meer gevraagd. (Wijzigen: Instellingen)")}
+cb(p);
+}},p))),
+el("label",{class:"keus",style:"border:0;margin-top:6px"},onthoud,el("div",{class:"tekst2"},"Dit is mijn eigen telefoon: niet meer vragen",el("small",{text:"Niet aanvinken op de iPad aan de muur."}))));
+const m=modal(vraag||"Wie ben je?",body,[["Annuleren",()=>m.sluit()]]);
 }
 
 /* ---------- Vensters ---------- */
