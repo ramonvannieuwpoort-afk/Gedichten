@@ -3,11 +3,14 @@
 // doorkomen) en alleen uit de opslag gehaald als er geen verbinding is.
 // Gedichten en aantekeningen bewaart de site zelf; die gaan hier niet doorheen.
 // Lettertypes van Google worden ook bewaard, zodat de tekst meteen en offline goed staat.
+// v6: ook de recepten (map recepten/). Elke pagina wordt onder zijn eigen adres bewaard,
+// zodat de gedichten en de recepten elkaar offline niet kunnen vervangen.
 
-const CACHE = 'gedichten-v5';
+const CACHE = 'gedichten-v6';
 const FONT_CACHE = 'gedichten-lettertypes-v1';
 const ASSETS = ['./', './index.html', './manifest.webmanifest', './apple-touch-icon.png', './icon-192.png', './icon-512.png',
-  './briefje.html', './manifest-briefje.webmanifest', './briefje-icon.png', './briefje-192.png', './briefje-512.png'];
+  './briefje.html', './manifest-briefje.webmanifest', './briefje-icon.png', './briefje-192.png', './briefje-512.png',
+  './recepten/', './recepten/index.html', './recepten/manifest.webmanifest', './recepten/apple-touch-icon.png', './recepten/icon-192.png', './recepten/icon-512.png'];
 
 self.addEventListener('install', event => {
   event.waitUntil(
@@ -57,8 +60,10 @@ self.addEventListener('fetch', event => {
   const isPage = request.mode === 'navigate' || url.pathname.endsWith('/') || url.pathname.endsWith('.html');
 
   if (isPage) {
-    // Eerst internet, anders de bewaarde versie (de gedichten of het briefje-scherm).
-    const key = url.pathname.endsWith('briefje.html') ? './briefje.html' : './index.html';
+    // Eerst internet, anders de bewaarde versie. Elke pagina heeft een eigen plek in de opslag
+    // (gedichten, briefje-scherm, recepten), zodat ze elkaar niet overschrijven.
+    const key = url.pathname.endsWith('/') ? url.pathname + 'index.html' : url.pathname;
+    const reserve = url.pathname.indexOf('/recepten/') !== -1 ? './recepten/index.html' : './index.html';
     // 'no-cache': altijd bij GitHub navragen of er een nieuwere versie is, niet de
     // browsergeheugen-kopie van tot 10 minuten oud gebruiken.
     event.respondWith(
@@ -70,7 +75,7 @@ self.addEventListener('fetch', event => {
           }
           return response;
         })
-        .catch(() => caches.match(key).then(cached => cached || caches.match('./')))
+        .catch(() => caches.match(key).then(cached => cached || caches.match(reserve)).then(cached => cached || caches.match('./')))
     );
     return;
   }
