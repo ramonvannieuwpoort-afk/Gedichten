@@ -6,7 +6,7 @@
 // v6: ook de recepten (map recepten/). Elke pagina wordt onder zijn eigen adres bewaard,
 // zodat de gedichten en de recepten elkaar offline niet kunnen vervangen.
 
-const CACHE = 'gedichten-v6';
+const CACHE = 'gedichten-v7';
 const FONT_CACHE = 'gedichten-lettertypes-v1';
 const ASSETS = ['./', './index.html', './manifest.webmanifest', './apple-touch-icon.png', './icon-192.png', './icon-512.png',
   './briefje.html', './manifest-briefje.webmanifest', './briefje-icon.png', './briefje-192.png', './briefje-512.png',
