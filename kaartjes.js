@@ -192,7 +192,7 @@ function tekenReacties(el,tekst){
 var r=leesReacties(tekst),namen=Object.keys(r);
 if(!namen.length)return;
 var rij=maak("div","kaart-reacties");
-namen.forEach(function(n){var e=maak("span","kaart-reactie");e.title=n;e.innerHTML=SVG[r[n]];rij.appendChild(e)});
+namen.forEach(function(n){var e=maak("span","kaart-reactie");e.title=n;e.setAttribute("data-wie",n);e.innerHTML=SVG[r[n]];rij.appendChild(e)});
 el.appendChild(rij);
 }
 function tekenStempel(el,b){
