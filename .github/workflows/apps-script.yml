@@ -1,0 +1,79 @@
+name: Apps Script
+
+on:
+  workflow_dispatch:
+    inputs:
+      actie:
+        description: "ophalen = code uit Google naar GitHub, uitrollen = code uit GitHub naar Google"
+        type: choice
+        options: [ophalen, uitrollen]
+        default: ophalen
+  push:
+    branches: [main]
+    paths: ["apps-script/*/src/**"]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: apps-script
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Clasp installeren en inloggen
+        env:
+          CLASPRC: ${{ secrets.CLASPRC_JSON }}
+        run: |
+          if [ -z "$CLASPRC" ]; then
+            echo "::error::Het geheim CLASPRC_JSON ontbreekt. Zie apps-script/LEESMIJ.md."
+            exit 1
+          fi
+          printf '%s' "$CLASPRC" > ~/.clasprc.json
+          chmod 600 ~/.clasprc.json
+          npm install -g @google/clasp@3.4.1 >/dev/null
+
+      - name: Ophalen uit Google
+        if: github.event_name == 'workflow_dispatch' && inputs.actie == 'ophalen'
+        env:
+          GEHEIMEN: ${{ secrets.TOEGANGSCODES }}
+        run: node .github/scripts/apps-script.mjs ophalen
+
+      - name: Uitrollen naar Google
+        if: github.event_name == 'push' || inputs.actie == 'uitrollen'
+        env:
+          BEFORE: ${{ github.event.before }}
+          GEHEIMEN: ${{ secrets.TOEGANGSCODES }}
+        run: |
+          if [ "${{ github.event_name }}" = "push" ] && [ -n "$BEFORE" ] && [ "$BEFORE" != "0000000000000000000000000000000000000000" ]; then
+            export GEWIJZIGD="$(git diff --name-only "$BEFORE" "$GITHUB_SHA" -- apps-script | tr '\n' ' ')"
+          else
+            export GEWIJZIGD="ALLES"
+          fi
+          echo "Gewijzigd: $GEWIJZIGD"
+          node .github/scripts/apps-script.mjs uitrollen
+
+      - name: Wijzigingen terugzetten in de repo
+        if: always()
+        run: |
+          rm -f ~/.clasprc.json
+          git config user.name "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          git add apps-script
+          if git diff --cached --quiet; then
+            echo "Niets te bewaren."
+          else
+            git commit -m "Apps Script gesynchroniseerd (${{ inputs.actie || 'uitrollen' }})"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi

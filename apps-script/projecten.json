@@ -1,0 +1,14 @@
+[
+  {
+    "map": "gedichten",
+    "omschrijving": "Gedichten-app en briefjes",
+    "deploymentId": "AKfycbximcSly2Yp2TyiIzJWdNZ2gt5QcQ5Is9rf4ITK3SHQfMaWQH6NCAUGYMw3kgJvHl36kQ",
+    "scriptId": ""
+  },
+  {
+    "map": "recepten",
+    "omschrijving": "Recepten-app",
+    "deploymentId": "AKfycbxDoDzE2EqPLyzmtx573RPd7PWPYOGITEXFY9zDIcUCjJuRsmNN4Ba7uvyI1Bb1Iz9niA",
+    "scriptId": ""
+  }
+]
