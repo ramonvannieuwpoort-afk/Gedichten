@@ -19,7 +19,7 @@ Vuistregel: pas de code voortaan aan in de repo, niet meer in de Apps Script-edi
 2. Maak een Codespace op deze repo en voer daarin uit:
    `npx @google/clasp@3.4.1 login --no-localhost`
    Open de link, geef toestemming en plak de URL waarop je uitkomt (een foutpagina met `localhost` is normaal) terug in de terminal.
-3. `cat ~/.clasprc.json` en kopieer de hele inhoud.
+3. `jq -c . ~/.clasprc.json` en kopieer de ene regel die verschijnt.
 4. In GitHub: Settings → Secrets and variables → Actions → New repository secret, met de naam `CLASPRC_JSON` en als waarde de gekopieerde inhoud.
 5. Maak een tweede secret, `TOEGANGSCODES`, met de toegangscode(s) van de apps (meerdere codes scheiden met een komma). De workflow controleert hiermee dat die codes nooit in deze openbare repo terechtkomen.
 6. Verwijder de Codespace en draai de workflow met `ophalen`.

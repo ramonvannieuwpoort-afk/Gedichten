@@ -23,11 +23,11 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: 22
 
@@ -39,8 +39,13 @@ jobs:
             echo "::error::Het geheim CLASPRC_JSON ontbreekt. Zie apps-script/LEESMIJ.md."
             exit 1
           fi
-          printf '%s' "$CLASPRC" > ~/.clasprc.json
+          # Regeleinden weghalen: die ontstaan soms bij kopiëren uit de terminal en maken de JSON stuk.
+          printf '%s' "$CLASPRC" | tr -d '\r\n' > ~/.clasprc.json
           chmod 600 ~/.clasprc.json
+          if ! node -e 'const j=JSON.parse(require("fs").readFileSync(process.argv[1],"utf8"));if(!j.tokens&&!j.token)throw 0' ~/.clasprc.json 2>/dev/null; then
+            echo "::error::Het geheim CLASPRC_JSON is geen geldige clasp-sleutel (kapotte JSON). Kopieer hem opnieuw met: jq -c . ~/.clasprc.json"
+            exit 1
+          fi
           npm install -g @google/clasp@3.4.1 >/dev/null
 
       - name: Ophalen uit Google
