@@ -528,7 +528,7 @@ body.sausje-bloesem .spriet .blad{display:none}
 <button type="button" class="briefje-button" id="briefjeButton" aria-label="Nieuw briefje" title="Nieuw briefje"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M5 4.5h14v10.5l-4.5 4.5H5Z"/><path d="M14.5 19.5V15H19"/><path d="M8.5 9h7M8.5 12h4.5"/></svg></button>
 <button type="button" class="prikbord-knop reeks-knop" id="reeksWallButton" aria-label="Reeksen" title="Reeks"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M12 20.5V11"/><path d="M12 14c-3.6 0-5.6-2.3-6-6 3.6.2 5.8 2.2 6 6Z"/><path d="M12 11.5c.2-3.6 2.2-5.8 6-6-.3 3.7-2.4 5.9-6 6Z"/><path d="M7 20.5h10"/></svg></button>
 <button type="button" class="prikbord-knop" id="prikbordWallButton" aria-label="Prikbord met alle briefjes" title="Prikbord"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="14" rx="1.5"/><path d="M7 9h4.5v4H7Z"/><path d="M13.5 11h3.5v4.5h-3.5Z"/><circle cx="9.2" cy="9" r=".9" fill="currentColor"/><circle cx="15.2" cy="11" r=".9" fill="currentColor"/></svg></button>
-<script src="kaartjes.js?v=1.8.1"></script>
+<script src="kaartjes.js?v=1.9"></script>
 <script>
 // Los van de rest: deze twee knoppen werken altijd, ook als elders iets misgaat.
 (function(){
@@ -1580,7 +1580,7 @@ document.addEventListener("visibilitychange",()=>{if(document.visibilityState===
 /* ---------- Automatisch bijwerken ---------- */
 // Als er een nieuwe versie van de site op GitHub staat, laadt de iPad die vanzelf,
 // maar alleen als er niets open staat (dus nooit midden in het schrijven).
-const APP_VERSION="1.8.1";
+const APP_VERSION="1.9";
 let pendingReload=false;
 async function checkForNewVersion(){
 if(location.protocol!=="https:"&&location.hostname!=="localhost")return;
@@ -3206,8 +3206,8 @@ if(kaart){
 el.style.setProperty("--briefje-kleur",kaart.kleur);
 el.style.setProperty("--briefje-inkt",kaart.inkt);
 if(!folded){
-Kaartjes.decoreer(el,b);
-el.style.paddingTop="calc(var(--briefje-font,25px)*"+kaart.ruimte+")";
+Kaartjes.decoreer(el,b,{flow:true});
+el.style.paddingTop="calc(var(--briefje-font,25px)*.42)";
 }
 }
 el.classList.toggle("folded",folded);
@@ -3229,10 +3229,10 @@ el.appendChild(hint);
 return;
 }
 const body=document.createElement("div");body.className="briefje-body";
-if(kaart){const onder=Kaartjes.ruimteOnder(b);if(onder)body.style.marginBottom="calc(var(--briefje-font,25px)*"+onder+")"}
 if(b.tekening){body.appendChild(drawingSvg(b.tekening))}
 if(b.tekst){const t=document.createElement("div");t.className="briefje-tekst";t.textContent=b.tekst;body.appendChild(t)}
 el.appendChild(body);
+if(kaart)Kaartjes.onderregels(b,true).forEach(x=>el.appendChild(x));
 const meta=document.createElement("div");meta.className="briefje-meta";
 const who=document.createElement("span");who.textContent=(canonicalPerson(b.persoon)||b.persoon||"")+(b.gemaakt?" · "+briefjeTime(Math.max(b.gemaakt,b.verschijnt||0)):"");
 meta.appendChild(who);
@@ -3242,11 +3242,21 @@ else if(b.gelezenOp){status.textContent="gezien "+briefjeTime(b.gelezenOp)}
 else if(isUnreadFor(b)){const dot=document.createElement("span");dot.className="briefje-dot";status.append(dot,"nieuw")}
 meta.appendChild(status);
 el.appendChild(meta);
+pasTekstIn(el);
 if(window.Kaartjes){
 Kaartjes.tekenStickers(el,b.stickers);
 Kaartjes.tekenStempel(el,b);
 Kaartjes.tekenReacties(el,b.reacties);
 }
+}
+// Lange tekst op een klein briefje: de letters iets kleiner maken tot het past.
+function pasTekstIn(el){
+const body=el.querySelector(".briefje-body"),t=body&&body.querySelector(".briefje-tekst");
+if(!t)return;
+t.style.fontSize="";
+if(!body.clientHeight)return;
+let f=1;
+while(body.scrollHeight>body.clientHeight+1&&f>0.62){f-=0.06;t.style.fontSize="calc(var(--briefje-font,25px)*"+f.toFixed(2)+")"}
 }
 function briefjeSignature(b){
 return JSON.stringify([b.tekst,b.tekening?b.tekening.length:0,b.kleur,b.envelop,b.gelezenOp,b.verschijnt,b.voor,isUnreadFor(b),isFuture(b),viewerName(),b.kaart||"",b.extra||"",b.stickers||"",b.reacties||"",b.ingewisseld||0]);
@@ -3456,6 +3466,7 @@ markInboxSeen("b¦"+b.id);
 }
 renderBriefjeSheet();
 briefjeBackdrop.classList.add("visible");
+pasTekstIn(document.getElementById("briefjeGroot"));
 renderBriefjes();
 }
 function renderBriefjeSheet(){
