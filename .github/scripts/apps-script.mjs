@@ -58,10 +58,12 @@ function zoekScriptIds() {
   if (!zoek.length) return;
   console.log("Script-ID's zoeken via de deployment-ID's…");
   const scripts = claspJson(["list"], os.tmpdir());
+  console.log(`  ${scripts.length} losse scripts gevonden in Google Drive.`);
   for (const s of scripts) {
     if (zoek.every(p => p.scriptId)) break;
     let deps = [];
-    try { deps = claspJson(["list-deployments", s.id], os.tmpdir()); } catch (e) { continue; }
+    try { deps = claspJson(["list-deployments", s.id], os.tmpdir()); }
+    catch (e) { console.log(`  "${s.name}": implementaties opvragen mislukt: ${String(e.stderr || e.message).split("\n")[0]}`); continue; }
     for (const p of zoek) if (!p.scriptId && deps.some(d => d.deploymentId === p.deploymentId)) {
       p.scriptId = s.id;
       console.log(`  ${p.map}: gevonden in "${s.name}" (${s.id})`);
