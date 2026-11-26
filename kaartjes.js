@@ -152,6 +152,11 @@ ideeen:["en dat je maar veel kerstkransjes mag eten","met jou is het altijd een 
 ideeen:["nog een jaar met jou. dat wordt wat.","goede voornemens: meer knuffels, minder sokken op de grond","oliebol?"]},
 {id:"valentijn",groep:"feest",naam:"Valentijn",kop:"mijn valentijn",stijl:"sierlijk",kleur:"#f9d3d6",inkt:"#7a1a2a",deco:["hartjes"],ruimte:1.45,plaats:"raad eens van wie dit is",vast:1,
 ideeen:["raad eens van wie dit is","jij, ik, chocola","je bent mijn favoriete mens"]},
+/* ---- Spel ---- */
+{id:"aanvul",groep:"spel",naam:"Maak de zin af",kop:"maak de zin af",stijl:"spel",kleur:"#151515",inkt:"#fafafa",klasse:"zwart",ruimte:1.3,plaats:"Het geheim van een goed huwelijk is _____.",gaten:1,voet:"Kaarten tegen het huishouden",
+ideeen:["Het geheim van een goed huwelijk is _____.","In de keukenla ligt al jaren _____.","Mijn autobiografie heet: _____.","Volgens de buren doen wij 's nachts _____.","Sinterklaas brengt dit jaar vooral _____.","Als de kat kon praten, zou hij over ons zeggen: _____.","Het eerste wat ik koop als ik de loterij win: _____.","Het meest overschatte ding ter wereld: _____.","Ons huis ruikt altijd een beetje naar _____.","Het nieuwe kookprogramma heet: Koken met _____.","De film van ons leven heet: _____.","Mijn plantjes overleven alleen dankzij _____.","De echte reden dat de vaatwasser stuk is: _____.","Over 500 jaar vinden archeologen in ons huis _____.","Ik ben stiekem heel goed in _____.","Het eerste woord van onze toekomstige papegaai: _____.","Jij weet nog niet dat ik _____.","Morgen op het journaal: _____.","Ik word 's nachts wakker van angst voor _____.","Op mijn grafsteen komt: 'Hier ligt iemand die hield van _____.'","_____: ik heb er spijt van, maar ik zou het zo weer doen.","_____ + _____ = liefde.","Mijn superkracht: _____. Mijn zwakte: _____.","De Kamer van Koophandel heeft ons ingeschreven als _____.","Het slechtste cadeau ooit: _____."]},
+{id:"witkaart",groep:"spel",naam:"Witte kaart",kop:"",stijl:"spel",kleur:"#ffffff",inkt:"#111111",klasse:"wit",ruimte:.6,plaats:"jouw antwoord",verborgen:1,voet:"Kaarten tegen het huishouden",
+ideeen:["een boze eend","drie sokken en een droom","de belastingdienst","een emotioneel instabiele courgette","oma's gehaktballen","heel veel glitter","een dansende stofzuiger","een spreadsheet met gevoelens","een IKEA-handleiding zonder schroefjes","de laatste stroopwafel","stiekem huilen bij reclames","een kast vol lege potjes","net doen alsof je luistert","een duif met ambities","vergeten wasgoed in de machine","een tweedehands kasteel","slapende tenen","een opblaasflamingo","kaas. heel veel kaas.","de buurman in badjas","een verdacht dure kaars","62 openstaande tabbladen","een kat die alles beter weet","boterhammen met hagelslag om middernacht","een ex-collega die nog steeds belt"]},
 /* ---- Bonnen ---- */
 {id:"bon",groep:"bon",naam:"Tegoedbon",kop:"TEGOEDBON",sub:"goed voor:",stijl:"bon",kleur:"#fffdf7",inkt:"#2d4a5c",klasse:"bon",ruimte:2.1,plaats:"één keer een voetmassage",bon:1,extra:{label:"Geldig tot",plaats:"zondag"},
 ideeen:[["één keer een voetmassage","zondag"],["één keer gelijk krijgen","altijd"],["de film kiezen (zonder discussie)","eind van de maand"],["uitslapen, ik doe het ontbijt","het weekend"]]},
@@ -160,7 +165,7 @@ ideeen:[["één keer een voetmassage","zondag"],["één keer gelijk krijgen","al
 {id:"bonmassage",groep:"bon",naam:"Massage",kop:"BON",sub:"voor een massage",stijl:"bon",kleur:"#f1f6ef",inkt:"#2b4a3a",deco:["handjes"],klasse:"bon",ruimte:3.05,plaats:"20 minuten, zonder zeuren",bon:1,vast:1,extra:{label:"Geldig tot",plaats:"altijd"}},
 {id:"bonuitje",groep:"bon",naam:"Avondje uit",kop:"BON",sub:"voor een avondje uit",stijl:"bon",kleur:"#f6f0fa",inkt:"#47305f",deco:["glazen"],klasse:"bon",ruimte:3.05,plaats:"ik regel alles",bon:1,vast:1,extra:{label:"Geldig tot",plaats:"voor de zomer"}}
 ];
-var GROEPEN=[["lief","Lief"],["grappig","Grappig"],["absurd","Absurd"],["vragen","Vragen"],["weer","Weer"],["feest","Feest"],["bon","Bonnen"]];
+var GROEPEN=[["lief","Lief"],["grappig","Grappig"],["absurd","Absurd"],["vragen","Vragen"],["weer","Weer"],["feest","Feest"],["spel","Spel"],["bon","Bonnen"]];
 var PER_ID={};KAARTEN.forEach(function(k){PER_ID[k.id]=k});
 function vind(id){return id&&PER_ID[id]||null}
 
@@ -188,14 +193,23 @@ var CSS=[
 ".kaart-certificaat .kaart-decor{border:.14em solid #3d6b4f;box-shadow:inset 0 0 0 .12em #f4f6ec,inset 0 0 0 .2em #3d6b4f;box-sizing:border-box}",
 ".kaart-weer .kaart-decor{border-top:.3em solid #4f86b8;box-sizing:border-box}",
 ".kaart-code .kaart-decor{border-top:.32em solid #f08a1c;box-sizing:border-box}",
+".stijl-spel .kaart-kop .k1{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-weight:700;font-size:.5em;letter-spacing:.06em;text-transform:uppercase;opacity:.6}",
+".stijl-spel .briefje-tekst,.stijl-spel textarea{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif!important;font-weight:700;line-height:1.18!important;letter-spacing:-.01em}",
+".stijl-spel .briefje-tekst{font-size:calc(var(--briefje-font,25px)*.78)}",
+".stijl-spel textarea{font-size:calc(var(--f,25px)*.78)}",
+".stijl-spel .kaart-voet{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-style:normal;font-weight:700;font-size:calc(var(--briefje-font,25px)*.36);letter-spacing:.02em;opacity:.55}",
+".kaart-zwart,.kaart-wit{border-radius:.35em}",
+".kaart-gat{display:inline-block;min-width:3.2em;border-bottom:.08em solid currentColor;line-height:1}",
+".kaart-gat.vol{min-width:0;border-bottom-width:.06em;padding:0 .1em;background:rgba(255,255,255,.14);font-style:italic}",
+".kaart-wit .kaart-gat.vol{background:rgba(0,0,0,.06)}",
 ".kaart-gezocht .kaart-decor{box-shadow:inset 0 0 1.6em rgba(120,80,30,.35)}",
 ".kaart-bon .kaart-decor{border:.11em dashed currentColor;border-radius:.2em;box-sizing:border-box;opacity:1}",
 ".kaart-bon .kaart-decor:before,.kaart-bon .kaart-decor:after{content:'';position:absolute;top:50%;width:.7em;height:.7em;margin-top:-.35em;border-radius:50%;background:#f7f4ed}",
 ".kaart-bon .kaart-decor:before{left:-.4em}.kaart-bon .kaart-decor:after{right:-.4em}",
-".kaart-extra{position:absolute;left:.6em;right:.6em;bottom:1.5em;font-family:'Cormorant Garamond',Georgia,serif;font-size:calc(var(--briefje-font,25px)*.6);color:var(--briefje-inkt,#3b2f1c);line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}",
+".kaart-extra{position:absolute;left:calc(var(--briefje-font,25px)*.6);right:calc(var(--briefje-font,25px)*.6);bottom:calc(var(--briefje-font,25px)*1.05);font-family:'Cormorant Garamond',Georgia,serif;font-size:calc(var(--briefje-font,25px)*.6);color:var(--briefje-inkt,#3b2f1c);line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}",
 ".kaart-extra b{font-weight:600;font-style:italic;margin-right:.3em}.kaart-extra span{font-family:Caveat,cursive;font-size:1.3em}",
 ".kaart-cijfer{position:absolute;right:.4em;top:.35em;width:1.7em;height:1.7em;border:.08em solid #c4302b;border-radius:50%;color:#c4302b;font-family:Caveat,cursive;font-size:1.05em;line-height:1.62em;text-align:center;transform:rotate(-8deg);white-space:nowrap}",
-".kaart-voet{position:absolute;left:.6em;right:.6em;bottom:1.5em;font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:calc(var(--briefje-font,25px)*.58);opacity:.85;color:var(--briefje-inkt,#3b2f1c)}",
+".kaart-voet{position:absolute;left:calc(var(--briefje-font,25px)*.6);right:calc(var(--briefje-font,25px)*.6);bottom:calc(var(--briefje-font,25px)*1.05);font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:calc(var(--briefje-font,25px)*.58);opacity:.85;color:var(--briefje-inkt,#3b2f1c)}",
 ".kaart-extra.flow,.kaart-voet.flow{position:static;flex:0 0 auto;margin-top:.15em}",
 ".kaart-midden .briefje-tekst,.kaart-midden textarea{text-align:center}",
 ".kaart-stickers{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;font-size:var(--briefje-font,25px)}",
@@ -254,6 +268,7 @@ var laag=maak("div","kaart-decor");laag.setAttribute("aria-hidden","true");
 (k.deco||[]).forEach(function(n){var d=D[n];if(!d)return;var s=maak("span","kaart-deco");s.setAttribute("style",d.stijl);s.innerHTML=d.svg;laag.appendChild(s)});
 var kop=maak("div","kaart-kop");
 var k1=maak("span","k1");
+if(!k.kop)k1.style.display="none";
 if(k.nummer){k1.appendChild(maak("span","",k.kop));k1.appendChild(maak("span","","Nr. "+String(1000+hash(b.id||"x")%9000)))}
 else k1.textContent=k.kop;
 kop.appendChild(k1);
@@ -304,6 +319,18 @@ s.appendChild(maak("small","",datumKort(b.ingewisseld)+(b.ingewisseldDoor?" · "
 el.appendChild(s);
 }
 
+// Tekst met gaten ("_____"). Met invul worden de gaten gevuld met de antwoorden (in volgorde).
+function tekstMetGaten(el,tekst,invul){
+el.textContent="";
+var delen=String(tekst||"").split(/_{3,}/),n=0;
+invul=invul||[];
+delen.forEach(function(d,i){
+if(d)el.appendChild(document.createTextNode(d));
+if(i<delen.length-1){var g=maak("span","kaart-gat");var w=invul[n++];if(w){g.textContent=w;g.classList.add("vol")}else g.innerHTML="&nbsp;";el.appendChild(g)}
+});
+}
+function heeftGaten(t){return /_{3,}/.test(String(t||""))}
+
 /* ---------- Kaartje van de dag ---------- */
 // Een rustig idee, geen verplichting. Wisselt per dag (en 's avonds iets anders).
 var IDEEEN={
@@ -312,7 +339,7 @@ var IDEEEN={
 2:[["zomaar","Zomaar, omdat het dinsdag is"],["trots","Waar ben je trots op bij de ander?"],["vraag","Stel eens een grote vraag"]],
 3:[["dankjewel","Vandaag al iemand bedankt?"],["rapport","Geef eens een rapportcijfer"],["merci","Onwijs merci, gewoon omdat het kan"],["tafel","Een vraag voor aan tafel"]],
 4:[["denkaanje","Laat weten dat je aan de ander denkt"],["bekeuring","Tijd voor een bekeuring wegens schattigheid"],["liever","Zou je liever…?"],["namens","Wat zou de plant zeggen?"]],
-5:[["bonkoken","Vrijdag: geef een niet-koken-bon"],["bonuitje","Een avondje uit in het vooruitzicht?"]],
+5:[["bonkoken","Vrijdag: geef een niet-koken-bon"],["bonuitje","Een avondje uit in het vooruitzicht?"],["aanvul","Vrijdagavond: speel een potje maak-de-zin-af"]],
 6:[["oorkonde","Reik een oorkonde uit"],["bonmassage","Zaterdag: massagebon?"]]
 };
 function seizoen(d){
@@ -338,7 +365,7 @@ KAARTEN:KAARTEN,GROEPEN:GROEPEN,STICKERS:STICKERS,REACTIES:REACTIES,SVG:SVG,
 vind:vind,zetCss:zetCss,decoreer:decoreer,onderregels:onderregels,haalWeg:haalWeg,ruimteBoven:ruimteBoven,ruimteOnder:ruimteOnder,
 tekenStickers:tekenStickers,tekenReacties:tekenReacties,tekenStempel:tekenStempel,
 leesStickers:leesStickers,schrijfStickers:schrijfStickers,leesReacties:leesReacties,schrijfReacties:schrijfReacties,
-vanDeDag:vanDeDag
+vanDeDag:vanDeDag,tekstMetGaten:tekstMetGaten,heeftGaten:heeftGaten
 };
 zetCss(document);
 })();

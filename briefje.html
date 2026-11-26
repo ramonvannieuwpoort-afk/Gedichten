@@ -14,7 +14,7 @@
 <link rel="manifest" href="manifest-briefje.webmanifest">
 <title>Briefje</title>
 <!-- Briefje-scherm bij Gedichten, versie 1.9: 43 kaartjes, verzin-knop -->
-<meta name="briefje-versie" content="1.9">
+<meta name="briefje-versie" content="1.9.1">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Caveat:wght@400;500;600&display=swap" rel="stylesheet" crossorigin="anonymous" media="print" onload="this.media='all'"><noscript><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Caveat:wght@400;500;600&display=swap" rel="stylesheet"></noscript>
@@ -84,6 +84,9 @@ body{min-height:100vh}
 .extra-veld label{flex:0 0 auto;margin-right:10px;font-size:17px;color:#5f5547}
 .extra-veld input{flex:1;min-width:0;border:1px solid rgba(151,133,108,.45);border-radius:3px;padding:9px 10px;background:#fffdf8;color:#302c26;font-family:inherit;font-size:17px}
 .stickerrij{display:flex;flex-wrap:wrap;align-items:center}
+.zin-hint{margin:4px 0 0;padding:14px 16px;border-radius:6px;background:#151515;color:#fafafa;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-weight:700;font-size:18px;line-height:1.25}
+.zin-hint small{display:block;margin-bottom:6px;font-size:12px;letter-spacing:.06em;text-transform:uppercase;opacity:.6}
+.zin-hint .kaart-gat{min-width:4em}
 .groepen{display:flex;overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -22px;padding:2px 22px 4px}
 .groepen::-webkit-scrollbar{display:none}
 .groepen button{flex:0 0 auto;min-height:40px;margin-right:8px;border:1px solid rgba(151,133,108,.45);border-radius:20px;padding:6px 16px;background:#fffdf8;color:#776d60;font-family:inherit;font-size:16px;cursor:pointer;white-space:nowrap}
@@ -127,6 +130,7 @@ body{min-height:100vh}
 <div class="groepen" id="groepKeuze"></div>
 <div class="kaartstrook" id="kaartStrook" hidden></div>
 </div>
+<p class="zin-hint" id="zinHint" hidden></p>
 <div class="notitie-plek">
 <div class="notitie" id="notitie">
 <div class="plakband"></div>
@@ -174,7 +178,7 @@ body{min-height:100vh}
 </section>
 
 </div>
-<script src="kaartjes.js?v=1.9"></script>
+<script src="kaartjes.js?v=1.9.1"></script>
 <script>
 const NOTES_URL="https://script.google.com/macros/s/AKfycbximcSly2Yp2TyiIzJWdNZ2gt5QcQ5Is9rf4ITK3SHQfMaWQH6NCAUGYMw3kgJvHl36kQ/exec";
 const ACCESS_STORAGE_KEY="gedichten_access_token";
@@ -242,7 +246,7 @@ segmented($("groepKeuze"),[["blanco","Blanco"]].concat(Kaartjes.GROEPEN),()=>sta
 if(state.groep!==v)setTimeout(()=>{const a=$("groepKeuze").querySelector(".active");if(a)try{$("groepKeuze").scrollLeft=Math.max(0,a.offsetLeft-80)}catch(e){}},0);
 state.groep=v;
 if(v==="blanco")state.kaart="";
-else if(!huidigeKaart()||huidigeKaart().groep!==v){state.kaart=Kaartjes.KAARTEN.filter(k=>k.groep===v)[0].id;state.extra="";$("extraInvoer").value=""}
+else if(!huidigeKaart()||huidigeKaart().groep!==v){state.kaart=Kaartjes.KAARTEN.filter(k=>k.groep===v&&!k.verborgen)[0].id;state.extra="";$("extraInvoer").value=""}
 tekenStrook();tekenNotitie();
 });
 tekenStrook();
@@ -270,7 +274,7 @@ const strook=$("kaartStrook");
 strook.hidden=state.groep==="blanco";
 strook.innerHTML="";
 if(state.groep==="blanco")return;
-Kaartjes.KAARTEN.filter(k=>k.groep===state.groep).forEach(k=>{
+Kaartjes.KAARTEN.filter(k=>k.groep===state.groep&&!k.verborgen).forEach(k=>{
 const b=document.createElement("button");b.type="button";b.className="mini"+(state.kaart===k.id?" active":"");
 b.setAttribute("aria-label",k.naam);b.setAttribute("aria-pressed",state.kaart===k.id?"true":"false");
 b.style.setProperty("--briefje-font","11px");
@@ -308,14 +312,15 @@ notitie.style.setProperty("--inkt",k?k.inkt:INKT[state.kleur]);
 notitie.style.setProperty("--ruimte",k?String(k.ruimte):"0.9");
 if(k){const kopEl=notitie.querySelector(".kaart-kop"),fpx=parseFloat(f);if(kopEl&&kopEl.offsetHeight&&fpx)notitie.style.setProperty("--ruimte",((kopEl.offsetTop+kopEl.offsetHeight)/fpx+0.15).toFixed(2))}
 notitie.style.setProperty("--onder",String(1.2+Kaartjes.ruimteOnder({kaart:state.kaart,extra:state.extra})));
-tekstVeld.placeholder=k?k.plaats+"…":(antwoordOp?"Schrijf je antwoord…":"Schrijf hier je briefje…");
+if(ouderZin&&k&&k.id==="witkaart")tekstVeld.placeholder=(ouderZin.match(/_{3,}/g)||[]).length>1?"antwoord 1 / antwoord 2":"jouw antwoord…";
+else tekstVeld.placeholder=k?k.plaats+"…":(antwoordOp?"Schrijf je antwoord…":"Schrijf hier je briefje…");
 $("kleurVeld").hidden=!!k;
 $("verzinRij").hidden=!(k&&k.ideeen&&k.ideeen.length);
 const ex=k&&k.extra;
 $("extraVeld").hidden=!ex;
 if(ex){$("extraLabel").textContent=ex.label;$("extraInvoer").placeholder=ex.plaats;if($("extraInvoer").value!==state.extra)$("extraInvoer").value=state.extra}
 notitie.querySelectorAll(".kaart-stickers").forEach(e=>e.remove());
-pasTekstIn();
+pasTekstIn();tekenZinHint();
 Kaartjes.tekenStickers(notitie,stickerTekst());
 $("afzender").textContent=state.van||"";
 const schrijven=state.modus==="schrijven";
@@ -371,6 +376,18 @@ canvas.addEventListener("pointerup",stopStreek);
 canvas.addEventListener("pointercancel",stopStreek);
 function tekening(){return state.streken.filter(s=>s.p.length).map(s=>"c"+s.c+"|"+s.p.map(p=>p[0]+","+p[1]).join(" ")).join(";")}
 // Lange tekst: de letters iets kleiner maken tot het op het briefje past (net als op de muur).
+let ouderZin="";
+function tekenZinHint(){
+const hint=$("zinHint");
+hint.hidden=!ouderZin;
+if(!ouderZin)return;
+hint.innerHTML="";
+const kop=document.createElement("small");kop.textContent="Maak de zin af";hint.appendChild(kop);
+const zin=document.createElement("span");
+Kaartjes.tekstMetGaten(zin,ouderZin,tekstVeld.value.trim()?tekstVeld.value.split(/\s*\/\s*/):[]);
+hint.appendChild(zin);
+}
+tekstVeld.addEventListener("input",tekenZinHint);
 function pasTekstIn(){
 tekstVeld.style.fontSize="";
 if(!tekstVeld.clientHeight)return;
@@ -520,7 +537,9 @@ $("schrijfTitel").textContent="Antwoord";
 $("naarPlek").innerHTML="<span>Ophangen</span>";
 $("envelopVeld").hidden=true;
 $("kaartVeld").hidden=true;
-try{const data=await jsonp({action:"briefjes"});const ouder=(data.briefjes||[]).find(b=>b.id===antwoordOp);if(ouder){state.voor=["Sanne","Ramon"].includes(ouder.persoon)?ouder.persoon:"Ons";if(!state.van&&ouder.persoon)state.van=ander(ouder.persoon)}}catch(e){}
+try{const data=await jsonp({action:"briefjes"});const ouder=(data.briefjes||[]).find(b=>b.id===antwoordOp);if(ouder){state.voor=["Sanne","Ramon"].includes(ouder.persoon)?ouder.persoon:"Ons";if(!state.van&&ouder.persoon)state.van=ander(ouder.persoon);
+// Maak de zin af: antwoorden met een witte kaart, met de zin erboven.
+if(ouder.kaart==="aanvul"&&Kaartjes.heeftGaten(ouder.tekst)){state.kaart="witkaart";state.groep="spel";ouderZin=ouder.tekst;$("schrijfTitel").textContent="Maak de zin af"}}}catch(e){}
 }
 vernieuwKeuzes();
 toon("stapSchrijven");
