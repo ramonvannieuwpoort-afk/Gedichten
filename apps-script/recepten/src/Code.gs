@@ -1,4 +1,5 @@
 // Recepten – Apps Script
+// Versie 1.3: wie kookt er los van het recept zetten (voor de niet-koken-bon uit de briefjes).
 // Versie 1.2: recepten verwijderen en terughalen.
 // Versie 1.1: erbij-recepten (jus, saus, bijgerecht koppelen aan een hoofdgerecht).
 // Versie 1.0: recepten (met versies en geschiedenis), weekmenu, boodschappen (Lidl en AH),
@@ -7,7 +8,7 @@
 // Eenmalig: zet bij Projectinstellingen → Scripteigenschappen de eigenschap SECRET_TOKEN
 // (dezelfde toegangscode als bij de gedichten) en voer daarna de functie installeer() uit.
 
-const VERSIE = '1.2';
+const VERSIE = '1.3';
 
 // Elk tabblad met zijn kolommen. De kolomnamen in rij 1 zijn precies deze woorden.
 const TABELLEN = {
@@ -83,6 +84,7 @@ function doPost(e) {
       recept_weg: () => receptWeg(String(d.id || ''), persoon),
       recept_herstel: () => receptHerstel(String(d.id || ''), persoon),
       weekmenu_zet: () => weekmenuZet(d),
+      weekmenu_kok: () => weekmenuKok(d),
       weekmenu_weg: () => verwijderRijen('Weekmenu', r => r.id === d.id),
       weekmenu_status: () => werkBij('Weekmenu', r => r.id === d.id, pick(d, ['gekookt', 'opLijst'])),
       weekmenu_erbij: () => werkBij('Weekmenu', r => r.id === d.id, { erbij: erbijLijst(d.erbij, true) }),
@@ -223,6 +225,23 @@ function weekmenuZet(d) {
   // Eén gerecht per dag: een bestaande planning op die dag wordt vervangen.
   const rest = lees('Weekmenu').filter(w => w.datum !== rij.datum && w.id !== rij.id);
   schrijfAlles('Weekmenu', rest.concat([rij]));
+  return { id: rij.id };
+}
+
+// Alleen de kok van een dag zetten (bijv. via een ingewisselde bon). Het recept blijft staan;
+// is er nog niets gepland, dan komt er een dag zonder recept met alleen de kok.
+function weekmenuKok(d) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(d.datum || ''))) throw new Error('Ongeldige datum.');
+  const kok = ['Sanne', 'Ramon', 'Samen'].includes(d.kok) ? d.kok : '';
+  const alles = lees('Weekmenu');
+  const dag = alles.find(w => w.datum === d.datum);
+  if (dag) {
+    dag.kok = kok;
+    schrijfAlles('Weekmenu', alles);
+    return { id: dag.id };
+  }
+  const rij = { id: nieuwId('w'), datum: d.datum, receptId: '', kok: kok, personen: '2', gekookt: '', opLijst: '', erbij: '' };
+  schrijfAlles('Weekmenu', alles.concat([rij]));
   return { id: rij.id };
 }
 

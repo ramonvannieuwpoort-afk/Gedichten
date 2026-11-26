@@ -12,6 +12,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#ffffff">
 <title>Gedichten</title>
+<!-- Versie 1.8: 26 november 2026 – kaartjes, stickers, reacties, bonnen en de bewaardoos bij de briefjes -->
 <!-- Versie 1.7: 23 november 2026 – gelezen-rij vervaagt mee met de knoppen -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -135,6 +136,15 @@ body.reading-mode #briefjesLayer{opacity:0;visibility:hidden;transition:opacity 
 .prikbord-briefje{position:relative;width:100%;height:150px;cursor:default;touch-action:auto}
 .prikbord-info{margin-top:10px;color:#887e70;font-size:14px;font-style:italic;line-height:1.3}
 .prikbord-acties{display:flex;gap:12px;margin-top:4px}
+.briefje-reactierij{display:flex;justify-content:center;margin:-4px 0 14px}
+.briefje-reactierij button{display:flex;flex-direction:column;align-items:center;margin:0 6px;border:1px solid rgba(151,133,108,.35);border-radius:22px;padding:6px 12px 4px;background:#fffdf8;color:#7d7263;font-family:inherit;font-size:14px;cursor:pointer}
+.briefje-reactierij button svg{width:26px;height:26px;display:block;margin-bottom:2px}
+.briefje-reactierij button.active{border-color:#a77c48;background:#efe5d4;color:#302c26;font-weight:600}
+.briefje-reactierij .wie{display:block;font-size:12px;font-style:italic;color:#8a6845;min-height:14px}
+.prikbord-filter{display:flex;margin:4px 6px 0;border:1px solid rgba(151,133,108,.45);border-radius:3px;overflow:hidden}
+.prikbord-filter button{flex:1;min-height:40px;border:0;background:transparent;color:#776d60;font-family:inherit;font-size:16px;cursor:pointer}
+.prikbord-filter button+button{border-left:1px solid rgba(151,133,108,.45)}
+.prikbord-filter button.active{background:#e9e1d4;color:#302c26;font-weight:600}
 .prikbord-acties button{border:0;border-bottom:1px solid currentColor;padding:2px 0;background:none;color:#8a6845;font-family:inherit;font-size:15px;cursor:pointer}
 .briefje-button,.prikbord-knop{position:fixed;bottom:calc(10px + env(safe-area-inset-bottom));z-index:10002;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(151,133,108,.38);border-radius:50%;padding:0;background:rgba(247,244,237,.94);color:#766b5d;box-shadow:0 2px 9px rgba(55,45,32,.09);cursor:pointer;-webkit-tap-highlight-color:transparent}
 .briefje-button{left:14px}
@@ -515,6 +525,7 @@ body.sausje-bloesem .spriet .blad{display:none}
 <button type="button" class="briefje-button" id="briefjeButton" aria-label="Nieuw briefje" title="Nieuw briefje"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M5 4.5h14v10.5l-4.5 4.5H5Z"/><path d="M14.5 19.5V15H19"/><path d="M8.5 9h7M8.5 12h4.5"/></svg></button>
 <button type="button" class="prikbord-knop reeks-knop" id="reeksWallButton" aria-label="Reeksen" title="Reeks"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M12 20.5V11"/><path d="M12 14c-3.6 0-5.6-2.3-6-6 3.6.2 5.8 2.2 6 6Z"/><path d="M12 11.5c.2-3.6 2.2-5.8 6-6-.3 3.7-2.4 5.9-6 6Z"/><path d="M7 20.5h10"/></svg></button>
 <button type="button" class="prikbord-knop" id="prikbordWallButton" aria-label="Prikbord met alle briefjes" title="Prikbord"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="14" rx="1.5"/><path d="M7 9h4.5v4H7Z"/><path d="M13.5 11h3.5v4.5h-3.5Z"/><circle cx="9.2" cy="9" r=".9" fill="currentColor"/><circle cx="15.2" cy="11" r=".9" fill="currentColor"/></svg></button>
+<script src="kaartjes.js?v=1.8"></script>
 <script>
 // Los van de rest: deze twee knoppen werken altijd, ook als elders iets misgaat.
 (function(){
@@ -601,8 +612,11 @@ try{if(typeof openPrikbord==="function"){openPrikbord();return}}catch(e){melding
 <p class="modal-description" id="briefjeInfo"></p>
 <p class="briefje-gelezen" id="briefjeGelezen"></p>
 <div class="briefje-antwoorden" id="briefjeAntwoorden"></div>
+<div class="briefje-reactierij" id="briefjeReacties"></div>
 <div class="briefje-acties">
+<button type="button" class="settings-action" id="briefjeInwisselen" hidden>Bon inwisselen</button>
 <button type="button" class="settings-action" id="briefjeAntwoord">Antwoorden</button>
+<button type="button" class="settings-action" id="briefjeBewaren">Bewaren</button>
 <button type="button" class="settings-action" id="briefjeOngelezen">Markeer als nieuw</button>
 <button type="button" class="settings-action" id="briefjePrikbord">Naar het prikbord</button>
 </div>
@@ -765,6 +779,7 @@ schaduw.appendChild(kopie);hand.insertBefore(schaduw,icon);
 
 const NOTES_URL="https://script.google.com/macros/s/AKfycbximcSly2Yp2TyiIzJWdNZ2gt5QcQ5Is9rf4ITK3SHQfMaWQH6NCAUGYMw3kgJvHl36kQ/exec";
 const ACCESS_STORAGE_KEY="gedichten_access_token";
+const RECEPTEN_URL="https://script.google.com/macros/s/AKfycbxDoDzE2EqPLyzmtx573RPd7PWPYOGITEXFY9zDIcUCjJuRsmNN4Ba7uvyI1Bb1Iz9niA/exec";
 let poems=[];
 let currentIndex=0;
 let lastDailyKey="";
@@ -1562,7 +1577,7 @@ document.addEventListener("visibilitychange",()=>{if(document.visibilityState===
 /* ---------- Automatisch bijwerken ---------- */
 // Als er een nieuwe versie van de site op GitHub staat, laadt de iPad die vanzelf,
 // maar alleen als er niets open staat (dus nooit midden in het schrijven).
-const APP_VERSION="1.7";
+const APP_VERSION="1.8";
 let pendingReload=false;
 async function checkForNewVersion(){
 if(location.protocol!=="https:"&&location.hostname!=="localhost")return;
@@ -3180,6 +3195,18 @@ const folded=b.envelop&&!b.gelezenOp&&!options.open;
 el.innerHTML="";
 el.style.setProperty("--briefje-kleur",BRIEFJE_COLORS[b.kleur]||BRIEFJE_COLORS.geel);
 el.style.setProperty("--briefje-inkt",BRIEFJE_INK[b.kleur]||BRIEFJE_INK.geel);
+// Kaartjes: eigen papier, voorgedrukte tekst en versiering.
+const kaart=window.Kaartjes?Kaartjes.vind(b.kaart):null;
+if(window.Kaartjes)Kaartjes.haalWeg(el);
+el.style.paddingTop="";
+if(kaart){
+el.style.setProperty("--briefje-kleur",kaart.kleur);
+el.style.setProperty("--briefje-inkt",kaart.inkt);
+if(!folded){
+Kaartjes.decoreer(el,b);
+el.style.paddingTop="calc(var(--briefje-font,25px)*"+kaart.ruimte+")";
+}
+}
 el.classList.toggle("folded",folded);
 el.classList.toggle("is-new",!options.static&&isUnreadFor(b));
 el.classList.toggle("ghost",!!isFuture(b));
@@ -3199,6 +3226,7 @@ el.appendChild(hint);
 return;
 }
 const body=document.createElement("div");body.className="briefje-body";
+if(kaart){const onder=Kaartjes.ruimteOnder(b);if(onder)body.style.marginBottom="calc(var(--briefje-font,25px)*"+onder+")"}
 if(b.tekening){body.appendChild(drawingSvg(b.tekening))}
 if(b.tekst){const t=document.createElement("div");t.className="briefje-tekst";t.textContent=b.tekst;body.appendChild(t)}
 el.appendChild(body);
@@ -3211,9 +3239,14 @@ else if(b.gelezenOp){status.textContent="gezien "+briefjeTime(b.gelezenOp)}
 else if(isUnreadFor(b)){const dot=document.createElement("span");dot.className="briefje-dot";status.append(dot,"nieuw")}
 meta.appendChild(status);
 el.appendChild(meta);
+if(window.Kaartjes){
+Kaartjes.tekenStickers(el,b.stickers);
+Kaartjes.tekenStempel(el,b);
+Kaartjes.tekenReacties(el,b.reacties);
+}
 }
 function briefjeSignature(b){
-return JSON.stringify([b.tekst,b.tekening?b.tekening.length:0,b.kleur,b.envelop,b.gelezenOp,b.verschijnt,b.voor,isUnreadFor(b),isFuture(b),viewerName()]);
+return JSON.stringify([b.tekst,b.tekening?b.tekening.length:0,b.kleur,b.envelop,b.gelezenOp,b.verschijnt,b.voor,isUnreadFor(b),isFuture(b),viewerName(),b.kaart||"",b.extra||"",b.stickers||"",b.reacties||"",b.ingewisseld||0]);
 }
 
 // Wat er niet bedekt mag worden bij "naast het gedicht": de tekstregels, de kop en de knoppen.
@@ -3438,7 +3471,87 @@ const replies=briefjes.filter(x=>x.antwoordOp===b.id&&x.status==="actief");
 const list=document.getElementById("briefjeAntwoorden");
 list.innerHTML="";
 replies.forEach(r=>{const p=document.createElement("p");p.className="briefje-antwoord-regel";p.textContent=`${r.persoon}: ${r.tekst||"(getekend antwoord)"}`;list.appendChild(p)});
+renderBriefjeExtras(b);
 }
+/* Kaartjes: reageren, bon inwisselen, bewaren */
+function renderBriefjeExtras(b){
+const viewer=viewerName();
+const isAuthor=!!viewer&&canonicalPerson(b.persoon)===viewer;
+const kaart=window.Kaartjes?Kaartjes.vind(b.kaart):null;
+// Reacties: één tik, voor wie het briefje kreeg (niet voor de schrijver zelf).
+const rij=document.getElementById("briefjeReacties");
+rij.innerHTML="";
+const reacties=window.Kaartjes?Kaartjes.leesReacties(b.reacties):{};
+rij.hidden=!window.Kaartjes||isFuture(b);
+if(!rij.hidden){
+Kaartjes.REACTIES.forEach(([soort,label])=>{
+const btn=document.createElement("button");btn.type="button";
+const mijn=viewer&&reacties[viewer]===soort;
+btn.className=mijn?"active":"";
+btn.innerHTML=Kaartjes.SVG[soort];
+btn.append(label);
+const wie=document.createElement("span");wie.className="wie";
+wie.textContent=Object.keys(reacties).filter(n=>reacties[n]===soort).join(" & ");
+btn.appendChild(wie);
+btn.setAttribute("aria-pressed",mijn?"true":"false");
+if(isAuthor||!viewer){btn.disabled=true;btn.style.opacity=reacties[viewer]===soort||wie.textContent?"1":".55"}
+btn.addEventListener("click",()=>{
+const nieuw=mijn?"":soort;
+if(nieuw)reacties[viewer]=nieuw;else delete reacties[viewer];
+b.reacties=Kaartjes.schrijfReacties(reacties);
+postBriefje({action:"briefje_react",id:b.id,reactie:nieuw});
+renderBriefjeSheet();renderBriefjes();
+});
+rij.appendChild(btn);
+});
+}
+// Bon inwisselen
+const wissel=document.getElementById("briefjeInwisselen");
+const isBon=!!(kaart&&kaart.bon);
+wissel.hidden=!isBon||(!b.ingewisseld&&(isAuthor||isFuture(b)));
+wissel.textContent=b.ingewisseld?"Stempel weghalen":kaart&&kaart.koken?"Bon inwisselen (vanavond)":"Bon inwisselen";
+// Bewaardoos
+document.getElementById("briefjeBewaren").textContent=b.bewaard?"Uit de bewaardoos":"Bewaren";
+}
+document.getElementById("briefjeInwisselen").addEventListener("click",()=>{
+const b=briefjes.find(x=>x.id===openBriefjeId);
+if(!b)return;
+const kaart=Kaartjes.vind(b.kaart);
+const gever=canonicalPerson(b.persoon)||b.persoon;
+if(b.ingewisseld){
+if(!window.confirm("De stempel weghalen? Dan is de bon weer geldig."))return;
+b.ingewisseld=0;b.ingewisseldDoor="";
+postBriefje({action:"briefje_redeem",id:b.id,terug:"ja"});
+renderBriefjeSheet();renderBriefjes();
+return;
+}
+const vraag=kaart&&kaart.koken?`Bon inwisselen? Dan kookt ${gever} vanavond, en dat komt ook in het weekmenu van de recepten.`:"Bon inwisselen? Er komt een stempel op.";
+if(!window.confirm(vraag))return;
+b.ingewisseld=Date.now();b.ingewisseldDoor=viewerName();
+postBriefje({action:"briefje_redeem",id:b.id,door:b.ingewisseldDoor});
+if(kaart&&kaart.koken&&(gever==="Sanne"||gever==="Ramon"))zetKokVanavond(gever);
+renderBriefjeSheet();renderBriefjes();
+const big=document.getElementById("briefjeGroot");
+const stempel=big.querySelector(".kaart-stempel");
+if(stempel&&stempel.animate&&!reduceMotion)stempel.animate([{transform:"translate(-50%,-50%) rotate(-14deg) scale(2.2)",opacity:0},{transform:"translate(-50%,-50%) rotate(-14deg) scale(1)",opacity:.82}],{duration:380,easing:"cubic-bezier(.2,.9,.3,1.2)"});
+});
+async function zetKokVanavond(kok){
+const d=new Date();
+const datum=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+const form=new URLSearchParams();
+form.append("token",localStorage.getItem(ACCESS_STORAGE_KEY)||"");
+form.append("action","weekmenu_kok");form.append("datum",datum);form.append("kok",kok);form.append("persoon",viewerName());
+try{await fetch(RECEPTEN_URL,{method:"POST",mode:"no-cors",body:form});if(window.toonMelding)window.toonMelding(`${kok} kookt vanavond. Dat staat nu ook in het weekmenu.`)}
+catch(e){if(window.toonMelding)window.toonMelding("Het weekmenu kon niet worden bijgewerkt. Zet het even zelf in de recepten.")}
+}
+document.getElementById("briefjeBewaren").addEventListener("click",()=>{
+const b=briefjes.find(x=>x.id===openBriefjeId);
+if(!b)return;
+b.bewaard=!b.bewaard;
+postBriefje({action:"briefje_keep",id:b.id,bewaard:b.bewaard?"ja":""});
+renderBriefjeSheet();
+if(window.toonMelding)window.toonMelding(b.bewaard?"In de bewaardoos gelegd. Je vindt hem terug op het prikbord.":"Uit de bewaardoos gehaald.");
+});
 function closeBriefje(){briefjeBackdrop.classList.remove("visible");openBriefjeId=null}
 document.getElementById("briefjeSluiten").addEventListener("click",closeBriefje);
 briefjeBackdrop.addEventListener("click",event=>{if(event.target===briefjeBackdrop)closeBriefje()});
@@ -3465,9 +3578,19 @@ openComposer({antwoordOp:id});
 /* Prikbord: alle briefjes, ook oude en afgepelde */
 const prikbordBackdrop=document.getElementById("prikbordBackdrop");
 const prikbordList=document.getElementById("prikbordList");
+let prikbordFilter="alles";
 function renderPrikbord(){
 prikbordList.innerHTML="";
-const list=briefjes.filter(b=>!b.antwoordOp).sort((a,b)=>(b.gemaakt||0)-(a.gemaakt||0));
+const filter=document.createElement("div");filter.className="prikbord-filter";
+[["alles","Alle briefjes"],["bewaard","Bewaardoos"]].forEach(([v,label])=>{
+const btn=document.createElement("button");btn.type="button";btn.textContent=label;btn.className=prikbordFilter===v?"active":"";
+btn.setAttribute("aria-pressed",prikbordFilter===v?"true":"false");
+btn.addEventListener("click",()=>{prikbordFilter=v;renderPrikbord()});
+filter.appendChild(btn);
+});
+prikbordList.appendChild(filter);
+const list=briefjes.filter(b=>!b.antwoordOp&&(prikbordFilter!=="bewaard"||b.bewaard)).sort((a,b)=>(b.gemaakt||0)-(a.gemaakt||0));
+if(!list.length&&prikbordFilter==="bewaard"){const p=document.createElement("p");p.className="poem-menu-empty";p.textContent="De bewaardoos is nog leeg. Open een briefje en kies Bewaren om het hier te bewaren.";prikbordList.appendChild(p);return}
 if(!list.length){const p=document.createElement("p");p.className="poem-menu-empty";p.textContent="Nog geen briefjes. Hang er een op met de knop onderaan.";prikbordList.appendChild(p);return}
 const grid=document.createElement("div");grid.className="prikbord-grid";
 list.forEach(b=>{
@@ -3478,7 +3601,9 @@ mini.style.setProperty("--briefje-font","19px");
 mini.style.setProperty("--draai",((hashString(b.id)%7)-3)+"deg");
 const info=document.createElement("div");info.className="prikbord-info";
 const hanging=isVisibleBriefje(b);
-info.textContent=`${b.persoon} · ${briefjeTime(b.gemaakt)} · ${hanging?"hangt aan de muur":b.status==="prikbord"?"afgepeld":"verlopen"}`;
+info.textContent=`${b.bewaard?"♥ ":""}${b.persoon} · ${briefjeTime(b.gemaakt)} · ${hanging?"hangt aan de muur":b.status==="prikbord"?"afgepeld":"verlopen"}`;
+mini.style.cursor="pointer";
+mini.addEventListener("click",()=>{closePrikbord();openBriefje(b)});
 const actions=document.createElement("div");actions.className="prikbord-acties";
 if(!hanging){
 const again=document.createElement("button");again.type="button";again.textContent="Weer ophangen";

@@ -5,11 +5,12 @@
 // Lettertypes van Google worden ook bewaard, zodat de tekst meteen en offline goed staat.
 // v6: ook de recepten (map recepten/). Elke pagina wordt onder zijn eigen adres bewaard,
 // zodat de gedichten en de recepten elkaar offline niet kunnen vervangen.
+// v8: kaartjes.js (gedeeld door de muur en het briefje-scherm), net als de pagina's eerst via internet.
 
-const CACHE = 'gedichten-v7';
+const CACHE = 'gedichten-v8';
 const FONT_CACHE = 'gedichten-lettertypes-v1';
 const ASSETS = ['./', './index.html', './manifest.webmanifest', './apple-touch-icon.png', './icon-192.png', './icon-512.png',
-  './briefje.html', './manifest-briefje.webmanifest', './briefje-icon.png', './briefje-192.png', './briefje-512.png',
+  './briefje.html', './kaartjes.js', './manifest-briefje.webmanifest', './briefje-icon.png', './briefje-192.png', './briefje-512.png',
   './recepten/', './recepten/index.html', './recepten/manifest.webmanifest', './recepten/apple-touch-icon.png', './recepten/icon-192.png', './recepten/icon-512.png'];
 
 self.addEventListener('install', event => {
@@ -80,7 +81,7 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  if (url.pathname.endsWith('.json') && !url.pathname.endsWith('.webmanifest')) {
+  if ((url.pathname.endsWith('.json') || url.pathname.endsWith('.js')) && !url.pathname.endsWith('.webmanifest') && !url.pathname.endsWith('/sw.js')) {
     // Reeksen (bijv. Song of Myself): eerst internet, anders de bewaarde versie.
     const key = url.pathname;
     event.respondWith(

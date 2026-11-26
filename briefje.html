@@ -13,8 +13,8 @@
 <link rel="icon" type="image/png" sizes="192x192" href="briefje-192.png">
 <link rel="manifest" href="manifest-briefje.webmanifest">
 <title>Briefje</title>
-<!-- Briefje-scherm bij Gedichten, versie 1.7 -->
-<meta name="briefje-versie" content="1.7">
+<!-- Briefje-scherm bij Gedichten, versie 1.8: kaartjes, stickers -->
+<meta name="briefje-versie" content="1.8">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Caveat:wght@400;500;600&display=swap" rel="stylesheet" crossorigin="anonymous" media="print" onload="this.media='all'"><noscript><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Caveat:wght@400;500;600&display=swap" rel="stylesheet"></noscript>
@@ -69,6 +69,25 @@ body{min-height:100vh}
 .klaar h1{margin:14px 0 8px;font-size:30px;font-weight:500}
 .klaar p{margin:0 0 26px;color:#7d7263;font-size:18px}
 .klaar .klein-knop{display:block;width:100%;min-height:48px;margin-bottom:10px;font-size:18px}
+/* Kaartjes */
+.idee{display:block;width:100%;margin:0 0 10px;border:0;background:none;padding:2px 0;color:#8a6845;font-family:inherit;font-size:16px;font-style:italic;text-align:left;cursor:pointer}
+.idee b{font-style:normal;font-weight:600;border-bottom:1px solid #a77c48}
+.kaartstrook{display:flex;overflow-x:auto;-webkit-overflow-scrolling:touch;margin:10px -22px 0;padding:6px 22px 12px;scroll-snap-type:x proximity}
+.kaartstrook::-webkit-scrollbar{display:none}
+.mini{position:relative;flex:0 0 auto;width:96px;height:84px;margin-right:12px;border:0;padding:0;background:var(--briefje-kleur,#f8e7a1);color:var(--briefje-inkt,#3b2f1c);box-shadow:0 1px 1px rgba(80,60,20,.12),0 5px 12px rgba(80,60,20,.16);cursor:pointer;scroll-snap-align:start;font-family:inherit;transform:rotate(-1deg)}
+.mini:nth-child(2n){transform:rotate(1.2deg)}
+.mini.active{outline:3px solid #a77c48;outline-offset:3px}
+.mini-naam{position:absolute;left:0;right:0;bottom:-21px;font-size:13px;color:#7d7263;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kaartstrook .mini{margin-bottom:18px}
+.notitie.kaart textarea{padding-top:calc(var(--f)*var(--ruimte,0.9));padding-bottom:calc(var(--f)*var(--onder,1.2))}
+.extra-veld{display:flex;align-items:center;margin:-6px 0 16px}
+.extra-veld label{flex:0 0 auto;margin-right:10px;font-size:17px;color:#5f5547}
+.extra-veld input{flex:1;min-width:0;border:1px solid rgba(151,133,108,.45);border-radius:3px;padding:9px 10px;background:#fffdf8;color:#302c26;font-family:inherit;font-size:17px}
+.stickerrij{display:flex;flex-wrap:wrap;align-items:center}
+.stickerknop{width:44px;height:44px;margin:0 6px 6px 0;border:1px solid rgba(151,133,108,.35);border-radius:50%;padding:7px;background:#fffdf8;cursor:pointer}
+.stickerknop svg{display:block;width:100%;height:100%}
+.notitie .kaart-stickers{z-index:1}
+.notitie canvas{z-index:2}
 </style>
 </head>
 <body>
@@ -94,6 +113,11 @@ body{min-height:100vh}
 <span class="veld-label">Van</span>
 <div class="segmented" id="vanKeuze"></div>
 </div>
+<div class="veld" id="kaartVeld">
+<button type="button" class="idee" id="idee" hidden></button>
+<div class="segmented" id="groepKeuze"></div>
+<div class="kaartstrook" id="kaartStrook" hidden></div>
+</div>
 <div class="notitie-plek">
 <div class="notitie" id="notitie">
 <div class="plakband"></div>
@@ -103,8 +127,10 @@ body{min-height:100vh}
 </div>
 </div>
 <div class="veld"><div class="segmented" id="modusKeuze"></div></div>
+<div class="extra-veld" id="extraVeld" hidden><label for="extraInvoer" id="extraLabel"></label><input id="extraInvoer" maxlength="30" autocomplete="off"></div>
 <div class="teken-gereedschap" id="tekenGereedschap" hidden></div>
-<div class="veld"><span class="veld-label">Kleur</span><div class="kleuren" id="kleurKeuze"></div></div>
+<div class="veld" id="kleurVeld"><span class="veld-label">Kleur</span><div class="kleuren" id="kleurKeuze"></div></div>
+<div class="veld"><span class="veld-label">Stickers</span><div class="stickerrij" id="stickerKeuze"></div></div>
 <div class="veld"><span class="veld-label">Grootte</span><div class="segmented" id="grootteKeuze"></div></div>
 <div class="veld" id="envelopVeld"><button type="button" class="schakelaar" id="envelop" aria-pressed="false"><span>Als verrassing dichtgevouwen</span><span class="knop"></span></button></div>
 <div class="status" id="schrijfStatus"></div>
@@ -138,6 +164,7 @@ body{min-height:100vh}
 </section>
 
 </div>
+<script src="kaartjes.js?v=1.8"></script>
 <script>
 const NOTES_URL="https://script.google.com/macros/s/AKfycbximcSly2Yp2TyiIzJWdNZ2gt5QcQ5Is9rf4ITK3SHQfMaWQH6NCAUGYMw3kgJvHl36kQ/exec";
 const ACCESS_STORAGE_KEY="gedichten_access_token";
@@ -156,9 +183,12 @@ const state={
 van:eigenaar()||localStorage.getItem("briefje_van")||"",
 voor:"Ons",kleur:"geel",grootte:antwoordOp?"S":"M",modus:"typen",envelop:false,
 pen:0,streken:[],x:0.82,y:0.4,plaatsing:"overal",blijft:"altijd",verschijnt:"nu",
+groep:"blanco",kaart:"",extra:"",stickers:[],
 draai:Math.round((Math.random()*8-4)*10)/10
 };
 state.voor=ander(state.van);
+Kaartjes.zetCss();
+const huidigeKaart=()=>Kaartjes.vind(state.kaart);
 
 /* ---------- Kleine knoppenrijen ---------- */
 function segmented(container,options,get,set){
@@ -198,7 +228,59 @@ const wissen=document.createElement("button");wissen.type="button";wissen.classN
 wissen.addEventListener("click",()=>{state.streken=[];tekenStreken();controleerInhoud()});
 gereedschap.append(ongedaan,wissen);
 $("envelop").setAttribute("aria-pressed",state.envelop?"true":"false");
+segmented($("groepKeuze"),[["blanco","Blanco"]].concat(Kaartjes.GROEPEN),()=>state.groep,v=>{
+state.groep=v;
+if(v==="blanco")state.kaart="";
+else if(!huidigeKaart()||huidigeKaart().groep!==v){state.kaart=Kaartjes.KAARTEN.filter(k=>k.groep===v)[0].id;state.extra="";$("extraInvoer").value=""}
+tekenStrook();tekenNotitie();
+});
+tekenStrook();
+// Stickers
+const rij=$("stickerKeuze");rij.innerHTML="";
+Kaartjes.STICKERS.forEach(naam=>{
+const b=document.createElement("button");b.type="button";b.className="stickerknop";b.setAttribute("aria-label","Sticker: "+naam);
+b.innerHTML=Kaartjes.SVG[naam];
+b.addEventListener("click",()=>{voegStickerToe(naam)});
+rij.appendChild(b);
+});
+if(state.stickers.length){
+const weg=document.createElement("button");weg.type="button";weg.className="klein-knop";weg.textContent="Stickers weg";weg.style.marginBottom="6px";
+weg.addEventListener("click",()=>{state.stickers=[];vernieuwKeuzes();tekenNotitie()});
+rij.appendChild(weg);
 }
+// Idee voor vandaag
+const idee=Kaartjes.vanDeDag(),ik=Kaartjes.vind(idee.kaart);
+const ideeKnop=$("idee");
+ideeKnop.hidden=!ik||state.kaart===idee.kaart;
+if(ik){ideeKnop.innerHTML="";ideeKnop.append("Idee: "+idee.tekst+" ");const b=document.createElement("b");b.textContent=ik.naam;ideeKnop.appendChild(b)}
+}
+function tekenStrook(){
+const strook=$("kaartStrook");
+strook.hidden=state.groep==="blanco";
+strook.innerHTML="";
+if(state.groep==="blanco")return;
+Kaartjes.KAARTEN.filter(k=>k.groep===state.groep).forEach(k=>{
+const b=document.createElement("button");b.type="button";b.className="mini"+(state.kaart===k.id?" active":"");
+b.setAttribute("aria-label",k.naam);b.setAttribute("aria-pressed",state.kaart===k.id?"true":"false");
+b.style.setProperty("--briefje-font","11px");
+Kaartjes.decoreer(b,{kaart:k.id,id:"mini"},{zonderExtra:true});
+const naam=document.createElement("span");naam.className="mini-naam";naam.textContent=k.naam;b.appendChild(naam);
+b.addEventListener("click",()=>{if(state.kaart!==k.id){state.kaart=k.id;state.extra="";$("extraInvoer").value=""}tekenStrook();tekenNotitie();vernieuwKeuzes()});
+strook.appendChild(b);
+});
+const actief=strook.querySelector(".mini.active");
+if(actief&&actief.scrollIntoView)setTimeout(()=>{try{strook.scrollLeft=Math.max(0,actief.offsetLeft-60)}catch(e){}},0);
+}
+// Stickers komen op een plek langs de rand, zodat ze de tekst zo min mogelijk bedekken.
+const STICKERPLEKKEN=[[0.92,0.5],[0.9,0.86],[0.07,0.52],[0.62,0.92],[0.93,0.24],[0.08,0.3],[0.42,0.93],[0.78,0.68],[0.25,0.7]];
+function voegStickerToe(naam){
+if(state.stickers.length>=9){$("schrijfStatus").textContent="Genoeg stickers zo.";return}
+const plek=STICKERPLEKKEN[state.stickers.length%STICKERPLEKKEN.length];
+const j=()=>(Math.random()-.5)*0.06;
+state.stickers.push({soort:naam,x:Math.max(0.05,Math.min(0.95,plek[0]+j())),y:Math.max(0.06,Math.min(0.94,plek[1]+j())),draai:Math.round(Math.random()*36-18)});
+vernieuwKeuzes();tekenNotitie();
+}
+function stickerTekst(){return Kaartjes.schrijfStickers(state.stickers)}
 
 /* ---------- Het briefje zelf ---------- */
 const notitie=$("notitie"),tekstVeld=$("tekst"),canvas=$("teken");
@@ -206,9 +288,21 @@ function tekenNotitie(){
 const max=Math.min(320,window.innerWidth-48);
 const w=max*({S:.75,M:.88,L:1}[state.grootte]);
 notitie.style.width=w+"px";notitie.style.height=(w*.88)+"px";
-notitie.style.setProperty("--f",(w/200*25).toFixed(1)+"px");
-notitie.style.setProperty("--kleur",KLEUREN[state.kleur]);
-notitie.style.setProperty("--inkt",INKT[state.kleur]);
+const f=(w/200*25).toFixed(1)+"px";
+notitie.style.setProperty("--f",f);
+notitie.style.setProperty("--briefje-font",f);
+const k=Kaartjes.decoreer(notitie,{kaart:state.kaart,extra:state.extra,id:"concept"});
+notitie.style.setProperty("--kleur",k?k.kleur:KLEUREN[state.kleur]);
+notitie.style.setProperty("--inkt",k?k.inkt:INKT[state.kleur]);
+notitie.style.setProperty("--ruimte",k?String(k.ruimte):"0.9");
+notitie.style.setProperty("--onder",String(1.2+Kaartjes.ruimteOnder({kaart:state.kaart,extra:state.extra})));
+tekstVeld.placeholder=k?k.plaats+"…":(antwoordOp?"Schrijf je antwoord…":"Schrijf hier je briefje…");
+$("kleurVeld").hidden=!!k;
+const ex=k&&k.extra;
+$("extraVeld").hidden=!ex;
+if(ex){$("extraLabel").textContent=ex.label;$("extraInvoer").placeholder=ex.plaats;if($("extraInvoer").value!==state.extra)$("extraInvoer").value=state.extra}
+notitie.querySelectorAll(".kaart-stickers").forEach(e=>e.remove());
+Kaartjes.tekenStickers(notitie,stickerTekst());
 $("afzender").textContent=state.van||"";
 const schrijven=state.modus==="schrijven";
 canvas.hidden=!schrijven;
@@ -262,7 +356,9 @@ const stopStreek=()=>{if(huidigeStreek){huidigeStreek=null;controleerInhoud()}};
 canvas.addEventListener("pointerup",stopStreek);
 canvas.addEventListener("pointercancel",stopStreek);
 function tekening(){return state.streken.filter(s=>s.p.length).map(s=>"c"+s.c+"|"+s.p.map(p=>p[0]+","+p[1]).join(" ")).join(";")}
-function heeftInhoud(){return tekstVeld.value.trim()||state.streken.length}
+function heeftInhoud(){const k=huidigeKaart();return tekstVeld.value.trim()||state.streken.length||(k&&k.vast)}
+$("extraInvoer").addEventListener("input",e=>{state.extra=e.target.value;tekenNotitie()});
+$("idee").addEventListener("click",()=>{const idee=Kaartjes.vanDeDag(),k=Kaartjes.vind(idee.kaart);if(!k)return;state.groep=k.groep;state.kaart=k.id;vernieuwKeuzes();tekenNotitie()});
 function controleerInhoud(){$("naarPlek").disabled=!heeftInhoud()}
 tekstVeld.addEventListener("input",controleerInhoud);
 $("envelop").addEventListener("click",()=>{state.envelop=!state.envelop;$("envelop").setAttribute("aria-pressed",state.envelop?"true":"false")});
@@ -276,7 +372,7 @@ if(document.referrer&&/index\.html|\/$/.test(new URL(document.referrer).pathname
 if(heeftInhoud()&&!confirm("Dit briefje weggooien?"))return;
 leegmaken();
 });
-function leegmaken(){tekstVeld.value="";state.streken=[];state.envelop=false;state.draai=Math.round((Math.random()*8-4)*10)/10;vernieuwKeuzes();tekenNotitie();toon("stapSchrijven")}
+function leegmaken(){tekstVeld.value="";state.streken=[];state.envelop=false;state.kaart="";state.groep="blanco";state.extra="";state.stickers=[];$("extraInvoer").value="";state.draai=Math.round((Math.random()*8-4)*10)/10;vernieuwKeuzes();tekenNotitie();toon("stapSchrijven")}
 $("naarPlek").addEventListener("click",()=>{
 if(!state.van){$("schrijfStatus").textContent="Kies eerst van wie het briefje is.";return}
 if(!heeftInhoud()){$("schrijfStatus").textContent="Schrijf eerst iets op je briefje.";return}
@@ -301,7 +397,7 @@ if(!muurGeladen){muur.src="index.html?muur=1"+(gedichtId?"&gedicht="+encodeURICo
 else stuurConcept(false);
 }
 function concept(dragging){
-return{persoon:state.van,voor:state.voor,tekst:tekstVeld.value.trim(),tekening:tekening(),kleur:state.kleur,grootte:state.grootte,envelop:state.envelop,x:state.x,y:state.y,draai:state.draai,plaatsing:state.plaatsing,dragging};
+return{persoon:state.van,voor:state.voor,tekst:tekstVeld.value.trim(),tekening:tekening(),kleur:state.kleur,kaart:state.kaart,extra:huidigeKaart()?state.extra.trim():"",stickers:stickerTekst(),grootte:state.grootte,envelop:state.envelop,x:state.x,y:state.y,draai:state.draai,plaatsing:state.plaatsing,dragging};
 }
 function stuurConcept(dragging){if(muur.contentWindow)muur.contentWindow.postMessage({type:"concept",briefje:concept(dragging)},"*")}
 function plekVan(event){
@@ -350,7 +446,7 @@ if(state.verschijnt==="kies"&&!verschijntOp()){status.textContent="Kies eerst ee
 knop.disabled=true;
 status.textContent="Briefje wordt opgehangen…";
 const id="b"+Date.now().toString(36)+Math.random().toString(36).slice(2,7);
-const velden={action:"briefje_create",token:localStorage.getItem(ACCESS_STORAGE_KEY)||"",persoon:state.van,id,voor:state.voor,tekst:tekstVeld.value.trim(),tekening:tekening(),kleur:state.kleur,grootte:state.grootte,x:state.x.toFixed(4),y:state.y.toFixed(4),draai:String(state.draai),plaatsing:state.plaatsing,envelop:state.envelop&&!antwoordOp?"ja":"",blijft:state.blijft,verschijnt:String(verschijntOp()),antwoordOp};
+const velden={action:"briefje_create",token:localStorage.getItem(ACCESS_STORAGE_KEY)||"",persoon:state.van,id,voor:state.voor,tekst:tekstVeld.value.trim(),tekening:tekening(),kleur:state.kleur,kaart:state.kaart,extra:huidigeKaart()?state.extra.trim():"",stickers:stickerTekst(),grootte:state.grootte,x:state.x.toFixed(4),y:state.y.toFixed(4),draai:String(state.draai),plaatsing:state.plaatsing,envelop:state.envelop&&!antwoordOp?"ja":"",blijft:state.blijft,verschijnt:String(verschijntOp()),antwoordOp};
 try{
 const form=new URLSearchParams();Object.entries(velden).forEach(([k,v])=>form.append(k,v));
 await fetch(NOTES_URL,{method:"POST",mode:"no-cors",body:form});
@@ -386,6 +482,7 @@ if(antwoordOp){
 $("schrijfTitel").textContent="Antwoord";
 $("naarPlek").innerHTML="<span>Ophangen</span>";
 $("envelopVeld").hidden=true;
+$("kaartVeld").hidden=true;
 try{const data=await jsonp({action:"briefjes"});const ouder=(data.briefjes||[]).find(b=>b.id===antwoordOp);if(ouder){state.voor=["Sanne","Ramon"].includes(ouder.persoon)?ouder.persoon:"Ons";if(!state.van&&ouder.persoon)state.van=ander(ouder.persoon)}}catch(e){}
 }
 vernieuwKeuzes();

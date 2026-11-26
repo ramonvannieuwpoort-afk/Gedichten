@@ -424,7 +424,7 @@ svg.innerHTML=`
 return svg;
 }
 
-const APP_VERSION="1.3.1";
+const APP_VERSION="1.3.2";
 // Plak hier de web-app-URL van het Recepten Apps Script (eindigt op /exec):
 const RECEPTEN_URL="https://script.google.com/macros/s/AKfycbxDoDzE2EqPLyzmtx573RPd7PWPYOGITEXFY9zDIcUCjJuRsmNN4Ba7uvyI1Bb1Iz9niA/exec";
 
@@ -872,6 +872,8 @@ function kEmbleem(r){if(isKeto(r))return el("span",{class:"k-badge",title:"Keto"
 
 /* ---------- Weekmenu-hulpjes ---------- */
 function weekmenuOp(datum){return D.weekmenu.find(w=>w.datum===datum&&w.receptId)||null}
+// Ook een dag zonder recept, waar alleen de kok al vaststaat (bijv. via een bon uit de briefjes).
+function dagPlan(datum){return weekmenuOp(datum)||D.weekmenu.find(w=>w.datum===datum)||null}
 function kokTekst(k){return k==="Samen"?"Samen koken":k?k+" kookt":"Nog niemand gekozen"}
 function factorVanPlan(w){const r=IX.recept[w.receptId];return portiesVoorPersonen(Number(w.personen)||basisPersonen(r))/basisPersonen(r)}
 function planVoorKoken(id){
@@ -935,8 +937,10 @@ el("button",{type:"button",class:"knop",onclick:()=>lijstDialoog(bronnenMetErbij
 el("button",{type:"button",class:"knop",onclick:()=>ga("recept/"+r.id)},"Recept"),
 el("button",{type:"button",class:"knop",onclick:()=>planDialoog(vandaag())},"Iets anders"))));
 }else{
+const alleenKok=dagPlan(vandaag());
 m.appendChild(el("div",{class:"kaart vanavond-kaart"},el("div",{class:"plakband"}),
-el("p",{class:"sub",text:"Nog niets gepland voor vanavond."}),
+alleenKok&&alleenKok.kok?el("span",{class:"chip "+alleenKok.kok},kokTekst(alleenKok.kok)):null,
+el("p",{class:"sub",text:alleenKok&&alleenKok.kok?"Nog geen recept gekozen.":"Nog niets gepland voor vanavond."}),
 el("div",{style:"margin-top:14px"},
 el("button",{type:"button",class:"knop hoofd",onclick:()=>planDialoog(vandaag())},"Kies een recept"),
 el("button",{type:"button",class:"knop",onclick:verrasMe},"Verras me"))));
@@ -1336,18 +1340,20 @@ el("p",{class:"uitleg",text:"Tik op een dag om te plannen. De kleur laat zien wi
 function dagRij(datum){
 const w=weekmenuOp(datum);
 const r=w&&IX.recept[w.receptId];
-return el("div",{class:"dag "+(r&&w.kok?w.kok:"")+(datum===vandaag()?" vandaag":""),onclick:()=>planDialoog(datum)},
+const p=dagPlan(datum);
+const kok=r?w.kok:(p&&p.kok)||"";
+return el("div",{class:"dag "+(kok||"")+(datum===vandaag()?" vandaag":""),onclick:()=>planDialoog(datum)},
 el("div",{class:"naam"},el("b",{text:dagNaam(datum)}),korteDatum(datum)),
 el("div",{class:"wat"},r?r.titel+erbijVan(r.id,w).map(x=>" + "+IX.recept[x].titel).join(""):el("span",{class:"leeg",text:"niets gepland"}),
-r?el("div",{class:"meta",text:[kokTekst(w.kok),w.personen+" pers.",w.gekookt==="ja"?"gekookt":w.opLijst?"op de lijst":""].filter(Boolean).join(" · ")}):null));
+r?el("div",{class:"meta",text:[kokTekst(w.kok),w.personen+" pers.",w.gekookt==="ja"?"gekookt":w.opLijst?"op de lijst":""].filter(Boolean).join(" · ")}):kok?el("div",{class:"meta",text:kokTekst(kok)}):null));
 }
 function planDialoog(datum,receptId){
-const bestaand=datum?weekmenuOp(datum):null;
+const bestaand=datum?dagPlan(datum):null;
 const keuze={datum:datum||vandaag(),receptId:receptId||(bestaand&&bestaand.receptId)||"",kok:(bestaand&&bestaand.kok)||eigenaar()||"",personen:Number(bestaand&&bestaand.personen)||0};
 const body=el("div");
 if(!datum){
 const dk=el("div",{class:"dagkeuze"});
-const tekenDagen=()=>{dk.innerHTML="";for(let d=0;d<7;d++){const s=plusDagen(vandaag(),d);const bezet=weekmenuOp(s);dk.appendChild(el("button",{type:"button",class:keuze.datum===s?"active":"",onclick:()=>{keuze.datum=s;tekenDagen()}},dagNaam(s)+(bezet?" •":"")))}};
+const tekenDagen=()=>{dk.innerHTML="";for(let d=0;d<7;d++){const s=plusDagen(vandaag(),d);const bezet=weekmenuOp(s);dk.appendChild(el("button",{type:"button",class:keuze.datum===s?"active":"",onclick:()=>{keuze.datum=s;const pp=dagPlan(s);if(pp&&pp.kok){keuze.kok=pp.kok;tekenKoks()}tekenDagen()}},dagNaam(s)+(bezet?" •":"")))}};
 tekenDagen();
 body.appendChild(el("div",{class:"veld"},el("span",{text:"Welke dag? (• = er staat al iets)"}),dk));
 }
@@ -1382,7 +1388,7 @@ bestaand?["Weghalen",()=>{post({action:"weekmenu_weg",id:bestaand.id});D.weekmen
 ["Annuleren",()=>m.sluit()],
 ["Opslaan",()=>{
 if(!keuze.receptId){melding("Kies eerst een recept.");return}
-const oud=weekmenuOp(keuze.datum);
+const oud=dagPlan(keuze.datum);
 const id=oud?oud.id:nieuwId("w");
 post({action:"weekmenu_zet",id:id,datum:keuze.datum,receptId:keuze.receptId,kok:keuze.kok,personen:keuze.personen});
 D.weekmenu=D.weekmenu.filter(w=>w.datum!==keuze.datum).concat([{id:id,datum:keuze.datum,receptId:keuze.receptId,kok:keuze.kok,personen:String(keuze.personen),gekookt:"",opLijst:""}]);

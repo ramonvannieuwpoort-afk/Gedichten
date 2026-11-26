@@ -1,4 +1,5 @@
 // Gedichten – Apps Script
+// Versie 18: kaartjes bij de briefjes (kaart, extra, stickers), reacties, bonnen inwisselen en de bewaardoos.
 // Versie 17: samen lezen (wie heeft welk deel gelezen, lievelingsregels). Eerder: meerdere reeksen, reeksen met gedeelde voortgang, inspringen bewaard, alles in één keer ophalen (sneller), plus briefjes, vaste nummers, reacties en favorieten.
 
 const SHEET_NAME = 'Aantekeningen';
@@ -446,17 +447,22 @@ function newId(prefix) {
 // ---------- Briefjes (post-its) ----------
 
 const BRIEFJES_SHEET = 'Briefjes';
-const BRIEFJE_FIELDS = ['id', 'persoon', 'voor', 'tekst', 'tekening', 'kleur', 'grootte', 'x', 'y', 'draai', 'plaatsing', 'envelop', 'blijft', 'verschijnt', 'gemaakt', 'gelezenOp', 'gelezenDoor', 'antwoordOp', 'status', 'afgepeld'];
-const BRIEFJE_HEADERS = ['ID', 'Persoon', 'Voor', 'Tekst', 'Tekening', 'Kleur', 'Grootte', 'X', 'Y', 'Draai', 'Plaatsing', 'Envelop', 'Blijft', 'Verschijnt', 'Gemaakt', 'GelezenOp', 'GelezenDoor', 'AntwoordOp', 'Status', 'Afgepeld'];
+const BRIEFJE_FIELDS = ['id', 'persoon', 'voor', 'tekst', 'tekening', 'kleur', 'grootte', 'x', 'y', 'draai', 'plaatsing', 'envelop', 'blijft', 'verschijnt', 'gemaakt', 'gelezenOp', 'gelezenDoor', 'antwoordOp', 'status', 'afgepeld', 'kaart', 'extra', 'stickers', 'reacties', 'ingewisseld', 'ingewisseldDoor', 'bewaard'];
+const BRIEFJE_HEADERS = ['ID', 'Persoon', 'Voor', 'Tekst', 'Tekening', 'Kleur', 'Grootte', 'X', 'Y', 'Draai', 'Plaatsing', 'Envelop', 'Blijft', 'Verschijnt', 'Gemaakt', 'GelezenOp', 'GelezenDoor', 'AntwoordOp', 'Status', 'Afgepeld', 'Kaart', 'Extra', 'Stickers', 'Reacties', 'Ingewisseld', 'IngewisseldDoor', 'Bewaard'];
 const BRIEFJE_COL = {};
 BRIEFJE_FIELDS.forEach((field, i) => { BRIEFJE_COL[field] = i + 1; });
-const BRIEFJE_NUMBERS = ['x', 'y', 'draai', 'verschijnt', 'gemaakt', 'gelezenOp', 'afgepeld'];
+const BRIEFJE_NUMBERS = ['x', 'y', 'draai', 'verschijnt', 'gemaakt', 'gelezenOp', 'afgepeld', 'ingewisseld'];
+const BRIEFJE_STICKERS = /^([a-z]{2,8}:\d(\.\d+)?,\d(\.\d+)?,-?\d{1,2})(;[a-z]{2,8}:\d(\.\d+)?,\d(\.\d+)?,-?\d{1,2}){0,11}$/;
+const BRIEFJE_REACTIES = ['hart', 'lach', 'ster', 'kus'];
 
 // Het tabblad Briefjes wordt de eerste keer vanzelf aangemaakt.
 function getBriefjesSheet(spreadsheet) {
   let sheet = spreadsheet.getSheetByName(BRIEFJES_SHEET);
   if (!sheet) {
     sheet = spreadsheet.insertSheet(BRIEFJES_SHEET);
+    sheet.getRange(1, 1, 1, BRIEFJE_HEADERS.length).setValues([BRIEFJE_HEADERS]);
+  } else if (sheet.getLastColumn() < BRIEFJE_HEADERS.length) {
+    // Nieuwe kolommen (kaartjes, reacties, ...) achteraan toevoegen.
     sheet.getRange(1, 1, 1, BRIEFJE_HEADERS.length).setValues([BRIEFJE_HEADERS]);
   }
   return sheet;
@@ -470,6 +476,7 @@ function rowToBriefje(row) {
     else b[field] = value === null || value === undefined ? '' : String(value);
   });
   b.envelop = b.envelop === 'ja';
+  b.bewaard = b.bewaard === 'ja';
   return b;
 }
 
@@ -480,6 +487,18 @@ function getBriefjes(spreadsheet) {
   const first = Math.max(2, lastRow - 399);
   const rows = sheet.getRange(first, 1, lastRow - first + 1, BRIEFJE_FIELDS.length).getValues();
   const briefjes = rows.map(rowToBriefje).filter(b => b.id);
+  // Bewaarde briefjes (de bewaardoos) altijd meesturen, ook als ze ouder zijn.
+  if (first > 2) {
+    const bewaard = sheet.getRange(2, BRIEFJE_COL.bewaard, first - 2, 1).getValues();
+    const oud = [];
+    bewaard.forEach((r, i) => { if (String(r[0]) === 'ja') oud.push(i + 2); });
+    const kies = oud.slice(-200);
+    if (kies.length) {
+      const blok = sheet.getRange(kies[0], 1, first - kies[0], BRIEFJE_FIELDS.length).getValues();
+      const extra = kies.map(rij => rowToBriefje(blok[rij - kies[0]])).filter(x => x.id);
+      briefjes.unshift.apply(briefjes, extra);
+    }
+  }
   return { success: true, briefjes: briefjes, nu: Date.now() };
 }
 
@@ -506,7 +525,10 @@ function briefjeAction(spreadsheet, data, action, persoon) {
     if (persoon !== 'Sanne' && persoon !== 'Ramon') throw new Error('Kies Sanne of Ramon.');
     const tekst = String(data.tekst || '').trim();
     const tekening = String(data.tekening || '').trim();
-    if (!tekst && !tekening) throw new Error('Het briefje is leeg.');
+    const kaart = /^[a-z0-9-]{2,24}$/.test(String(data.kaart || '')) ? String(data.kaart) : '';
+    if (!tekst && !tekening && !kaart) throw new Error('Het briefje is leeg.');
+    const stickers = String(data.stickers || '').trim();
+    if (stickers && (stickers.length > 600 || !BRIEFJE_STICKERS.test(stickers))) throw new Error('De stickers kloppen niet.');
     if (tekst.length > 1200) throw new Error('Het briefje is te lang.');
     if (tekening.length > 45000 || !/^[0-9c|,; ]*$/.test(tekening)) throw new Error('De tekening klopt niet.');
     const newIdOk = /^b[a-z0-9]{6,24}$/.test(id);
@@ -534,7 +556,14 @@ function briefjeAction(spreadsheet, data, action, persoon) {
       gelezenDoor: '',
       antwoordOp: antwoordOp,
       status: 'actief',
-      afgepeld: ''
+      afgepeld: '',
+      kaart: kaart,
+      extra: kaart ? String(data.extra || '').trim().slice(0, 80) : '',
+      stickers: stickers,
+      reacties: '',
+      ingewisseld: '',
+      ingewisseldDoor: '',
+      bewaard: ''
     };
     const row = BRIEFJE_FIELDS.map(field => values[field]);
     const range = sheet.getRange(sheet.getLastRow() + 1, 1, 1, BRIEFJE_FIELDS.length);
@@ -566,6 +595,30 @@ function briefjeAction(spreadsheet, data, action, persoon) {
     set('afgepeld', '');
     set('blijft', 'altijd');
     set('verschijnt', 0);
+  } else if (action === 'briefje_react') {
+    // Eén reactie per persoon; dezelfde nog eens = weghalen.
+    const wie = ['Sanne', 'Ramon'].includes(persoon) ? persoon : '';
+    if (!wie) throw new Error('Kies Sanne of Ramon.');
+    const reactie = BRIEFJE_REACTIES.includes(data.reactie) ? data.reactie : '';
+    const huidig = {};
+    String(sheet.getRange(rowNumber, BRIEFJE_COL.reacties).getValue() || '').split(';').forEach(p => {
+      const m = p.match(/^(Sanne|Ramon)=([a-z]{2,8})$/);
+      if (m) huidig[m[1]] = m[2];
+    });
+    if (reactie) huidig[wie] = reactie; else delete huidig[wie];
+    set('reacties', Object.keys(huidig).map(k => k + '=' + huidig[k]).join(';'));
+  } else if (action === 'briefje_redeem') {
+    if (!sheet.getRange(rowNumber, BRIEFJE_COL.kaart).getValue()) throw new Error('Dit is geen bon.');
+    if (data.terug === 'ja') {
+      set('ingewisseld', '');
+      set('ingewisseldDoor', '');
+    } else {
+      if (Number(sheet.getRange(rowNumber, BRIEFJE_COL.ingewisseld).getValue())) throw new Error('Deze bon is al ingewisseld.');
+      set('ingewisseld', Date.now());
+      set('ingewisseldDoor', ['Sanne', 'Ramon'].includes(data.door) ? data.door : '');
+    }
+  } else if (action === 'briefje_keep') {
+    set('bewaard', data.bewaard === 'ja' ? 'ja' : '');
   } else if (action === 'briefje_delete') {
     // Verwijder ook de antwoorden op dit briefje.
     const lastRow = sheet.getLastRow();
